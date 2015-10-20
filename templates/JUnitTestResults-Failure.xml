@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<testsuite>
+  <properties>
+  </properties>
+  <testcase name="test-execution-timed-out" classname="TestSuite" time="0.0121629">
+    <error message="Failed (1)">Test execution killed by supervisor process.
+Overall test runtime consumed more than the maximum permitted amount of time (including allowed tolerances) and was assumed to be hung.
+Test run was killed to ensure smooth operation of CI system.</error>
+  </testcase>
+  <system-out></system-out>
+</testsuite>
+

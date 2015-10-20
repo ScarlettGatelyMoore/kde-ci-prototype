@@ -1,0 +1,212 @@
+// 
+// 
+// 
+// 
+//
+//
+import static helper.ExtractData.*
+import static groovy.json.JsonOutput.*
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import helper.CIOptions
+import helper.Platform
+import helper.GenerateMatrixDSL
+
+def allJsonMap = parse_kde_projects_json()
+assert allJsonMap instanceof Map
+def groupData = extract_data(allJsonMap, "groups")
+assert groupData instanceof Map
+
+// Cycle through the Product groups to allow group level email/irc notifications.
+groupData.each { groups ->
+	Object currentGroup = groupData.getAt(groups.key)
+	println "Now processing group " + groups.key
+	branch_group_tracks = [:] << currentGroup.branch_group_tracks
+	String group_email = currentGroup.group_email ?: null
+	String group_irc = currentGroup.group_irc ?: null	
+	currentGroup.projects.each { projects ->		
+		Map currentProject = [:] << projects.value
+		// Variable to hold current project.
+		def jobname = projects.key
+		/* Here we pull in the ci_overrides for the current project and create a new
+		* ci option map. Because the number of overrides are unknown we must create 
+		* a new map with the overrides. 
+		*/
+		Map overrides = extract_data(currentProject, "ci_overrides")
+		currentProject << overrides			
+		overrides.each { key, value ->
+			assert overrides.value == currentProject.value
+		}
+		// Check to see if there are branchGroup overrides per project (mostly needed for external)
+		if (currentProject.branch_group_tracks) {
+			branch_group_tracks = [:] << currentProject.branch_group_tracks
+		}
+		//Set Variations if it exists
+		if(currentProject.Variation) {
+			def Variation = currentProject.Variation
+		} else { println "No variations configured for this job" }
+		/* Bring in only platforms that have build set to true and have the current track enabled.
+		* The platforms are put into a List usable by the DSL. The compilers for each enabled platform
+		* are also obtained. Platform specific variation overrides will be set.
+		* This is all accomplished in the Platform.groovy class.
+		*/			
+		def new_platform			
+		branch_group_tracks.each { track ->
+			// Reset the variables to empty for each new track processed.
+			currTrack = new Platform()
+			currTrack.newTrack()
+			println "Now processing project " + projects.key + " " + track.key
+			// Process each platform to check if the build and the current track is enabled 
+			currentProject.platforms.each { platform ->				
+				platform_data = [:] << platform.value
+				// bring in the values from json to the class								
+				new_platform = new Platform(platform.key, platform_data.build.toBoolean(), platform_data.compilers, \
+					platform_data.platform_email, platform_data.platform_irc, platform_data.tracks, platform_data.VariationLinux, \
+				platform_data.VariationWindows, platform_data.VariationOSX, platform_data.VariationAndroid, platform_data.VariationUbuntuP)	
+				// Run the check	
+						
+				new_platform.addPlatform(platform.key, platform_data.compilers, track.value)	
+				// test
+				if(platform_data.tracks.contains(track.value) && new_platform.build != false) {
+					assert new_platform.platformsToBuild.contains(platform.key)
+				}
+			}		
+			println "The following platforms are scheduled to build for " + jobname + " " \
+				+ track.value + ": " + new_platform.platformsToBuild		
+			
+			//Set CI variables
+			CIVars = new CIOptions(jobname, currentProject.description, currentProject.combinations, currentProject.downstream, currentProject.logrotator, \
+				currentProject.priority, currentProject.email, currentProject.irc, currentProject.html5, currentProject.cron)
+			//Set some DSL variables defined in the kde_projects.json			
+			def (daysToKeep, numToKeep, artifactDaysToKeep, artifactNumToKeep) = CIVars.logrotator.tokenize( ',' )
+			ArrayList Variation = new_platform.Variation ?: null
+			if (new_platform.platformsToBuild) {			
+				def DSLClosure = new GenerateMatrixDSL()				
+				def platformClosure = DSLClosure.generateDSLPlatformMatrix(new_platform.platformsToBuild)
+				def compilerClosure = DSLClosure.generateDSLCompilerMatrix(new_platform.platformCompilers)
+				def variationClosure = DSLClosure.generateDSLVariationsMatrix(new_platform.Variation)
+				//TO-DO Variations..
+				
+				//retrieve repository information and path
+				CIVars.repository = [:] << currentProject.getAt("repositories")
+				CIVars.getRepoInfo()
+				def branch = CIVars.branches.getAt(track.value)
+				assert branch != null : "The following platforms are scheduled to build for " + jobname + " " \
+				+ track.value + ": " + new_platform.platformsToBuild + " but no repository has been configured!!!"			
+				
+				/* BEGIN DSL CODE */
+				try{
+					matrixJob("${jobname}  ${branch} ${track.key}".replaceAll('/','-')) {
+						configure { project ->
+							project / 'actions' {}
+							project << authToken("PNcTKQORJW653QKVTwL0GV64OZA-${jobname}")
+						}
+						description "${CIVars.description}\n ${branch} build for ${jobname}"		
+						// limit job cache (Can be overridden)
+						logRotator(daysToKeep.toInteger(), numToKeep.toInteger(), artifactDaysToKeep.toInteger(), artifactNumToKeep.toInteger())
+						configure { project ->
+							project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
+								skip CIVars.html5 
+							}
+						}
+						//customWorkspace("${ITEM_ROOTDIR}/workspace")
+						/*configure { project ->
+							project << childCustomWorkspace(".")
+						}*/
+		
+						// Set only build on slaves assignment to be sure we are on the correct OS.
+						/*configure { project ->
+							project.name = 'matrix-project'
+							project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+								groovyScript 'def labelMap = [ Linux: "LINBUILDER", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+							}
+						}*/
+					
+					// throttle jobs TO-DO: make this configurable
+					/*throttleConcurrentBuilds {
+						maxPerNode 1
+						maxTotal 2 }
+	*/
+					// How often to automatically build job, set to empty by default as the git commit triggers need it.
+					triggers {
+						scm('')
+					}
+					//Wrappers
+					wrappers {
+						timestamps()
+						preBuildCleanup()
+						colorizeOutput()
+					}
+					//Run the parent on master
+					configure {
+						it / assignedNode <<  'master'
+						it / canRoam <<	 false
+					}
+					//Create matrix for each platform
+					configure platformClosure
+					touchStoneFilter( 'PLATFORM=="linux"' )
+					configure { project ->
+						project.name = 'matrix-project'
+						project / combinationFilter <<
+						'(PLATFORM=="linux" && compiler=="gcc")' || '(PLATFORM=="windows" && compiler=="vs2013")' || '(PLATFORM=="osx" && compiler=="clang")' || '(PLATFORM=="android" && compiler=="android_sdk")' || '(PLATFORM=="ubuntup" && compiler=="ubuntu_sdk")'
+					}
+					configure compilerClosure
+					// We only need to create this matrix if the job has variations
+					configure variationClosure
+					// Generate buildsteps.
+					
+					configure new_platform.initialPlatformBlock("/home/jenkins")
+					
+		
+				// Create publishers based on if the file exists.
+				/*publishers {
+				if (coberturareport.toBoolean() != false) {
+				cobertura('build/CoberturaLcovResults.xml') }
+				analysisCollector()
+				//set some downstreams to control some build order
+				if (bgdownstream != null) {
+				downstream(bgdownstream.toString(), 'UNSTABLE')
+				}
+				configure createEmailNotifications(jobname, email)
+				configure createIRCNotifications(irc)
+				//wsCleanup()
+			
+				}*/
+				/* We need to check for qt5 jobname and create a pre SCM to run --init-repository for
+				* submodules. I could not find an easy way to accomplish this with the git plugin.
+				*/
+				//configure createPreSCM(jobname, branchGroup)
+				/* Create the actual build steps */
+				//configure conditionalbyCombinations(combinations, jobcompilers, jobname, branchGroup)
+				//configure createPublishers(flexpublishers.toBoolean(), jobname, jobcompilers)		
+				
+				}
+	}catch(Throwable e){}
+			}	
+			
+		}
+	}
+}
+	
+class JobNotFoundException extends Exception {
+	public JobNotFoundException () {
+	
+		}
+	
+		public JobNotFoundException (String message) {
+			super (message);
+		}
+	
+		public JobNotFoundException (Throwable cause) {
+			super (cause);
+		}
+
+	public JobNotFoundException (String message, Throwable cause) {
+		super (message, cause);
+	}
+	
+}
+
+
