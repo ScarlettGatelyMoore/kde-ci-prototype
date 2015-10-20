@@ -6,20 +6,20 @@
 //
 import static helper.ExtractData.*
 import static groovy.json.JsonOutput.*
-
 import java.util.ArrayList;
 import java.util.Map;
-
 import helper.CIOptions
 import helper.Platform
 import helper.GenerateMatrixDSL
 
+
+//Retrieve JSON data in metadata/
 def allJsonMap = parse_kde_projects_json()
 assert allJsonMap instanceof Map
 def groupData = extract_data(allJsonMap, "groups")
 assert groupData instanceof Map
 
-// Cycle through the Product groups to allow group level email/irc notifications.
+// Cycle through the Product groups to allow group level email/irc notifications, cron, and branchgroup tracks.
 groupData.each { groups ->
 	Object currentGroup = groupData.getAt(groups.key)
 	println "Now processing group " + groups.key
@@ -181,9 +181,10 @@ groupData.each { groups ->
 				/* Create the actual build steps */
 				//configure conditionalbyCombinations(combinations, jobcompilers, jobname, branchGroup)
 				//configure createPublishers(flexpublishers.toBoolean(), jobname, jobcompilers)		
-				
-				}
-	}catch(Throwable e){}
+					}
+				}catch(Throwable e){}
+			
+	
 			}	
 			
 		}

@@ -1,5 +1,5 @@
 #DATA ONLY CONTAINER
-# This container holds the install sync data in /srv/jenkins
+# This container holds the install sync data in /home/jenkins
 # If loading a backup the files need to be in the build dir
 FROM ubuntu:trusty
 MAINTAINER Scarlett Clark <sgclark@kubuntu.org>
@@ -19,13 +19,9 @@ ADD id_rsa /home/jenkins/.ssh/
 ADD id_rsa.pub /home/jenkins/.ssh/
 ADD known_hosts /home/jenkins/.ssh/
 ADD authorized_keys /home/jenkins/.ssh/
-ADD scripts /home/jenkins/scripts
 
 USER root
 RUN chown -R jenkins.jenkins /home/jenkins 
-
-USER jenkins
-RUN python /home/jenkins/scripts/tools/update-setup.py
 
 VOLUME /home/jenkins
 
