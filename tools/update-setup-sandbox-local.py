@@ -63,13 +63,13 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       print( "Checkout branch: " + str(repoBranch) )
       os.chdir(repoPath)     
       process = subprocess.check_output( command, shell=True )      
-      print( process.output )
+      print( subprocess.CalledProcessError.output )
       command = "git pull origin " + repoBranch
       print( repoPath + "/.git exists " + str(command))
       process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True )
       os.chdir(originalDir)
     except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(process.returncode))
+      print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
 			
   os.chdir(originalDir)			
 	
