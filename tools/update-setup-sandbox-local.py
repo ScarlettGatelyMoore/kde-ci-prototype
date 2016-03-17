@@ -21,7 +21,7 @@ def generate_server_config():
   configFiles += ['{serverhost}.cfg']
   for confFile in configFiles:
     confFile = confFile.format( serverhost=socket.gethostname() )
-    config.read( confFile )
+    config.read( scriptsLocation + 'tools/' + confFile )
     return config
 
 config = generate_server_config()
