@@ -4,7 +4,7 @@ import os
 import subprocess
 import shutil
 import socket
-from os.path import expanduser
+import os.path
 import shlex
 import configparser
 
@@ -21,8 +21,9 @@ def generate_server_config():
   #Get hostname
   serverhost=socket.gethostname()
   #If the host has config overrides read it in.
-  if os.path.exists(scriptsLocation + 'tools/' + '{serverhost}.cfg' ):
-      config.read( scriptsLocation + 'tools/' + '{serverhost}.cfg' )
+  if os.path.isfile(scriptsLocation + 'tools/' + '{serverhost}.cfg' ):
+    print('{serverhost}.cfg' + " exists, using overrides")
+    config.read( scriptsLocation + 'tools/' + '{serverhost}.cfg' )
   return config
   
 print(socket.gethostname())
