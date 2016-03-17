@@ -24,7 +24,7 @@ def generate_server_config():
     config.read( scriptsLocation + 'tools/' + confFile )
     return config
   
-print(serverhost=socket.gethostname())
+print(socket.gethostname())
 
 config = generate_server_config()
 print( config )
