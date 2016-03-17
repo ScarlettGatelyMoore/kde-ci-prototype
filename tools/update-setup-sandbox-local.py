@@ -63,8 +63,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       command = "git checkout " + repoBranch
       print( "Checkout branch: " + str(repoBranch) )
       os.chdir(repoPath)     
-      process = subprocess.check_output( command, shell=True )      
-      print( subprocess.SubprocessError.output )
+      process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True )     
       command = "git pull origin " + repoBranch
       print( repoPath + "/.git exists " + str(command))
       process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True )
