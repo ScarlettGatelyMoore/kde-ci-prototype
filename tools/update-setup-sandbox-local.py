@@ -8,6 +8,7 @@ import os.path
 import shlex
 import configparser
 from subprocess import STDOUT
+from subprocess import CalledProcessError, check_output
 
 # Settings
 home = os.path.expanduser("~")
