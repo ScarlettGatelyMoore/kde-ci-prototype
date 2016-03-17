@@ -46,18 +46,21 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
     repoPath=scriptsLocation
   else:
     repoPath=scriptsLocation + repo_name
-    
+  
+  print("Processing: " + repo_name)
   if not os.path.exists(os.path.join(repoPath, '.git')):  
     try:
       print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
-      process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True )
+      process = subprocess.check_output( command, shell=True )
+      print(process)
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True  )
+      process = subprocess.check_output( command, shell=True )
+      print(process)
       
     except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(sys.exc_info()[0]))
+      print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
   elif os.path.exists(os.path.join(repoPath, '.git')):  
     try:
       print("There appears to be a repo already in: " + repoPath + " Pulling instead")        	
@@ -68,10 +71,11 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       print(process)
       command = "git pull origin " + repoBranch
       print( repoPath + "/.git exists " + str(command))
-      process = subprocess.check_call( command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True )
+      process = subprocess.check_output( command, shell=True )
+      print(process)
       os.chdir(originalDir)
     except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(subprocess.SubprocessError.returncode))
+      print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
 			
   os.chdir(originalDir)			
 	
