@@ -37,6 +37,7 @@ JENKINS_BRANCH = config.get( 'Repo', 'jenkinsBranch' )
 JENKINS_DEPENDENCY_BRANCH = config.get( 'Repo', 'jenkinsDepBranch' )
 JENKINS_CONFIG_BRANCH = config.get( 'Repo', 'jenkinsConfigBranch' )
 
+#TO-DO Add in output code, could not get it working in port.
 def getRepository(repo_name, repoUrl, repoBranch="master"):
   #Retrieve config settings 
   originalDir = os.getcwd()
@@ -46,7 +47,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   else:
     repoPath=scriptsLocation + repo_name
     
-  while not os.path.exists(os.path.join(repoPath, '.git')):  
+  if not os.path.exists(os.path.join(repoPath, '.git')):  
     try:
       print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
@@ -57,7 +58,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       
     except subprocess.CalledProcessError: 
       print( "subproccess CalledProcessError.output = " + str(sys.exc_info()[0]))
-  while os.path.exists(os.path.join(repoPath, '.git')):  
+  elif os.path.exists(os.path.join(repoPath, '.git')):  
     try:
       print("There appears to be a repo already in: " + repoPath + " Pulling instead")        	
       command = "git checkout " + repoBranch
