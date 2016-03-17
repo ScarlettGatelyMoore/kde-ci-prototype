@@ -48,12 +48,12 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
     try:
       print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
-      process = subprocess.check_call( command )
+      process = subprocess.run( command )
       output = process.communicate()[0]
       print( output )
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.check_call( command )
+      process = subprocess.run( command )
       output = process.communicate()[0]
       print( output )
     except subprocess.CalledProcessError: 
@@ -61,16 +61,18 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   while os.path.exists(os.path.join(repoPath, '.git')):  
     try:
       print("There appears to be a repo already in: " + repoPath + " Pulling instead")  
+      os.chdir(repoPath)	
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.check_call( command )
+      process = subprocess.run( command )
       output = process.communicate()[0]
       print( output )
       command = "git pull origin " + repoBranch
       print( repoPath + "/.git exists " + str(command))
-      process = subprocess.check_call( command )
+      process = subprocess.run( command )
       output = process.communicate()[0]
       print( output )
+      os.chdir(originalDir)
     except subprocess.CalledProcessError: 
       print( "subproccess CalledProcessError.output = " + str(sys.exc_info()[0]))
 			
