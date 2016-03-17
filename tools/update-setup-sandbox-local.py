@@ -27,7 +27,7 @@ def generate_server_config():
 print(socket.gethostname())
 
 config = generate_server_config()
-print( config )
+for key in config: print(key)
 
 
 JENKINS_MASTER_REPO = config.get( 'Repo', 'jenkinsMasterRepo' )
@@ -47,13 +47,13 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   else:
     repoPath=scriptsLocation + repo_name
 	
-  if not os.path.exists(repoPath):
-    os.mkdir(repoPath)			
+  #if not os.path.exists(repoPath):
+    #os.mkdir(repoPath)			
 
   os.chdir(repoPath)
   
   if not os.path.exists(os.path.join(repoPath, '.git')):   
-      print("No valid repo exists in " + repoPath + " Cloning as requested.")
+  print("No valid repo exists in " + repoPath + " Cloning as requested.")
   try:
       command = "git clone %s %s" % (repoUrl, repoPath)
       process = subprocess.check_call( command )
