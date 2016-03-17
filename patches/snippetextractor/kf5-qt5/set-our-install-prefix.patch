@@ -1,0 +1,11 @@
+--- extractor.pro
++++ extractor.pro
+@@ -7,7 +7,7 @@ CONFIG   += console
+ CONFIG   -= app_bundle
+ 
+ TEMPLATE = app
+-target.path = /usr/local/bin
++target.path = /srv/jenkins/install/linux/x86_64/g++/kf5-qt5/general/snippetextractor/inst/
+ INSTALLS += target
+ 
+ include(sources.pri)

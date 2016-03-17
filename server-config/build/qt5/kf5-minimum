@@ -1,0 +1,3 @@
+[Source]
+alwaysCheckoutSources=True
+gitCheckoutCommand=%(gitExecutable)s checkout tags/{targetTag}
