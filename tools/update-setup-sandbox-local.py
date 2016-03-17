@@ -25,13 +25,9 @@ def generate_server_config():
     print(hostConf + " exists, using overrides")
     config.read( scriptsLocation + 'tools/' + hostConf )
   return config
-  
-print(socket.gethostname())
 
-config = generate_server_config()
-print(config.sections())
-
-
+#Set the variables
+config=generate_server_config()
 JENKINS_MASTER_REPO = config.get( 'Repo', 'jenkinsMasterRepo' )
 JENKINS_CONFIG_REPO = config.get( 'Repo', 'jenkinsConfigRepo' )
 JENKINS_METADATA_REPO = config.get( 'Repo', 'jenkinsMetadataRepo' )
@@ -40,23 +36,17 @@ JENKINS_DEPENDENCY_BRANCH = config.get( 'Repo', 'jenkinsDepBranch' )
 JENKINS_CONFIG_BRANCH = config.get( 'Repo', 'jenkinsConfigBranch' )
 
 def getRepository(repo_name, repoUrl, repoBranch="master"):
-  #Retrieve config settings
- 
+  #Retrieve config settings 
   originalDir = os.getcwd()
   
   if repo_name == "scripts":
     repoPath=scriptsLocation
   else:
     repoPath=scriptsLocation + repo_name
-	
-  #if not os.path.exists(repoPath):
-    #os.mkdir(repoPath)			
-
-  os.chdir(repoPath)
-  
-  if not os.path.exists(os.path.join(repoPath, '.git')):   
-    print("No valid repo exists in " + repoPath + " Cloning as requested.")
-  try:
+    
+  while not os.path.exists(os.path.join(repoPath, '.git')):  
+    try:
+      print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
       process = subprocess.check_call( command )
       output = process.communicate()[0]
@@ -66,11 +56,11 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
-  except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(returncode))
-  else:
-      print("There appears to be a repo already in: " + repoPath + " Pulling instead")
-  try:
+    except subprocess.CalledProcessError: 
+      print( "subproccess CalledProcessError.output = " + str(sys.exc_info()[0]))
+  while os.path.exists(os.path.join(repoPath, '.git')):  
+    try:
+      print("There appears to be a repo already in: " + repoPath + " Pulling instead")  
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
       process = subprocess.check_call( command )
@@ -81,8 +71,8 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
-  except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(returncode))
+    except subprocess.CalledProcessError: 
+      print( "subproccess CalledProcessError.output = " + str(sys.exc_info()[0]))
 			
   os.chdir(originalDir)			
 	
