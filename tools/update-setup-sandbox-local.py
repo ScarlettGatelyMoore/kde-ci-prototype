@@ -18,12 +18,12 @@ def generate_server_config():
   config = configparser.ConfigParser()
   #Read in the defaults.
   config.read( scriptsLocation + 'tools/' + 'server.cfg' )
-  #Get hostname
-  serverhost=socket.gethostname()
+  #Get hostname and add .cfg to get file name.  
+  hostConf=socket.gethostname() + '.cfg'
   #If the host has config overrides read it in.
-  if os.path.isfile(scriptsLocation + 'tools/' + '{serverhost}.cfg' ):
-    print('{serverhost}.cfg' + " exists, using overrides")
-    config.read( scriptsLocation + 'tools/' + '{serverhost}.cfg' )
+  if os.path.isfile(scriptsLocation + 'tools/' + hostConf ):
+    print(hostConf + " exists, using overrides")
+    config.read( scriptsLocation + 'tools/' + hostConf )
   return config
   
 print(socket.gethostname())
