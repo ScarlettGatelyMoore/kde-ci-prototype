@@ -48,12 +48,12 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
     try:
       print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
-      process = subprocess.run( command )
+      process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.run( command )
+      process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
     except subprocess.CalledProcessError: 
@@ -64,12 +64,12 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       os.chdir(repoPath)	
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.run( command )
+      process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
       command = "git pull origin " + repoBranch
       print( repoPath + "/.git exists " + str(command))
-      process = subprocess.run( command )
+      process = subprocess.check_call( command )
       output = process.communicate()[0]
       print( output )
       os.chdir(originalDir)
