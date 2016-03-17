@@ -65,7 +65,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
 		os.chdir(originalDir)			
 	
 
-getRepository("scripts", "git://192.168.0.7/home/scarlett/kde-ci-tools", JENKINS_BRANCH)
+getRepository("scripts", "git://anongit.kde.org/sysadmin/ci-master-config", JENKINS_BRANCH)
 getRepository("dependencies", "git://anongit.kde.org/kde-build-metadata", JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)

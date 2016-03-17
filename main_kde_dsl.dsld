@@ -6,20 +6,21 @@
 //
 import static helper.ExtractData.*
 import static groovy.json.JsonOutput.*
+
 import java.util.ArrayList;
 import java.util.Map;
 import helper.CIOptions
 import helper.Platform
 import helper.GenerateMatrixDSL
 
-
-//Retrieve JSON data in metadata/
-def allJsonMap = parse_kde_projects_json()
+def allJsonMap = parse_kde_projects_json("${HOME}")
 assert allJsonMap instanceof Map
 def groupData = extract_data(allJsonMap, "groups")
 assert groupData instanceof Map
 
-// Cycle through the Product groups to allow group level email/irc notifications, cron, and branchgroup tracks.
+def view
+def jobname
+// Cycle through the Product groups to allow group level email/irc notifications.
 groupData.each { groups ->
 	Object currentGroup = groupData.getAt(groups.key)
 	println "Now processing group " + groups.key
@@ -29,7 +30,7 @@ groupData.each { groups ->
 	currentGroup.projects.each { projects ->		
 		Map currentProject = [:] << projects.value
 		// Variable to hold current project.
-		def jobname = projects.key
+		jobname = projects.key
 		/* Here we pull in the ci_overrides for the current project and create a new
 		* ci option map. Because the number of overrides are unknown we must create 
 		* a new map with the overrides. 
@@ -63,22 +64,25 @@ groupData.each { groups ->
 				platform_data = [:] << platform.value
 				// bring in the values from json to the class								
 				new_platform = new Platform(platform.key, platform_data.build.toBoolean(), platform_data.compilers, \
-					platform_data.platform_email, platform_data.platform_irc, platform_data.tracks, platform_data.VariationLinux, \
+					platform_data.platform_email, platform_data.platform_irc, platform_data.tracks, platform_data.repositories, platform_data.VariationLinux, \
 				platform_data.VariationWindows, platform_data.VariationOSX, platform_data.VariationAndroid, platform_data.VariationUbuntuP)	
 				// Run the check	
 						
-				new_platform.addPlatform(platform.key, platform_data.compilers, track.value)	
+				new_platform.addPlatform(platform.key, platform_data.compilers, track.value)
+				
 				// test
 				if(platform_data.tracks.contains(track.value) && new_platform.build != false) {
 					assert new_platform.platformsToBuild.contains(platform.key)
+					
 				}
 			}		
 			println "The following platforms are scheduled to build for " + jobname + " " \
 				+ track.value + ": " + new_platform.platformsToBuild		
-			
+				println new_platform.PlatformToCompiler
 			//Set CI variables
 			CIVars = new CIOptions(jobname, currentProject.description, currentProject.combinations, currentProject.downstream, currentProject.logrotator, \
-				currentProject.priority, currentProject.email, currentProject.irc, currentProject.html5, currentProject.cron)
+				currentProject.priority, currentProject.email, currentProject.irc, currentProject.html5, currentProject.cron, currentProject.publishers, currentProject.job_view)
+			view = CIVars.view
 			//Set some DSL variables defined in the kde_projects.json			
 			def (daysToKeep, numToKeep, artifactDaysToKeep, artifactNumToKeep) = CIVars.logrotator.tokenize( ',' )
 			ArrayList Variation = new_platform.Variation ?: null
@@ -92,13 +96,13 @@ groupData.each { groups ->
 				//retrieve repository information and path
 				CIVars.repository = [:] << currentProject.getAt("repositories")
 				CIVars.getRepoInfo()
-				def branch = CIVars.branches.getAt(track.value)
+				def branch = CIVars.branches.getAt(track.value)				
 				assert branch != null : "The following platforms are scheduled to build for " + jobname + " " \
 				+ track.value + ": " + new_platform.platformsToBuild + " but no repository has been configured!!!"			
 				
 				/* BEGIN DSL CODE */
 				try{
-					matrixJob("${jobname}  ${branch} ${track.key}".replaceAll('/','-')) {
+					matrixJob("${jobname} ${branch} ${track.key} ${view}".replaceAll('/','-')) {
 						configure { project ->
 							project / 'actions' {}
 							project << authToken("PNcTKQORJW653QKVTwL0GV64OZA-${jobname}")
@@ -111,103 +115,99 @@ groupData.each { groups ->
 								skip CIVars.html5 
 							}
 						}
-						//customWorkspace("${ITEM_ROOTDIR}/workspace")
-						/*configure { project ->
-							project << childCustomWorkspace(".")
-						}*/
-		
-						// Set only build on slaves assignment to be sure we are on the correct OS.
-						/*configure { project ->
-							project.name = 'matrix-project'
-							project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-								groovyScript 'def labelMap = [ Linux: "LINBUILDER", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+						customWorkspace('${HOME}' + '/' + "${jobname}" + '/' + "${track.value}")
+						
+						childCustomWorkspace(".")
+								
+
+						// throttle jobs TO-DO: make this configurable
+						throttleConcurrentBuilds {
+							maxPerNode 1
+							maxTotal 2 }
+						if (jobname =~ "kolab")	{
+							environmentVariables {
+								env('GIT_SSL_NO_VERIFY', '1')
 							}
-						}*/
-					
-					// throttle jobs TO-DO: make this configurable
-					/*throttleConcurrentBuilds {
-						maxPerNode 1
-						maxTotal 2 }
-	*/
-					// How often to automatically build job, set to empty by default as the git commit triggers need it.
-					triggers {
-						scm('')
-					}
-					//Wrappers
-					wrappers {
-						timestamps()
-						preBuildCleanup()
-						colorizeOutput()
-					}
-					//Run the parent on master
-					configure {
-						it / assignedNode <<  'master'
-						it / canRoam <<	 false
-					}
-					//Create matrix for each platform
-					configure platformClosure
-					touchStoneFilter( 'PLATFORM=="linux"' )
-					configure { project ->
-						project.name = 'matrix-project'
-						project / combinationFilter <<
-						'(PLATFORM=="linux" && compiler=="gcc")' || '(PLATFORM=="windows" && compiler=="vs2013")' || '(PLATFORM=="osx" && compiler=="clang")' || '(PLATFORM=="android" && compiler=="android_sdk")' || '(PLATFORM=="ubuntup" && compiler=="ubuntu_sdk")'
-					}
-					configure compilerClosure
-					// We only need to create this matrix if the job has variations
-					configure variationClosure
-					// Generate buildsteps.
-					
-					configure new_platform.initialPlatformBlock("/home/jenkins")
-					
-		
-				// Create publishers based on if the file exists.
-				/*publishers {
-				if (coberturareport.toBoolean() != false) {
-				cobertura('build/CoberturaLcovResults.xml') }
-				analysisCollector()
-				//set some downstreams to control some build order
-				if (bgdownstream != null) {
-				downstream(bgdownstream.toString(), 'UNSTABLE')
-				}
-				configure createEmailNotifications(jobname, email)
-				configure createIRCNotifications(irc)
-				//wsCleanup()
+						}
+						
+						if (branchGroup =~ "qt4") {
+							configure { project ->
+								project.name = 'matrix-project'
+								project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+									groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+								}
+							}
+						}
+						// How often to automatically build job, set to empty by default as the git commit triggers need it.
+						triggers {
+							scm('')
+						}
+						//Wrappers
+						wrappers {
+							timestamps()							
+							colorizeOutput()
+							environmentVariables {
+								env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
+								env('ASAN_OPTIONS', 'detect_leaks=0')
+							}
+						}
+						//Run the parent on master
+						configure {
+							it / assignedNode <<  'master'
+							it / canRoam <<	 false
+						}
+						
+						//Create matrix for each platform
+						configure platformClosure
+						touchStoneFilter( 'PLATFORM=="Linux"' )
+						configure { project ->
+							project.name = 'matrix-project'
+							project / combinationFilter << '(PLATFORM=="Linux" && compiler=="gcc")'					
+						}
+						configure compilerClosure
+						// We only need to create this matrix if the job has variations
+						configure variationClosure
+						// Generate buildsteps.
+						configure new_platform.initialPlatformBlock(new_platform.PlatformToCompiler)
+						configure new_platform.GenerateSCM(CIOptions.repo_data, track.value)	
+				
+						analysisCollector()
+				
+						configure createEmailNotifications(jobname, new_platform.email)
+						configure createIRCNotifications(new_platform.irc)
+				
 			
-				}*/
-				/* We need to check for qt5 jobname and create a pre SCM to run --init-repository for
-				* submodules. I could not find an easy way to accomplish this with the git plugin.
-				*/
-				//configure createPreSCM(jobname, branchGroup)
-				/* Create the actual build steps */
-				//configure conditionalbyCombinations(combinations, jobcompilers, jobname, branchGroup)
-				//configure createPublishers(flexpublishers.toBoolean(), jobname, jobcompilers)		
 					}
-				}catch(Throwable e){}
-			
-	
+
+					/* Create the actual build steps */
+					//configure conditionalbyCombinations('Linux', new_platform.platformCompilers, jobname, branchGroup)
+					configure createPublishers(new_platform.publishers, jobname, new_platform.platformCompilers)		
+				
+					}catch(Throwable e){}			
 			}	
 			
 		}
 	}
 }
-	
-class JobNotFoundException extends Exception {
-	public JobNotFoundException () {
-	
-		}
-	
-		public JobNotFoundException (String message) {
-			super (message);
-		}
-	
-		public JobNotFoundException (Throwable cause) {
-			super (cause);
-		}
-
-	public JobNotFoundException (String message, Throwable cause) {
-		super (message, cause);
-	}
-	
+listView('External') {
+    description('All jobs for ' + view)
+    filterBuildQueue()
+    filterExecutors()
+    jobs {        
+        regex("*.External")
+    }
+//    jobFilters {
+//        status {
+//            status('')
+//        }
+//    }
+    columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
 }
-
-

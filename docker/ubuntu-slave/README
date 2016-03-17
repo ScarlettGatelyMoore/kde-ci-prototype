@@ -1,6 +1,0 @@
-This is the Docker file to create a jenkins slave the is compatible with the Jenkins KDE CI
-TO-DO: Add complete instructions to make this ubuntu slave.
-TO-DO: Add more distributions
-
-To create a new slave.
-docker build -t kdeci/kde-slave .

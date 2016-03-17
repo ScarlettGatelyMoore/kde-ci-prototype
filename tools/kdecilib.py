@@ -19,9 +19,7 @@ from distutils import dir_util
 from lxml import etree
 from collections import defaultdict
 from os.path import expanduser
-import urllib2
-from pprint import pprint
-
+from load_configuration import *
 
 # Settings
 hostname = socket.gethostname()
@@ -97,15 +95,12 @@ class ProjectManager(object):
 
 	# Load the kde_projects.xml data in
 	@staticmethod
-	def load_projects( object ):
+	def load_projects( xmlData ):
 		# Get a list of all repositories, then create projects for them
-		data_file = json.loads(open('kde_projects.json').read()) 
- 		for x in data_file:
- 			repoData = (x['repositories'])
- 			for repos in repoData:
- 				pprint( repos )
- 				projectData = repos.getParent()
- 				pprint( projectData )
+		for repoData in xmlData.iterfind('.//repo'):
+			# Grab the actual project xml item
+			projectData = repoData.getparent()
+
 			# Create the new project and set the bare essentials
 			project = Project()
 			project.identifier = projectData.get('identifier')
@@ -270,7 +265,7 @@ class Project(object):
 		return 'master'
 
 	# Return a list of dependencies of ourselves
-	def determine_dependencies(self, branchGroup, includeSubDeps = True, checkDynamicDeps = True):
+	def determine_dependencies(self, branchGroup, includeSubDeps = True, checkDynamicDeps = True, currentlyKnown = []):
 		# Determine what the real name is for dependency information lookups
 		ourBranch = self.resolve_branch(branchGroup)
 		ourDeps = finalDynamic = []
@@ -298,13 +293,13 @@ class Project(object):
 		# Add the dependencies of our dependencies if requested
 		# Dynamic dependencies are excluded otherwise it will be infinitely recursive
 		if includeSubDeps:
-			toLookup = set(ourDeps) - set(finalDynamic)
+			toLookup = set(ourDeps) - set(finalDynamic) - set(currentlyKnown)
 			for dependency, dependencyBranch in toLookup:
-				ourDeps = ourDeps + dependency.determine_dependencies(branchGroup, includeSubDeps = True)
+				ourDeps = ourDeps + dependency.determine_dependencies(branchGroup, includeSubDeps = True, currentlyKnown = ourDeps)
 
 			dynamicLookup = set(ourDeps) & set(finalDynamic)
 			for dependency, dependencyBranch in dynamicLookup:
-				ourDeps = ourDeps + dependency.determine_dependencies(branchGroup, includeSubDeps = True, checkDynamicDeps = False)
+				ourDeps = ourDeps + dependency.determine_dependencies(branchGroup, includeSubDeps = True, checkDynamicDeps = False, currentlyKnown = ourDeps)
 
 		# Re-ensure the current project is not listed and that they are not virtual
 		# Dynamic dependency resolution of sub-dependencies may have re-added it
@@ -460,7 +455,7 @@ class BuildManager(object):
 		# Add the source and destination to our arguments
 		rsyncCommand.append( source + '/' )
 		rsyncCommand.append( destination )
-		# Execute rsync and wait for it to finish
+		# Execute rsync and wait for it to finish	
 		process = subprocess.Popen( rsyncCommand, stdout=sys.stdout, stderr=sys.stderr )
 		process.wait()
 		# Indicate our success
@@ -482,7 +477,7 @@ class BuildManager(object):
 			# Put the appropriate tokens in place
 			# {instPrefix} = Directory where the project should be installed
 			# {sources} = Base directory where the project sources are located
-			# {loadLevel} = The desired maxmium load level during the build
+			# {loadLevel} = The desired maximum load level during the build
 			# {jobCount} = The appropriate number of jobs which should be started during a build
 			command = command.format( scriptsLocation=self.scriptsLocation, instPrefix=self.installPrefix.replace("\\", "/"), sources=self.projectSources.replace("\\", "/"), loadLevel=cpuCount, jobCount=cpuCount + 1 )
 			
@@ -490,11 +485,12 @@ class BuildManager(object):
 
 			# Execute the command which is part of the build execution process
 			try:
-                            #Windows ignores PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-                            if sys.platform == "win32":
-                                process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
-                            else:
-				process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
+                #Windows ignores PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
+				if sys.platform == "win32":
+					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
+				else:
+					print command
+					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
 			except subprocess.CalledProcessError:
 				# Abort if it fails to complete
 				return False
@@ -590,9 +586,13 @@ class BuildManager(object):
 				continue
 
 			# Setup CMAKE_PREFIX_PATH
-			envChanges['CMAKE_PREFIX_PATH'].append( reqPrefix )
+			extraLocation = os.path.join( reqPrefix, 'usr' )
+			if os.path.exists( extraLocation ):
+				envChanges['CMAKE_PREFIX_PATH'].append( extraLocation )
 			# Setup KDEDIRS
-			envChanges['KDEDIRS'].append( reqPrefix )
+			extraLocation = os.path.join( reqPrefix, 'usr' )
+			if os.path.exists( extraLocation ):
+				envChanges['KDEDIRS'].append( extraLocation )
 
 			# Setup PATH
 			extraLocation = os.path.join( reqPrefix, 'bin' )
@@ -612,7 +612,7 @@ class BuildManager(object):
 					envChanges['PKG_CONFIG_PATH'].append(extraLocation)
 				
 				# Set up include path CPLUS_INCLUDE_PATH
-				extraLocation = os.path.join( reqPrefix, 'include' )
+				extraLocation = os.path.join( reqPrefix, 'usr/include' )
 				if os.path.exists( extraLocation ):
 					envChanges[self.includePathVariable].append(extraLocation)
 
@@ -672,11 +672,11 @@ class BuildManager(object):
 				if os.path.exists( extraLocation ):
 					envChanges['BUNDLE_INSTALL_DIR'].append(extraLocation)					
 			else:
-				extraLocation = os.path.join( reqPrefix, 'share' )
+				extraLocation = os.path.join( reqPrefix, 'usr/share' )
 				if os.path.exists( extraLocation ):
 					envChanges['XDG_DATA_DIRS'].append(extraLocation)
 
-			# Setup XDG_CONFIG_DIRS
+			# Setup osx
 			if sys.platform == "darwin":
 				extraLocation = os.path.join( reqPrefix, 'Library/Preferences' )
 				if os.path.exists( extraLocation ):
@@ -685,7 +685,7 @@ class BuildManager(object):
 				extraLocation = os.path.join( reqPrefix, 'etc/xdg' )
 				if os.path.exists( extraLocation ):
 					envChanges['XDG_CONFIG_DIRS'].append(extraLocation)
-
+			
 			# Setup PYTHONPATH
 			extraLocation = os.path.join( reqPrefix, 'share/sip' )
 			if os.path.exists( extraLocation ):
@@ -847,8 +847,7 @@ class BuildManager(object):
 			command = self.config.get('Build', 'postConfigureCommand')
 			buildCommands.append( command )
 
-		# Do the configure
-		print buildCommands
+		# Do the configure		
 		return self.run_build_commands( buildCommands )
 
 	def compile_build(self):
@@ -1179,6 +1178,7 @@ class BuildManager(object):
 		# Now we need to transfer the data to it's final home, so it can be picked up by the API generation runs
 		return self.perform_rsync( source=metadataPath, destination=serverPath )
 
+		
 	# Check if the current platform we are running on needs an X environment
 	def use_xorg_environment(self):
 		# Linux systems use Xorg
@@ -1197,21 +1197,21 @@ class BuildManager(object):
 		# Assume everything else does
 		return True
 
-# Loads a configuration for a given project
-def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
-	# Create a configuration parser
-	config = ConfigParser.SafeConfigParser()
-	# List of prospective files to parse
-	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
-	configFiles += ['{branchGroup}-{platform}.cfg']
-	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
-	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
-	# Go over the list and load in what we can
-	for confFile in configFiles:
-		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
-		config.read( 'config/build/' + confFile )		
-	# All done, return the configuration		
-	return config
+## Loads a configuration for a given project
+#def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
+	## Create a configuration parser
+	#config = ConfigParser.SafeConfigParser()
+	## List of prospective files to parse
+	#configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
+	#configFiles += ['{branchGroup}-{platform}.cfg']
+	#configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
+	#configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
+	## Go over the list and load in what we can
+	#for confFile in configFiles:
+		#confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
+		#config.read( 'config/build/' + confFile )		
+	## All done, return the configuration		
+	#return config
 
 # Loads the projects
 def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):

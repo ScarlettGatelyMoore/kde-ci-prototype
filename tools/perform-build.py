@@ -2,6 +2,8 @@
 import sys
 import argparse
 from kdecilib import *
+from load_configuration import *
+from appstreamtest import *
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
@@ -52,9 +54,8 @@ environment = manager.generate_environment(True)
 
 # We care about these environment variables
 neededVariables = [
-	'CMAKE_PREFIX_PATH', 'KDEDIRS', 'PATH', 'LD_LIBRARY_PATH', 'PKG_CONFIG_PATH', 'PYTHONPATH',
-	'PERL5LIB', 'QT_PLUGIN_PATH', 'QML_IMPORT_PATH', 'QML2_IMPORT_PATH', 'XDG_DATA_DIRS',
-	'XDG_CONFIG_DIRS', 'QMAKEFEATURES', 'XDG_CURRENT_DESKTOP', 'PYTHON3PATH', 'CPLUS_INCLUDE_PATH'
+	'CMAKE_PREFIX_PATH', 'XDG_CONFIG_DIRS', 'XDG_DATA_DIRS', 'KDEDIRS', 'PATH', 'LD_LIBRARY_PATH', 'PKG_CONFIG_PATH', 'PYTHONPATH',
+	'PERL5LIB', 'QT_PLUGIN_PATH', 'QML_IMPORT_PATH', 'QML2_IMPORT_PATH', 'QMAKEFEATURES', 'XDG_CURRENT_DESKTOP', 'PYTHON3PATH', 'CPLUS_INCLUDE_PATH'
 ]
 
 osxneededVariables = [
@@ -69,9 +70,9 @@ if sys.platform == 'darwin':
 		if variable in environment:
 			print 'export %s="%s"' % (variable, environment[variable])
 else:
-		for variable in neededVariables:
-			if variable in environment:
-				print 'export %s="%s"' % (variable, environment[variable])
+	for variable in neededVariables:
+		if variable in environment:			
+			print 'export %s="%s"' % (variable, environment[variable])
 
 # Configure the build
 print "\n== Configuring Build\n"
@@ -81,7 +82,7 @@ if not manager.configure_build():
 # Build the project
 print "\n== Commencing the Build\n"
 if not manager.compile_build():
-	sys.exit("Compiliation step exited with non-zero code, assuming failure to build from source for project %s." % project.identifier)
+	sys.exit("Compilation step exited with non-zero code, assuming failure to build from source for project %s." % project.identifier)
 
 # Install the project
 print "\n== Installing the Build\n"
@@ -109,5 +110,14 @@ manager.generate_lcov_data_in_cobertura_format()
 print "\n== Extracting dependency information from CMake\n"
 manager.extract_dependency_information()
 manager.extract_cmake_dependency_metadata()
+
+# Run appstreamcli tests
+print "\n== Running Appstreamcli Test\n"
+enableTest = manager.config.getboolean('AppstreamcliTest', 'appstreamcliEnabled')
+
+if not enableTest:
+   print "\n Appstream test is disabled"  
+else:
+   run_appstreamcli_test(manager)
 
 print "\n== Run Completed Successfully\n"

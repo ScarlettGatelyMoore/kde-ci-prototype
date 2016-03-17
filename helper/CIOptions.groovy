@@ -22,18 +22,19 @@ class CIOptions {
 	String irc 
 	String html5
 	String path
+	String view	
 	Map repository
 	Map repo_data
 	Map branches
 	Map protocol
 	int priority 
 	String cron
-	
+	boolean publishers
 		
 	CIOptions() {		
 	}
 	CIOptions(projectname, description, combinations, downstream, logrotator, \
-		priority, email, irc, html5, cron){
+		priority, email, irc, html5, cron, publishers, view){
 		this.projectname = projectname	
 		this.description = description	
 		this.combinations = combinations ?: "Linux"
@@ -43,7 +44,9 @@ class CIOptions {
 		this.email = email ?: "sgclark@kde.org"
 		this.irc = irc ?: "#kde-builds"
 		this.html5 = html5 ?: false	
-		this.cron = cron ?: null		
+		this.cron = cron ?: null
+		this.publishers = publishers ?: true
+		this.view = view ?: "default"		
 	}		
 	def getRepoInfo() {	
 		this.repository.each { path -> 
@@ -53,4 +56,5 @@ class CIOptions {
 		this.protocol = [:] << this.repo_data.getAt("protocol")
 		}		
 	}
+
 }
