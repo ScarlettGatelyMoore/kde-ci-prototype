@@ -56,7 +56,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   os.chdir(repoPath)
   
   if not os.path.exists(os.path.join(repoPath, '.git')):   
-  print("No valid repo exists in " + repoPath + " Cloning as requested.")
+    print("No valid repo exists in " + repoPath + " Cloning as requested.")
   try:
       command = "git clone %s %s" % (repoUrl, repoPath)
       process = subprocess.check_call( command )
