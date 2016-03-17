@@ -18,16 +18,19 @@ def generate_server_config():
   config = configparser.ConfigParser()
   # List of prospective files to parse
   configFiles = ['server.cfg']
-  configFiles += ['{serverhost}.cfg']
   for confFile in configFiles:
-    confFile = confFile.format( serverhost=socket.gethostname() )
-    config.read( scriptsLocation + 'tools/' + confFile )
+    serverhost=socket.gethostname()
+    confFile = confFile.format( serverhost )
+    if os.path.exists(scriptsLocation + 'tools/' + '{serverhost}.cfg' ):
+      config.read( scriptsLocation + 'tools/' + '{serverhost}.cfg' )
+    else:
+      config.read( scriptsLocation + 'tools/' + confFile )
     return config
   
 print(socket.gethostname())
 
 config = generate_server_config()
-for key in config: print(key)
+for key in config[Repo]: print(key)
 
 
 JENKINS_MASTER_REPO = config.get( 'Repo', 'jenkinsMasterRepo' )
