@@ -18,7 +18,7 @@ def generate_server_config():
   config = configparser.ConfigParser()
   # List of prospective files to parse
   configFiles = ['server.cfg']
-  configFiles =+ ['{serverhost}.cfg']
+  configFiles += ['{serverhost}.cfg']
   for confFile in configFiles:
     confFile = confFile.format( serverhost=socket.gethostname() )
     config.read( confFile )
