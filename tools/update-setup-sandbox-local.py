@@ -23,8 +23,13 @@ def generate_server_config():
     confFile = confFile.format( serverhost=socket.gethostname() )
     config.read( scriptsLocation + 'tools/' + confFile )
     return config
+  
+print(serverhost=socket.gethostname())
 
 config = generate_server_config()
+print( config )
+
+
 JENKINS_MASTER_REPO = config.get( 'Repo', 'jenkinsMasterRepo' )
 JENKINS_CONFIG_REPO = config.get( 'Repo', 'jenkinsConfigRepo' )
 JENKINS_METADATA_REPO = config.get( 'Repo', 'jenkinsMetadataRepo' )
