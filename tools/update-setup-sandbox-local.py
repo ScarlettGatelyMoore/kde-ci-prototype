@@ -9,7 +9,7 @@ import shlex
 import configparser
 
 # Settings
-home = expanduser("~")
+home = os.path.expanduser("~")
 repo_name=""
 EMERGE_BASE=""
 EMERGE_ETC=""
