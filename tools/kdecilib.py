@@ -19,7 +19,6 @@ from distutils import dir_util
 from lxml import etree
 from collections import defaultdict
 from os.path import expanduser
-from load_configuration import *
 
 # Settings
 hostname = socket.gethostname()
@@ -595,12 +594,12 @@ class BuildManager(object):
 				envChanges['KDEDIRS'].append( extraLocation )
 
 			# Setup PATH
-			extraLocation = os.path.join( reqPrefix, 'bin' )
+			extraLocation = os.path.join( reqPrefix, 'usr/bin' )
 			if os.path.exists( extraLocation ):
 				envChanges['PATH'].append(extraLocation)
 
 			# Handle those paths which involve $prefix/lib*
-			for libraryDirName in ['lib', 'lib32', 'lib64', 'lib/x86_64-linux-gnu']:
+			for libraryDirName in ['usr/lib', 'usr/lib32', 'usr/lib64', 'usr/lib/x86_64-linux-gnu']:
 				# Do LD_LIBRARY_PATH
 				extraLocation = os.path.join( reqPrefix, libraryDirName )
 				if os.path.exists( extraLocation ):
@@ -675,7 +674,12 @@ class BuildManager(object):
 				extraLocation = os.path.join( reqPrefix, 'usr/share' )
 				if os.path.exists( extraLocation ):
 					envChanges['XDG_DATA_DIRS'].append(extraLocation)
-
+			
+			# Setup KDE_INSTALL_SYSCONFDIR
+				extraLocation = os.path.join( reqPrefix, 'etc/xdg' )
+				if os.path.exists( extraLocation ):
+					envChanges['KDE_INSTALL_SYSCONFDIR'].append(extraLocation)
+					
 			# Setup osx
 			if sys.platform == "darwin":
 				extraLocation = os.path.join( reqPrefix, 'Library/Preferences' )
@@ -1197,21 +1201,21 @@ class BuildManager(object):
 		# Assume everything else does
 		return True
 
-## Loads a configuration for a given project
-#def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
-	## Create a configuration parser
-	#config = ConfigParser.SafeConfigParser()
-	## List of prospective files to parse
-	#configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
-	#configFiles += ['{branchGroup}-{platform}.cfg']
-	#configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
-	#configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
-	## Go over the list and load in what we can
-	#for confFile in configFiles:
-		#confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
-		#config.read( 'config/build/' + confFile )		
-	## All done, return the configuration		
-	#return config
+# Loads a configuration for a given project
+def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
+	# Create a configuration parser
+	config = ConfigParser.SafeConfigParser()
+	# List of prospective files to parse
+	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
+	configFiles += ['{branchGroup}-{platform}.cfg']
+	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
+	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
+	# Go over the list and load in what we can
+	for confFile in configFiles:
+		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
+		config.read( 'config/build/' + confFile )		
+	# All done, return the configuration		
+	return config
 
 # Loads the projects
 def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):

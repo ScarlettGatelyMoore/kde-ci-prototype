@@ -4422,8 +4422,8 @@
 		"git": "git://github.com/hughsie/PackageKit-Qt.git",
 		"branchgroups": 
 		{
-			"latest-qt4": "master",
-			"stable-qt4": "master",
+			"latest-qt4": "QPACKAGEKIT_0_8_6",
+			"stable-qt4": "QPACKAGEKIT_0_8_6",
 			"kf5-qt5": "master",
 			"stable-kf5-qt5": "master"
 		},
@@ -4870,6 +4870,14 @@
     {
         "projectname": "kleopatra",
         "cron": "@weekly"
+    },
+    {
+    	"projectname": "libhybris",
+    	"git": "https://github.com/libhybris/libhybris",
+    	"branchgroups": 
+		{
+            "kf5-qt5": "master"           		
+		}
     }
 
 ]

@@ -9,11 +9,24 @@ RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ trusty-updates main restr
 RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list
 
-# Needed for add-apt-repository.
-RUN apt-get -y install software-properties-common \
-	&& add-apt-repository -y ppa:ximion/packagekit \
-	&& add-apt-repository -y ppa:mutlaqja/ppa \
-	&& add-apt-repository -y ppa:mc3man/trusty-media
+#Adding any need external PPAs here. We do not want any unecessary installs from these ppa's.
+#We want appstream for the test. We want ffmpeg for *a project*, trusty at the time of release uses a forked version that
+#is not compatible.. # Want libindi only from this PPA
+# Yes we are doing this again. We want libexiv2 for libkgeomap, they want a version that will never make into trusty.
+# We also absolutely do not want anything else from this ppa.
+RUN apt-get install -y  software-properties-common \
+	&& add-apt-repository -y ppa:anton+/photo-video-apps \
+	&& add-apt-repository -y ppa:mc3man/trusty-media \
+	&& add-apt-repository -y ppa:mutlaqja/ppa \	
+	&& add-apt-repository -y ppa:ximion/packagekit \	 
+	&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install libexiv2-dev appstream ffmpeg libindi
+
+#Now remove PPAs to avoid cruft.
+RUN add-apt-repository --remove ppa:ximion/packagekit \
+	&& add-apt-repository --remove ppa:mc3man/trusty-media \
+	&& add-apt-repository --remove ppa:anton+/photo-video-apps \
+	&& add-apt-repository --remove ppa:mutlaqja/ppa 
+	
 # Needed for building qt
 RUN apt-get update && apt-get upgrade -y && apt-get -y build-dep libqt4-dev
 # Dependencies for ALL KDE applications.
@@ -109,8 +122,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     xserver-xorg-input-wacom \
     libepoxy-dev \
     libarchive-dev \
-    libcfitsio3-dev \
-    libindi-dev \
+    libcfitsio3-dev \    
     wcslib-dev \
     xplanet \
     astrometry.net \
@@ -166,8 +178,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     xinput \
     texlive-latex-recommended \
     libepub-dev \
-    libxcb-util0-dev \
-    appstream \
+    libxcb-util0-dev \    
     python-lxml \     
     libfam-dev \
     media-player-info \
@@ -182,24 +193,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libavdevice-dev \
     libavutil-dev \
     libswscale-dev \
-    libpostproc-dev \
-    ffmpeg \
+    libpostproc-dev \   
     libaspell-dev \
     libenchant-dev \
     hspell \
     libhupnp-dev
     
-# Yes we are doing this again. We want libexiv2 for libkgeomap, they want a version that will never make into trusty.
-# We also absolutely do not want anything else from this ppa.
-RUN apt-get -y install software-properties-common \
-	&& add-apt-repository -y ppa:anton+/photo-video-apps \
-	&& apt-get update && apt-get -y install libexiv2-dev \
-	&& add-apt-repository --remove ppa:anton+/photo-video-apps 
-
+ 
 RUN mkdir -p /var/run/sshd
+RUN mkdir -p /tmp/1000-runtime-dir
 RUN groupadd -g 1000 jenkins
 RUN useradd -m -u 1000 -g 1000 -d /home/jenkins jenkins
 RUN echo 'jenkins:1234' | chpasswd #changeme
+RUN chown jenkins.jenkins /tmp/1000-runtime-dir
 RUN sed s,exit\ 101,exit\ 0, /usr/sbin/policy-rc.d -i
 RUN dpkg-reconfigure openssh-server
 

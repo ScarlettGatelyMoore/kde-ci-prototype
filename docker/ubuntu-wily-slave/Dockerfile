@@ -222,8 +222,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     ragel \
     dmz-cursor-theme \
     python3.5-dev \
-    libapt-pkg-dev
-
+    libapt-pkg-dev \
+    libisocodes-dev \
+    libsqlcipher-dev \
+    libhybris-dev \
+    libhardware-dev \
+    sphinxsearch \
+    android-libutils-dev
+    
 RUN mkdir -p /var/run/sshd
 RUN groupadd -g 1000 jenkins
 RUN useradd -m -u 1000 -g 1000 -d /home/jenkins jenkins
@@ -231,6 +237,7 @@ RUN echo 'jenkins:1234' | chpasswd #changeme
 
 USER jenkins
 RUN echo "eval \`dbus-launch --auto-syntax 2>&1\`" > ~/.bashrc
+RUN mkdir /tmp/xdg-runtime-dir
 
 USER root
 RUN sed s,exit\ 101,exit\ 0, /usr/sbin/policy-rc.d -i

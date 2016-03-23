@@ -45,7 +45,12 @@ class PublishersProjectHelper {
 										parserName 'GNU C Compiler 4 (gcc)'
 										}
 									}
-								} 																	
+								analysisCollector {
+									warnings()
+									computeNew()
+									useStableBuildAsReference()
+								}
+								}							
 							}
 						runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 						}																				
@@ -77,7 +82,12 @@ class PublishersProjectHelper {
 										'hudson.plugins.warnings.ConsoleParser' {
 											parserName 'Clang (LLVM based)'
 										}
-									} 																	
+									}
+									analysisCollector {
+										warnings()
+										computeNew()
+										useStableBuildAsReference()
+									}
 								}							
 							}
 							runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
@@ -109,6 +119,11 @@ class PublishersProjectHelper {
 										 'hudson.plugins.warnings.ConsoleParser' {
 											 parserName 'MSBuild'
 											 }
+									 }
+									 analysisCollector {
+										 warnings()
+										 computeNew()
+										 useStableBuildAsReference()
 									 }
 								 }
 							 }
@@ -205,6 +220,11 @@ class PublishersProjectHelper {
 											parserName 'GNU C Compiler 4 (gcc)'
 											}
 										}
+									analysisCollector {
+										warnings()
+										computeNew()
+										useStableBuildAsReference()
+									}
 									}
 								}
 							runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
@@ -237,6 +257,11 @@ class PublishersProjectHelper {
 											'hudson.plugins.warnings.ConsoleParser' {
 												parserName 'Clang (LLVM based)'
 											}
+										}
+										analysisCollector {
+											warnings()
+											computeNew()
+											useStableBuildAsReference()
 										}
 									}
 								}
@@ -316,11 +341,12 @@ class PublishersProjectHelper {
 								'hudson.plugins.warnings.WarningsPublisher' {
 									canRunOnFailed false
 									usePreviousBuildAsReference false
-									useStableBuildAsReference false
+									useStableBuildAsReference true
 									useDeltaValues false
 									shouldDetectModules false
 									dontComputeNew true
 									doNotResolveRelativePaths true
+									aggregationCondition true
 									parserConfigurations {}
 									consoleParsers {
 										'hudson.plugins.warnings.ConsoleParser' {
@@ -333,8 +359,14 @@ class PublishersProjectHelper {
 											parserName 'GNU C Compiler 4 (gcc)'
 										}
 									}
+									analysisCollector {
+										warnings()
+										computeNew()
+										useStableBuildAsReference()
+									}
 								}
 							}
+							
 							runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 						}					
 				// JUnit test results

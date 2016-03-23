@@ -23,7 +23,7 @@ import hudson.model.*
 import hudson.maven.*
 
 /* Retrieve kde_projects.xml for later use*/
-def xmlurl = 'http://projects.kde.org/kde_projects.xml'
+def xmlurl = 'https://projects.kde.org/kde_projects.xml'
 //Read the file and save it locally
 def projectsfile = new File("${WORKSPACE}/projects.xml").newOutputStream()
 projectsfile << new URL(xmlurl).openStream()
@@ -102,7 +102,11 @@ while(projects.hasNext()) {
 	} else if (json.tar != null) {
 		external = true	
 	} else {
-		repo = projectxml.repourl.find { it.value }.toString()
+		if ( jobname == 'qt5' ) {
+			repo = 'git://anongit.kde.org/qt/' + jobname
+		} else {
+			repo = 'git://anongit.kde.org/' + jobname
+		}
 		external = false
 	}	
 	
@@ -362,10 +366,13 @@ while(projects.hasNext()) {
 			colorizeOutput()
 			environmentVariables {
 				env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
+				env('JENKINS_TEST_HOME', '/home/jenkins')
 				env('ASAN_OPTIONS', 'detect_leaks=0')
-				env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share')
-				env('XDG_DATA_DIRS', '/usr:/usr/share')
-				env('XDG_DATA_HOME', '${JENKINS_SLAVE_HOME}/.local/share')			
+				env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
+				env('XDG_DATA_DIRS', '/usr:/usr/share:${JENKINS_TEST_HOME}/.local/share')
+				env('XDG_DATA_HOME', '${JENKINS_TEST_HOME}/.qttest/share:${JENKINS_TEST_HOME}/.local/share')		
+				env('XDG_RUNTIME_DIR', '/tmp/xdg-runtime-dir')	
+				env('XDG_CACHE_HOME', '${JENKINS_TEST_HOME}/.qttest/cache')
 			}  
 			      
 		}
@@ -374,7 +381,7 @@ while(projects.hasNext()) {
 		if (jobname == "mockcpp")	{
 			configure createMercurialSCM(repo)
 		} else
-		if (repo =~ "git:/" || repo =~ "https://" || repo =~ "http://") {
+		if (repo =~ "git://" || repo =~ "https://" || repo =~ "http://") {
 			configure createGitSCM(jobname, "${repo}", "${branch}", redmine)
 		} else if (repo =~ "svn:/")	{
 			configure createSVNSCM(repo)
@@ -398,7 +405,11 @@ while(projects.hasNext()) {
 		publishers {
 			if (coberturareport.toBoolean() != false) {
 			cobertura('build/CoberturaLcovResults.xml') }
-			analysisCollector()
+			analysisCollector {
+				warnings()
+				computeNew()
+				useStableBuildAsReference()
+			}
 			//set some downstreams to control some build order 
 // 			if (bgdownstream != null) {
 // 			downstream(bgdownstream.toString(), 'UNSTABLE')

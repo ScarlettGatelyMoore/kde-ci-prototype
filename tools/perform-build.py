@@ -2,8 +2,8 @@
 import sys
 import argparse
 from kdecilib import *
-from load_configuration import *
 from appstreamtest import *
+from pretest import *
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
@@ -93,6 +93,12 @@ if not manager.install_build():
 print "\n== Deploying Installation\n"
 if not manager.deploy_installation():
 	sys.exit("Deployment of completed installation failed for project %s." % project.identifier)
+
+pretest = False
+if not pretest:
+   print "\n Pre test is disabled"
+else:
+   run_pre_test(manager)
 
 # Execute the tests
 print "\n== Executing Tests\n"

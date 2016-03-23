@@ -1,0 +1,42 @@
+Docker Images
+All system dependencies ( Anything that is NOT KDE or built with QT. )
+Add to the respective docker/dist-version/Dockerfile
+
+In Jenkins:
+Must be an administrator!!
+Add new cloud
+Add your slave hosts ( in our case, we use swarm so only one host per image )
+sgclarkkde/kde-slave-{distro}
+{Ipoftheslavehost}:2375
+
+TODO:
+Get Ben to fill in swarm instructions
+
+Add a new job to Jenkins ( if one does not already exist )
+current naming scheme is create_distro_version_host
+Add the git repo that hosts the dockerfiles
+checkout to subdir jenkins home scripts/
+restrict job to only build on master
+Add shell buildstep 
+python3 $JENKINS_HOME/scripts/tools/update-setup-sandbox-local.py
+
+Add buildstep 
+Docker build and Publish
+sgclarkkde/kde-slave-{distro}
+{Ipoftheslavehost}:2375
+No pull ( we currently are not using a image repository due to private keys and the like)
+No cache ( very important!!!! new dependencies will NOT get installed without this )
+Build Context: Something along the lines of ( where your Dockerfile lives )
+$JENKINS_HOME/scripts/docker/ubuntu-wily-slave
+
+TO-DO:
+One idea is the create a script the auto-gens a new dockerfile from yaml config files
+then then triggers the respective image build on jenkins.
+
+
+Misc:
+To get into the docker images login to the host
+and as root 
+docker run -it sgclarkkde/kde-slave-{distrorelease} /bin/bash
+
+Though to keep consistency it is much better to keep everything in the Dockerfiles

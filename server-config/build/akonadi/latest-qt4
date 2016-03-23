@@ -1,2 +1,0 @@
-[DEFAULT]
-configureExtraArgs=-DBOOST_INCLUDEDIR=/usr/include

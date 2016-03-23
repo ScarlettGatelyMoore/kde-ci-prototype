@@ -1,0 +1,42 @@
+This assumes you have already setup a Jenkins instance. If you have not, please do so. 
+There are plenty of docs on how to do so, google it :)
+
+Slaves Setup:
+adduser jenkins - save password
+adduser jinstaller - save password
+mkdir /srv/jenkins
+chown jinstaller.jinstaller /srv/jenkins
+vim /etc/default/docker
+DOCKER_OPTS="--ipv6=false --dns 8.8.8.8 --dns 8.8.4.4 -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock"
+
+User jenkins:
+ssh-keygen - save passcode
+ssh-copy-id jenkins@masterserver.com
+
+User jinstaller:
+ssh-keygen - must be empty passcode ( for rsync )
+ssh-copy-id jinstaller@masterserver.com
+
+
+Master Setup:
+As jenkins
+cd ~
+git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git scripts
+python3 import socket
+socket.gethostname()
+yourserver must match this result!!
+create a new {yourserver}.cfg from the default ( server.cfg ) and update the the repos you wish to use (eg. fork). 
+cd scripts/
+Run python3 scripts/tools/update-setup-sandbox-local.py
+This will grab the rest of the repos needed for the CI system.
+
+In Jenkins web
+
+create a new job 
+add your main git repo ( that holds the dsl )
+be sure to use subdirectory scripts/
+add shell build step 
+python3 $JENKINS_HOME/scripts/tools/update-setup-sandbox-local.py
+
+add step Process Job DSLs
+base.groovy
