@@ -66,12 +66,32 @@ GroupFile.each { group ->
 			matrixJob(job.SetProjectFullName(jobname, branchGroup, track, branch)) {
 			configure { project ->
 				project / 'actions' {}				
-			}			
+			}	
+			// tokin for api		
 			configure misc.SetToken(jobname)
+			// Job description
 			description job.DefineDescription()
+			// Set the log history
 			logrotator misc.Logrotator(job)
-				
+			// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
+			configure { project ->
+				project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
+					skip false
 				}
+			}
+			// Jenkins likes to get creative with workspaces, especially with matix jobs. Putting in sane place.
+			customWorkspace(System.getProperty('user.home') + '/' + "${branchGroup}" + '/' + "${jobname}")
+			childCustomWorkspace(".")
+			// Make sure qt4 builds are using trusty containers
+			if (branchGroup =~ "qt4") {
+				configure { project ->
+					project.name = 'matrix-project'
+					project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+					groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+					}
+				}
+			}
+			}
 			}
 		}			
 	}
