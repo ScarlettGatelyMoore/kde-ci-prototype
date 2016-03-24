@@ -72,7 +72,7 @@ GroupFile.each { group ->
 			// Job description
 			description job.DefineDescription()
 			// Set the log history
-			logrotator misc.Logrotator(job)
+			misc.Logrotator(job)
 			// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
 			configure { project ->
 				project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
