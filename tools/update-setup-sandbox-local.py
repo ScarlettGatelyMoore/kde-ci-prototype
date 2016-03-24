@@ -86,22 +86,22 @@ getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test",
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
 getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
 
-if sys.platform == "win32":
-  settingsfile = scriptsLocation + "etc/kdesettings.ini"
-  dstroot = EMERGE_ETC
-  print( "Copying " + settingsfile + " to " + dstroot )
-try:
-  shutil.copy(settingsfile, dstroot)
-except:
-  print( "Oh No! Something went wrong" )
-else: 
-  print( "Copy was successful" )
-  envfile = scriptsLocation + "emerge/kdeenv.bat"
-  dstroot = EMERGE_BASE
-  print( "Copying " + envfile + " to " + dstroot )
-try:
-  shutil.copy(envfile, dstroot)
-except:
-  print( "Oh No! Something went wrong" )
-else: 
-  print( "Copy was successful" )
+# if sys.platform == "win32":
+#   settingsfile = scriptsLocation + "etc/kdesettings.ini"
+#   dstroot = EMERGE_ETC
+#   print( "Copying " + settingsfile + " to " + dstroot )
+# try:
+#   shutil.copy(settingsfile, dstroot)
+# except:
+#   print( "Oh No! Something went wrong" )
+# else: 
+#   print( "Copy was successful" )
+#   envfile = scriptsLocation + "emerge/kdeenv.bat"
+#   dstroot = EMERGE_BASE
+#   print( "Copying " + envfile + " to " + dstroot )
+# try:
+#   shutil.copy(envfile, dstroot)
+# except:
+#   print( "Oh No! Something went wrong" )
+# else: 
+#   print( "Copy was successful" )

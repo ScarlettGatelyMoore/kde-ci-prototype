@@ -34,8 +34,8 @@ class CIOverrides {
 	List downstream
 	List upstream
 	
-	CIOverrides() {
-		def ci = new Project().ci_overrides		
+	CIOverrides(ci) {
+			
 		this.logrotator = ci.get('logrotator').tokenize(',')
 		this.downstream = ci.get('downstream')
 		this.upstream = ci.get('upstream')		

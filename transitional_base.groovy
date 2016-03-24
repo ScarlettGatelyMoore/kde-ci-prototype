@@ -61,7 +61,7 @@ GroupFile.each { group ->
  			//Bring in our DSL Closure generation classes	
 			DSLMisc misc = new DSLMisc()
 			SCM scm = new SCM()
-			CIOverrides ci = new CIOverrides()	
+			CIOverrides ci = new CIOverrides(job)	
 			/* BEGIN DSL CODE */
 		
 			matrixJob(job.SetProjectFullName(jobname, branchGroup, track, branch)) {
