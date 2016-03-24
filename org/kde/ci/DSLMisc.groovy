@@ -40,7 +40,7 @@ class DSLMisc {
 		}
 	}	
 	
-	static Closure LogRotatorClosure(ci) {
+	static Closure Logrotator(ci) {
 		
 		def (daysToKeep, numToKeep, artifactDaysToKeep, artifactNumToKeep) = ci.logrotator ?: ["-1","10","-1","-1"]
 		return {

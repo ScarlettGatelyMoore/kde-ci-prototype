@@ -69,6 +69,7 @@ GroupFile.each { group ->
 			}			
 			configure misc.SetToken(jobname)
 			description job.DefineDescription()
+			logrotator misc.Logrotator(job)
 				
 				}
 			}
