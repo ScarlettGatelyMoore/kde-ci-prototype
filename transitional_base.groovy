@@ -57,24 +57,19 @@ GroupFile.each { group ->
 				//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 				bg.each { branchGroup , track  -> 
 					def branch = tracks.get(track)
-					println "Processing Project " jobname + " " + branchGroup + " Track " + track + " Branch " + branch
+					println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
  			//Bring in our DSL Closure generation classes	
 			DSLMisc misc = new DSLMisc()
 			SCM scm = new SCM()
 			CIOverrides ci = new CIOverrides()	
 			/* BEGIN DSL CODE */
 		
-			matrixJob("${jobname} ${branchGroup} ${track} ${branch}".replaceAll('/','-')) {
+			matrixJob(job.SetProjectFullName(jobname, branchGroup, track, branch)) {
 			configure { project ->
 				project / 'actions' {}				
 			}			
 			configure misc.SetToken(jobname)
-//			description "${jobdesc}\n ${branch} build for ${jobname}"
-//		
-//			// Disable kf5-minimum for now
-//			if ( jobname != "qt5" && branchGroup ==~ "kf5-minimum") {
-//				project << disabled(true)
-//			}
+			description job.DefineDescription()
 				
 				}
 			}

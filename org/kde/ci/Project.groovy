@@ -29,6 +29,7 @@ package org.kde.ci
 import static java.lang.String.format;
 
 public final class Project {
+	// Brought in via yaml config
 	String project_name
 	String group_name
 	Map branchGrouptracks
@@ -47,7 +48,9 @@ public final class Project {
 	Boolean active
 	Boolean webview
 	
-	def viewjobslist
+	// Internal
+	List viewjobslist
+	String full_jobname
 		
 	public void setProjectName(String project_name){
 		this.project_name = project_name
@@ -99,10 +102,9 @@ public final class Project {
 	}
 	public void setBrowser(Boolean webview){
 		this.browser = webview
-	}
+	}	
 	
-	Project() {
-		
+	Project() {		
 	}
 	
 	def Boolean IsActive() {
@@ -124,9 +126,8 @@ public final class Project {
 		return data		
 	}
 	
-	def String DefineDescription() {		
-		def desc = this.description
-		return desc
+	def String DefineDescription() {				
+		return this.full_jobname + "\n\n" + this.description		
 	}	
 	
 	def Map getBranchGroupTracks() {
@@ -153,8 +154,14 @@ public final class Project {
 		return [:] << this.platforms
 	}
 	
-	def List CreateViewJobList(jobname) {		
-		this.viewjobslist.push(jobname)
+	def String SetProjectFullName(jobname, branchGroup, track, branch) {
+		this.full_jobname = (jobname + " " + branchGroup + " " + track + " " + branch).replaceAll('/','-') 		
+		return this.full_jobname
+	}
+	
+	def List CreateViewJobList(full_jobname) {			
+		this.viewjobslist.push(this.full_jobname)
+		return this.viewjobslist		
 	}
 	
 	def Closure SetViewSection() {
