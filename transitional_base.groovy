@@ -60,8 +60,7 @@ GroupFile.each { group ->
 					println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
  			//Bring in our DSL Closure generation classes	
 			DSLMisc misc = new DSLMisc()
-			SCM scm = new SCM()
-			CIOverrides ci = new CIOverrides(job)	
+			SCM scm = new SCM()			
 			/* BEGIN DSL CODE */
 		
 			matrixJob(job.SetProjectFullName(jobname, branchGroup, track, branch)) {
