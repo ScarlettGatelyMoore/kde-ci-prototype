@@ -81,6 +81,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
 	
 getRepository("scripts", JENKINS_MASTER_REPO, JENKINS_BRANCH)
 getRepository("dependencies", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
+getRepository("metadata", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
 getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
