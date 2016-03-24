@@ -138,7 +138,7 @@ public final class Project {
 		return this.branchGrouptracks
 	}
 	def String getLogrotator() {
-		return this.logrotator
+		return this.logrotator.tokenize()
 	}
 	
 	def Map SetRepoMap() {
