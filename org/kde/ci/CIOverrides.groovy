@@ -36,8 +36,8 @@ class CIOverrides {
 	
 	CIOverrides(ci) {
 			
-		this.logrotator = ci.get('logrotator').tokenize(',')
-		this.downstream = ci.get('downstream')
-		this.upstream = ci.get('upstream')		
+		this.logrotator = ci.SetCIOVerridesMap().get('logrotator').tokenize(',')
+		this.downstream = ci.SetCIOVerridesMap().get('downstream')
+		this.upstream = ci.SetCIOVerridesMap().get('upstream')		
 	}	
 }

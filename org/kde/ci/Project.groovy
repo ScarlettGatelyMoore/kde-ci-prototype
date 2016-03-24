@@ -163,32 +163,4 @@ public final class Project {
 		this.viewjobslist.push(this.full_jobname)
 		return this.viewjobslist		
 	}
-	
-	def Closure SetViewSection() {
-		return { listView(this.group_name) {
-			description('All jobs for ' + this.group_name)
-			filterBuildQueue()
-			filterExecutors()
-			jobs {
-				names(viewjobslist)				
-			}
-			jobFilters {
-				status {
-					status(Status.ALL)
-				}
-			}
-			columns {
-				status()
-				weather()
-				name()
-				lastSuccess()
-				lastFailure()
-				lastDuration()
-				buildButton()
-				lastBuildConsole()
-			}
-		}
-		}
-		
-	}
 }
