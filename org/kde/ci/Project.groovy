@@ -43,7 +43,9 @@ public final class Project {
 	String description
 	String email
 	String irc
-	Map ci_overrides
+	List upstream
+	List downstream
+	String logrotator
 	Integer priority
 	Boolean active
 	Boolean webview
@@ -91,8 +93,14 @@ public final class Project {
 	public void setIRC(String irc){
 		this.irc = irc
 	}
-	public void CIOverrides(Map ci_overrides){
-		this.ci_overrides = ci_overrides
+	public void setLogrotator(String logrotator){
+		this.logrotator = logrotator
+	}
+	public void setUpstream(List upstream){
+		this.upstream = upstream
+	}
+	public void setDownstream(List downstream){
+		this.downstream = downstream
 	}
 	public void setPriority(Integer priority){
 		this.priority = priority
@@ -113,10 +121,6 @@ public final class Project {
 	
 	def AssignPriority() {
 		//#STUB
-	}
-	
-	def Map SetCIOVerridesMap() {
-		return [:] << this.ci_overrides
 	}
 	
 	def List NotificationData() {
