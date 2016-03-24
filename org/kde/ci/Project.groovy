@@ -137,6 +137,9 @@ public final class Project {
 	def Map getBranchGroupTracks() {
 		return this.branchGrouptracks
 	}
+	def String getLogrotator() {
+		return this.logrotator
+	}
 	
 	def Map SetRepoMap() {
 		def repo =  [:]
