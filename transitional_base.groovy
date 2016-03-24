@@ -25,7 +25,7 @@ import org.kde.ci.*
 import groovy.io.FileType
 import org.yaml.snakeyaml.Yaml
 
-def basePath = System.getProperty('user.home') + '/share_data/kde-ci-metadata/'
+def basePath = System.getProperty('user.home') + '/scripts/metadata/'
 def GroupFile = []
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 
