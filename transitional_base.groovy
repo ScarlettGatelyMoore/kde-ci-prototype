@@ -1,5 +1,5 @@
 /**
-# <DSL for KDE Continous Integration System>
+# <DSL for KDE Continuous Integration System>
 # Copyright 2016  Scarlett Clark <sgclark@kde.org>
 # 
 # This program is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ assert GroupFile == ['qt.yml', 'frameworks.yml']
 
 GroupFile.each { group ->	
 	println(group)
-	// Get the Yaml data into a useable object
+	// Get the Yaml data into a usable object
 	def yamldata = new ImportConfig().getConfig(basePath, group)	
 	
 	// Now for each project data Map we feed that in a current Project Object Class	
@@ -67,7 +67,7 @@ GroupFile.each { group ->
 			configure { project ->
 				project / 'actions' {}				
 			}	
-			// tokin for api		
+			// token for api		
 			configure misc.SetToken(jobname)
 			// Job description
 			description job.DefineDescription()
@@ -79,8 +79,8 @@ GroupFile.each { group ->
 					skip false
 				}
 			}
-			// Jenkins likes to get creative with workspaces, especially with matix jobs. Putting in sane place.
-			customWorkspace(System.getProperty('user.home') + '/' + "${branchGroup}" + '/' + "${jobname}")
+			// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
+			customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
 			childCustomWorkspace(".")
 			// Make sure qt4 builds are using trusty containers
 			if (branchGroup =~ "qt4") {

@@ -39,4 +39,8 @@ add shell build step
 python3 $JENKINS_HOME/scripts/tools/update-setup-sandbox-local.py
 
 add step Process Job DSLs
-base.groovy
+transitional-base.groovy
+relative to seed job
+classpath
+org/kde/ci*
+src/org.yaml/snakeyaml/jars/*.jar

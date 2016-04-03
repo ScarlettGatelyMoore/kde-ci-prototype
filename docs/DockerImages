@@ -2,11 +2,21 @@ Docker Images
 All system dependencies ( Anything that is NOT KDE or built with QT. )
 Add to the respective docker/dist-version/Dockerfile
 
+On docker host:
+Create jenkins user with /home/jenkins
+mkdir /srv/jenkins owner/group jenkins
+create ssh keys and add to charlottes (master) jenkins authorized_keys and vise versa
+create another key named jenkins_install and this  one must not have a passphrase Very important!1 it is for rsync and
+only has access to artifact directory. Add the pub key to jinstaller user authorized keys on master.
+
 In Jenkins:
 Must be an administrator!!
+Add jenkins user with ssh credentials ( use master ~.ssh should be fine unless you created non default names.
+add your slave jenkins users ( be sure to add 
 Add new cloud
 Add your slave hosts ( in our case, we use swarm so only one host per image )
 sgclarkkde/kde-slave-{distro}
+
 {Ipoftheslavehost}:2375
 
 TODO:
@@ -35,8 +45,16 @@ then then triggers the respective image build on jenkins.
 
 
 Misc:
-To get into the docker images login to the host
+To get into the docker containers login to the host
 and as root 
-docker run -it sgclarkkde/kde-slave-{distrorelease} /bin/bash
+docker run -it {containerID} /bin/bash
+
+To get into the image with no containers running:
+docker run -i -t --entrypoint /bin/bash <imageID>
 
 Though to keep consistency it is much better to keep everything in the Dockerfiles
+
+GOTCHAS:
+Sometimes but not always, on first run for the create images, you will get authentication required. All that needs to be done is 
+on the host run docker pull {base:image} aka debian:stable This is listed at the top of the Dockerfile.
+TLS error. Ben needs to fill in details as he fixed it.
