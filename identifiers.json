@@ -3816,11 +3816,6 @@
 	},
 
 	{
-		"projectname": "plugins",
-		"cron": "@weekly"
-	},
-
-	{
 		"projectname": "polkit-kde-kcmodules-1",
 		"email": "plasma-devel@kde.org",
 		"combinations": "Linux",
@@ -4340,8 +4335,8 @@
 		"git": "https://github.com/ayoy/qoauth",
 		"branchgroups": 
 		{
-			"latest-qt4": "master",
-			"stable-qt4": "master",
+			"latest-qt4": "v1.0",
+			"stable-qt4": "v1.0",
 			"kf5-qt5": "master",
 			"stable-kf5-qt5": "master"
 		},
@@ -4390,8 +4385,6 @@
 		"git": "https://gitlab.com/accounts-sso/libaccounts-qt.git",
 		"branchgroups": 
 		{
-			"latest-qt4": "master",
-			"stable-qt4": "master",
 			"kf5-qt5": "master",
 			"stable-kf5-qt5": "master"
 		},
@@ -4422,8 +4415,8 @@
 		"git": "git://github.com/hughsie/PackageKit-Qt.git",
 		"branchgroups": 
 		{
-			"latest-qt4": "QPACKAGEKIT_0_8_6",
-			"stable-qt4": "QPACKAGEKIT_0_8_6",
+			"latest-qt4": "master",
+			"stable-qt4": "master",
 			"kf5-qt5": "master",
 			"stable-kf5-qt5": "master"
 		},
@@ -4456,7 +4449,6 @@
 		"coberturareport": "false",
 		"cron": "@weekly"
 	},
-
 	{
 		"projectname": "telepathy-qt4",
 		"git": "git://anongit.freedesktop.org/telepathy/telepathy-qt",
@@ -4470,7 +4462,6 @@
 		"irc": "#kde-telepathy",
 		"cron": "@weekly"
 	},
-
 	{
 		"projectname": "shared-desktop-ontologies",
 		"git": "git://git.code.sf.net/p/oscaf/shared-desktop-ontologies",
@@ -4601,8 +4592,8 @@
 		{
 			"latest-qt4": "0.7.4",
 			"stable-qt4": "0.7.4",
-			"kf5-qt5": "master",
-			"stable-kf5-qt5": "1.2.0"
+			"kf5-qt5": "0.7.4",
+			"stable-kf5-qt5": "0.7.4"
 		},
 
 		"cron": "@weekly"
@@ -4872,12 +4863,51 @@
         "cron": "@weekly"
     },
     {
-    	"projectname": "libhybris",
-    	"git": "https://github.com/libhybris/libhybris",
-    	"branchgroups": 
+		"projectname": "appstream-qt",
+		"git": "https://github.com/ximion/appstream",
+		"branchgroups": 
 		{
-            "kf5-qt5": "master"           		
-		}
-    }
-
+            "kf5-qt5": "master",
+            "stable-kf5-qt5": "master"
+		},
+		"coberturareport": "false",
+		"cron": "@weekly"
+	},
+	{
+    	"projectname":"qimageblitz",
+    	"svn":"svn://anonsvn.kde.org/home/kde/trunk/kdesupport/qimageblitz",
+    	"branchgroups": {
+        	"latest-qt4":"master",
+        	"stable-qt4":"master",
+        	"kf5-qt5":"master",
+        	"stable-kf5-qt5":"master"
+    	},
+    	"cron":"@weekly"
+	},
+	{
+		"projectname": "oyranos",
+		"git": "https://github.com/oyranos-cms/oyranos.git",
+		"branchgroups": 
+		{
+            "latest-qt4":"master",
+        	"stable-qt4":"master",
+            "kf5-qt5": "master",
+            "stable-kf5-qt5": ""
+		},
+		"coberturareport": "false",
+		"cron": "@weekly"
+	},
+		{
+		"projectname": "libxcm",
+		"git": "https://github.com/oyranos-cms/libxcm.git",
+		"branchgroups": 
+		{
+            "latest-qt4":"master",
+        	"stable-qt4":"master",
+            "kf5-qt5": "master",
+            "stable-kf5-qt5": ""
+		},
+		"coberturareport": "false",
+		"cron": "@weekly"
+	}	  
 ]

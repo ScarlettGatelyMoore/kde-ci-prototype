@@ -3,7 +3,6 @@ import sys
 import argparse
 from kdecilib import *
 from appstreamtest import *
-from pretest import *
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')

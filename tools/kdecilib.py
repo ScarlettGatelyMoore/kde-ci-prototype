@@ -90,7 +90,7 @@ class ProjectManager(object):
 		# Are we registering any branch group associations?
 		if projectData.has_section('BranchGroups'):
 			for symName in projectData.options('BranchGroups'):
-				project.branchGroups[ symName ] = projectData.get('SymbolicBranches', symName)
+				project.branchGroups[ symName ] = projectData.get('BranchGroups', symName)
 
 	# Load the kde_projects.xml data in
 	@staticmethod
@@ -655,7 +655,7 @@ class BuildManager(object):
 				if os.path.exists( extraLocation ):
 					envChanges['PKG_CONFIG_PATH'].append(extraLocation)
 			else:
-				extraLocation = os.path.join( reqPrefix, 'share/pkgconfig' )
+				extraLocation = os.path.join( reqPrefix, 'usr/share/pkgconfig' )
 				if os.path.exists( extraLocation ):
 					envChanges['PKG_CONFIG_PATH'].append(extraLocation)
 
@@ -691,12 +691,12 @@ class BuildManager(object):
 					envChanges['XDG_CONFIG_DIRS'].append(extraLocation)
 			
 			# Setup PYTHONPATH
-			extraLocation = os.path.join( reqPrefix, 'share/sip' )
+			extraLocation = os.path.join( reqPrefix, 'usr/share/sip' )
 			if os.path.exists( extraLocation ):
 				envChanges['PYTHONPATH'].append( extraLocation )
 
 			# Setup QMAKEFEATURES
-			extraLocation = os.path.join( reqPrefix, 'mkspecs/features' )
+			extraLocation = os.path.join( reqPrefix, 'usr/mkspecs/features' )
 			if os.path.exists( extraLocation ):
 				envChanges['QMAKEFEATURES'].append( extraLocation )
 

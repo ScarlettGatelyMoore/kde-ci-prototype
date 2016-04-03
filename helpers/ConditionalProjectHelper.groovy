@@ -227,7 +227,7 @@ class ConditionalProjectHelper {
 		 *  jobcustomcommand is to be used for job specific platform additions eg. platform needed export
 		 */
 		def windefaultbasebuildcommand = 'c:/python27/python.exe %JENKINS_SLAVE_HOME%/tools/perform-build.py ' + '--project ' + "${projectname}" + ' --branchGroup ' + "${branchGroup}" + ' --compiler ' + 'vs2013' + ' --platform ' + 'windows64-vs2013' + ' --sources ' + '%WORKSPACE%'
-		def lindefaultbasebuildcommand = 'python ${JENKINS_SLAVE_HOME}/tools/update-setup-sandbox.py \n' \
+		def lindefaultbasebuildcommand = 'python ${JENKINS_SLAVE_HOME}/tools/update-setup.py \n' \
 						 + 'python -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py ' + '--project ' + "${projectname}" + ' --branchGroup ' + "${branchGroup}"	+ ' --compiler ' + 'gcc' + ' --platform ' + 'linux64-g++' + ' --sources ' + '${WORKSPACE}'									
 		def osxdefaultbasebuildcommand = 'launchctl unload -w /Library/LaunchAgents/org.freedesktop.dbus-session.plist \n' \
 		                                 + 'launchctl load -w /Library/LaunchAgents/org.freedesktop.dbus-session.plist \n' \
@@ -241,7 +241,9 @@ class ConditionalProjectHelper {
 				jobcustomcommand = 'export HAVE_GCOV_FALSE=\'#\' \n'
 			} else if (jobname == 'qt5') {
 				jobcustomcommand = 'perl init-repository -f -q \n'
-			} /*else if (jobname == 'qoauth') {
+			} /*else if (jobname == 'libhybris') {
+				jobcustomcommand = '${WORKSPACE}/hybris/utils/extract-headers.sh /usr/include/android . \n'
+			}else if (jobname == 'qoauth') {
 				jobcustomcommand = 'qmake \n' \
 				+ 'make \n' \
 				+ 'export instPrefix="/srv/jenkins/install/ubuntu/x86_64/g++/kf5-qt5/general/qoauth/inst" \n' \

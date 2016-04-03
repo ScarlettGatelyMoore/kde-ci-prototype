@@ -33,7 +33,7 @@ projectsfile.close()
  *  continue with the DSL script. Otherwise print false so we can look into 
  *  whether or not we want to change that.
  */
-ArrayList jobjsonfiles = (ArrayList) getJobConfig('identifiers.json', "${JENKINS_SLAVE_HOME}")
+ArrayList jobjsonfiles = (ArrayList) getJobConfig('identifiers.json', "${JENKINS_HOME}")
 Iterator projects = jobjsonfiles.iterator();
 
 //println verificationCheck(jobjsonfiles, "${WORKSPACE}")
@@ -130,7 +130,7 @@ while(projects.hasNext()) {
 	def cronschedule = json.cron ?: null
 	
 	// Grab the branches and branchgroups metadata from the logical-module-structure
-	def JOBCONFIG = new java.io.FileReader("${JENKINS_SLAVE_HOME}/dependencies/logical-module-structure")
+	def JOBCONFIG = new java.io.FileReader("${JENKINS_HOME}/scripts/dependencies/logical-module-structure")
 	def result = new groovy.json.JsonSlurper().parse(JOBCONFIG)
 	Object metadata = result
 	
@@ -289,10 +289,9 @@ while(projects.hasNext()) {
 		matrixJob("${jobname} ${branch} ${branchGroup}".replaceAll('/','-')) {
 		configure { project ->
 			project / 'actions' {}	
-			project << authToken( "${tokenid}")			
+			project << authToken( "${tokenid}")
 		}
-		description "${jobdesc}\n ${branch} build for ${jobname}"
-		
+		description "${branch} build for ${jobname} \n\n"
 		// Disable kf5-minimum for now
 		if ( jobname != "qt5" && branchGroup ==~ "kf5-minimum") {			 
 			project << disabled(true)			 
@@ -305,9 +304,10 @@ while(projects.hasNext()) {
 				skip html5_notifier.toBoolean()
 			}
 		}
-		customWorkspace('${HOME}' + '/' + "${jobname}" + '/' + "${branchGroup}")
+		customWorkspace('sources/' + "${jobname}" + '/' + "${branchGroup}")
 		childCustomWorkspace(".")
-		if (jobname =~ "kolab")	{
+		// Trusty certs are too old. Better magic needs to be done in dockerfile TO-DO
+		if (jobname =~ "kolab" && branchGroup =~ "qt4")	{
 			environmentVariables {
 				env('GIT_SSL_NO_VERIFY', '1')
 			}
@@ -322,11 +322,11 @@ while(projects.hasNext()) {
 					groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 				}
 			}
-		} /*else if (jobname == 'kdepim') {
+		} else if (branchGroup =~ "kf5-minimum") {
 			configure { project ->
 				project.name = 'matrix-project'
 				project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-					groovyScript 'def labelMap = [ Linux: "PIMBUILDER", Windows: "WINBUILDER", OSX: "OSXQTBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+					groovyScript 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 				}
 			}
 		} else {
@@ -336,7 +336,7 @@ while(projects.hasNext()) {
 					groovyScript 'def labelMap = [ Linux: "Linux", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 				}
 			}
-		}*/
+		}
 		// throttle jobs TO-DO: make this configurable
 		throttleConcurrentBuilds {
 			maxPerNode 1
@@ -362,7 +362,6 @@ while(projects.hasNext()) {
 		//Wrappers
 		wrappers {
 			timestamps()
-//			preBuildCleanup()
 			colorizeOutput()
 			environmentVariables {
 				env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
@@ -416,7 +415,6 @@ while(projects.hasNext()) {
 // 			}
 			configure createEmailNotifications(jobname, email)			
 			configure createIRCNotifications(irc)
-			//wsCleanup()
 			if (json.downstream) {
 				ArrayList downstream = json.downstream
 				String downstreamall = ""

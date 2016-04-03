@@ -53,7 +53,7 @@ class ProjectSCMHelpers {
 						extensions {							
 							'hudson.plugins.git.extensions.impl.CloneOption' {
 								shallow false
-								timeout '20'
+								timeout '120'
 							}
 						}
 					}				
@@ -76,7 +76,7 @@ class ProjectSCMHelpers {
 						extensions {							
 							'hudson.plugins.git.extensions.impl.CloneOption' {
 								shallow false
-								timeout '20'
+								timeout '40'
 							}
 						}
 					}

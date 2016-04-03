@@ -18,14 +18,14 @@ if sys.platform == "win32":
 	EMERGE_ETC="D:/kderoot-live/etc/"
 	EMERGE_BASE="D:/kderoot-live"
 else:
-	scriptsLocation=home + "/scripts/"
+	scriptsLocation=home + "/scripts-live/"
 	
-JENKINS_BRANCH="ci-test-merge"
+JENKINS_BRANCH="master"
 JENKINS_DEPENDENCY_BRANCH="master"
 
 
 def getRepository(repo_name, repoUrl, repoBranch="master"):		
-		if repo_name == "scripts":
+		if repo_name == "scripts-live":
 			repoPath=scriptsLocation
 		else:
 			repoPath=scriptsLocation + repo_name
@@ -65,11 +65,11 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
 		os.chdir(originalDir)			
 	
 
-getRepository("scripts", "git://anongit.kde.org/sysadmin/ci-tools-experimental", JENKINS_BRANCH)
+getRepository("scripts", "git://anongit.kde.org/sysadmin/ci-master-config", JENKINS_BRANCH)
 getRepository("dependencies", "git://anongit.kde.org/kde-build-metadata", JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
-getRepository("config", "git://anongit.kde.org/sysadmin/ci-builder-tools", 'nellie-migration')
+getRepository("config", "git://anongit.kde.org/sysadmin/ci-builder-tools", JENKINS_BRANCH)
 
 if sys.platform == "win32":
 	settingsfile = JENKINS_SLAVE_HOME + "etc/kdesettings.ini"

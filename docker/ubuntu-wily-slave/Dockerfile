@@ -15,23 +15,23 @@ RUN apt-get update && apt-get -y install software-properties-common \
 # Needed for building qt5
 RUN apt-get update && apt-get upgrade -y && apt-get -y build-dep qtbase5-dev
 # Dependencies for ALL KDE applications.
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
-	openssh-server \
-	ssh \    
-	wget \	
-	openjdk-8-jdk \
-	git \	
-	openbox \
-	dbus-x11 \
-	gnupg2 \
-	gnupg-agent \
-	psmisc \
-	doxygen \
-	bzr \
-	cppcheck \
-	gperf \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
+    openssh-server \
+    ssh \    
+    wget \	
+    openjdk-8-jdk \
+    git \	
+    openbox \
+    dbus-x11 \
+    gnupg2 \
+    gnupg-agent \
+    psmisc \
+    doxygen \
+    bzr \
+    cppcheck \
+    gperf \
     bison \
-	ruby \
+    ruby \
     flex \
     libpolkit-agent-1-dev \
     libpolkit-backend-1-dev \
@@ -225,10 +225,21 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
     libapt-pkg-dev \
     libisocodes-dev \
     libsqlcipher-dev \
-    libhybris-dev \
-    libhardware-dev \
+    sqlcipher \
     sphinxsearch \
-    android-libutils-dev
+    libgraphviz-dev \
+    libyaml-dev \
+    xmlto \
+    gobject-introspection \
+    mesa-utils \
+    libgirepository1.0-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libelektra-dev \
+    libxmu-dev \
+    dmz-cursor-theme \
+    libsmbclient-dev \
+    p7zip
     
 RUN mkdir -p /var/run/sshd
 RUN groupadd -g 1000 jenkins
@@ -238,6 +249,7 @@ RUN echo 'jenkins:1234' | chpasswd #changeme
 USER jenkins
 RUN echo "eval \`dbus-launch --auto-syntax 2>&1\`" > ~/.bashrc
 RUN mkdir /tmp/xdg-runtime-dir
+RUN chown jenkins.jenkins /tmp/xdg-runtime-dir
 
 USER root
 RUN sed s,exit\ 101,exit\ 0, /usr/sbin/policy-rc.d -i

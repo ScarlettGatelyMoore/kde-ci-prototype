@@ -13,19 +13,13 @@ RUN echo "deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-backports main res
 #We want appstream for the test. We want ffmpeg for *a project*, trusty at the time of release uses a forked version that
 #is not compatible.. # Want libindi only from this PPA
 # Yes we are doing this again. We want libexiv2 for libkgeomap, they want a version that will never make into trusty.
-# We also absolutely do not want anything else from this ppa.
-RUN apt-get install -y  software-properties-common \
-	&& add-apt-repository -y ppa:anton+/photo-video-apps \
+# We also do not want anything else from mutlaqja ppa (# currently disabled, breaks image)
+RUN apt-get  -y  install software-properties-common \
+	&& add-apt-repository -y ppa:ximion/packagekit \	 
+	&& add-apt-repository -y ppa:anton+/photo-video-apps \	
 	&& add-apt-repository -y ppa:mc3man/trusty-media \
 	&& add-apt-repository -y ppa:mutlaqja/ppa \	
-	&& add-apt-repository -y ppa:ximion/packagekit \	 
-	&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install libexiv2-dev appstream ffmpeg libindi
-
-#Now remove PPAs to avoid cruft.
-RUN add-apt-repository --remove ppa:ximion/packagekit \
-	&& add-apt-repository --remove ppa:mc3man/trusty-media \
-	&& add-apt-repository --remove ppa:anton+/photo-video-apps \
-	&& add-apt-repository --remove ppa:mutlaqja/ppa 
+	&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install appstream libexiv2-dev libindi-dev ffmpeg
 	
 # Needed for building qt
 RUN apt-get update && apt-get upgrade -y && apt-get -y build-dep libqt4-dev
@@ -91,6 +85,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libsane-dev \
     libhunspell-dev \
     xserver-xorg-input-wacom \
+    texlive-latex-recommended \
     libtelepathy-glib-dev \
     libgstreamer1.0-dev \   
     libsvn-dev \
@@ -108,8 +103,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libsox-dev \
     ladspa-sdk \   
     virtuoso-opensource \
-    librdf-storage-virtuoso \
-    librdf0-dev \  
     libxss-dev \
     packagekit \
     python-numpy \
@@ -157,7 +150,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     llvm \
     libgraphviz-dev \
     libmtp-dev \
+# Package Conflict with libelectra-dev temp resolution to disable.
     libmusicbrainz3-dev \
+    libneon27-dev \
+    libkrb5-dev \
+    libcurl4-gnutls-dev \
+    librdf-storage-virtuoso \
+    librdf0-dev \  
+    librasqal3-dev \
+    libraptor2-dev \
     libvncserver-dev \
     libgpgme++2 \
     subversion \
@@ -197,8 +198,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libaspell-dev \
     libenchant-dev \
     hspell \
-    libhupnp-dev
-    
+    libhupnp-dev \
+    libgit2-dev \
+    libsqlcipher-dev \
+    python-sip 
+#    libelektra-dev \
+#    libxmu-dev  
  
 RUN mkdir -p /var/run/sshd
 RUN mkdir -p /tmp/1000-runtime-dir

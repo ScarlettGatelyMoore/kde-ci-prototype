@@ -12,7 +12,7 @@ import groovy.json.*
 class ProjectConfigHelper {
 	static ArrayList getJobConfig(String json, String JENKINS_HOME) {
 		List configs = new ArrayList()
-		def JOBCONFIG = new java.io.FileReader("${JENKINS_HOME}/${json}")
+		def JOBCONFIG = new java.io.FileReader("${JENKINS_HOME}/scripts/${json}")
 		def result = new groovy.json.JsonSlurper().parse(JOBCONFIG)
 		if (!result.equals(null)) {
 			configs = (ArrayList) result;

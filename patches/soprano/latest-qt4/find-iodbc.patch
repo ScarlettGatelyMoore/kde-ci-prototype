@@ -1,20 +1,8 @@
-diff --git backends/virtuoso/CMakeLists.txt b/backends/virtuoso/CMakeLists.txt
-index 4fd98e5..63b2134 100644
---- backends/virtuoso/CMakeLists.txt
-+++ backends/virtuoso/CMakeLists.txt
-@@ -34,6 +34,7 @@ if(WIN32)
-   target_link_libraries(soprano_virtuosobackend odbc32)
- else()
-   target_link_libraries(soprano_virtuosobackend ${IODBC_LIBRARIES})
-+  SET_TARGET_PROPERTIES(soprano_virtuosobackend PROPERTIES INSTALL_RPATH "/usr/lib/odbc")
- endif()
- 
- install(TARGETS soprano_virtuosobackend ${PLUGIN_INSTALL_DIR})
-diff --git cmake/modules/FindIODBC.cmake b/cmake/modules/FindIODBC.cmake
-index 97cb936..2e3c10f 100644
+Index: cmake/modules/FindIODBC.cmake
+===================================================================
 --- cmake/modules/FindIODBC.cmake
 +++ cmake/modules/FindIODBC.cmake
-@@ -63,10 +63,11 @@ find_path(IODBC_INCLUDE_DIR sql.h
+@@ -57,10 +57,11 @@
    ${iodbc_INCLUDE_DIRS}
    )
  
@@ -28,5 +16,19 @@ index 97cb936..2e3c10f 100644
 +#  )
 +set(IODBC_LIBRARIES "/usr/lib/odbc/virtodbc_r.so")
  
- include(FindPackageHandleStandardArgs)
+ if (IODBC_LIBRARIES AND IODBC_INCLUDE_DIR)
+ #  set(IODBC_INCLUDE_DIR "${IODBC_INCLUDE_DIR}/iodbc")
+Index: backends/virtuoso/CMakeLists.txt
+===================================================================
+--- backends/virtuoso/CMakeLists.txt
++++ backends/virtuoso/CMakeLists.txt
+@@ -37,6 +37,7 @@
+ target_link_libraries(soprano_virtuosobackend odbc32)
+ else(WIN32)
+ target_link_libraries(soprano_virtuosobackend ${IODBC_LIBRARIES})
++SET_TARGET_PROPERTIES(soprano_virtuosobackend PROPERTIES INSTALL_RPATH "/usr/lib/odbc")    
+ endif(WIN32)
  
+ if(WIN32)
+
+
