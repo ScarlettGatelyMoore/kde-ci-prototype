@@ -137,7 +137,7 @@ public final class Project {
 	def Map getBranchGroupTracks() {
 		return this.branchGrouptracks
 	}
-	def String getLogrotator() {
+	def List getLogrotator() {
 		return this.logrotator
 	}
 	
