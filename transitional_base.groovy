@@ -115,7 +115,7 @@ GroupFile.each { group ->
 			} // end freestyle job
 			} else {
 				println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
-				continue;
+				return
 			}// end platform
 			} 
 			
