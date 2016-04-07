@@ -44,7 +44,7 @@ class Platform {
 		this.COMPILER == options.find { key, value -> key == 'compiler' }
 		def var = options.find { key, value -> key == 'Variations' }
 		if (var != null ) {
-			this.Variations = var
+			this.Variations 
 		}
 		if (this.Variations) {
 			this.jobType = 'matrixJob'
