@@ -45,7 +45,7 @@ public final class Project {
 	String irc
 	List upstream
 	List downstream
-	String logrotator
+	List logrotator [int, int, int, int]
 	Integer priority
 	Boolean active
 	Boolean webview
