@@ -68,10 +68,10 @@ GroupFile.each { group ->
 					// Process each platform
 					Map pf = job.SetRepoMap()
 					pf.each { PLATFORM , options ->
-						def currtrack = options.get(track)
+						def currtrack = options.getAt(track)
 						if (currtrack) {
-							String compiler = options.get('compiler')
-							List Variations = options.get('Variations')
+							String compiler = options.getAt('compiler')
+							List Variations = options.getAt('Variations')
 							def jobType
 							if (Variations) {
 								jobType = matrixJob
