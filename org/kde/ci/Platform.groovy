@@ -42,7 +42,10 @@ class Platform {
 		
 		this.PLATFORM = platform	
 		this.COMPILER == options.find { key, value -> key == 'compiler' }
-		this.Variations << options.find { key, value -> key == 'Variations' }
+		boolean var = options.find { key, value -> key == 'Variations' }
+		if (var) {
+			this.Variations << options.find { key, value -> key == 'Variations' }
+		}
 		if (this.Variations) {
 			this.jobType = 'matrixJob'
 		} else {
