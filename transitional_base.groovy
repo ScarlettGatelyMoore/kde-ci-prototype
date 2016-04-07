@@ -113,7 +113,10 @@ GroupFile.each { group ->
 				}
 			}
 			} }// end freestyle job
-			} else continue // end platform
+			} else {
+				println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
+				continue;
+			}// end platform
 			
 			}
 		}			
