@@ -51,7 +51,7 @@ GroupFile.each { group ->
 		Project job = Project.newInstance(curr_project)
 		//debug only
 		assert job.group_name == groupName
-		println("Processing " + jobname + " Value Dump: " + curr_project.toString() + "\n")	
+		//println("Processing " + jobname + " Value Dump: " + curr_project.toString() + "\n")	
 		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
@@ -67,6 +67,7 @@ GroupFile.each { group ->
 					def branch = tracks.get(track)
 					// Process each platform
 					Map pf = job.SetPlatformMap()
+					println pf
 					Platform platform = new Platform(pf)
 					pf.each { PLATFORM , options ->	
 						assert platform.PLATFORM == PLATFORM	

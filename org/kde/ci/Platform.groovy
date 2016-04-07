@@ -40,7 +40,6 @@ class Platform {
 	}
 	
 	Platform(platform_data) {
-		Map options 
 		platform_data.each { pf_key, pf_value ->
 			this.PLATFORM = pf_key
 			pf_value.each { opt_key, opt_value ->
