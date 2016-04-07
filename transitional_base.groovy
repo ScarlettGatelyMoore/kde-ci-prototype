@@ -67,8 +67,8 @@ GroupFile.each { group ->
 					def branch = tracks.get(track)
 					// Process each platform
 					Map pf = job.SetPlatformMap()
-					pf.each { PLATFORM , options ->
-						def currtrack = options.find(track)
+					pf.each { PLATFORM , options ->						
+						def currtrack = options.find { key, value -> value == track }
 						if (currtrack) {
 							String compiler = options.getAt('compiler')
 							List Variations = options.getAt('Variations')
