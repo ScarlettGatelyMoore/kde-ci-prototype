@@ -66,7 +66,7 @@ GroupFile.each { group ->
 				bg.each { branchGroup , track  -> 
 					def branch = tracks.get(track)
 					// Process each platform
-					Map pf = job.SetRepoMap()
+					Map pf = job.SetPlatformMap()
 					pf.each { PLATFORM , options ->
 						def currtrack = options.find(track)
 						if (currtrack) {
