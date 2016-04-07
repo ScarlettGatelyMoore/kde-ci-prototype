@@ -42,12 +42,10 @@ class Platform {
 	Platform(platform_data) {
 		platform_data.each { pf_key, pf_value ->
 			this.PLATFORM = pf_key
-			pf_value.each { opt_key, opt_value ->
-				this.options.put(opt_key, opt_value)
-			}
+			this.options << pf_value			
 		}
-		this.COMPILER == options.find { key, value -> key == 'compiler' }
-		this.Variations << options.find { key, value -> key == 'Variations' }
+		this.COMPILER == this.options.find { key, value -> key == 'compiler' }
+		this.Variations << this.options.find { key, value -> key == 'Variations' }
 		if (this.Variations) {
 			this.jobType = 'matrixJob'
 		} else {
