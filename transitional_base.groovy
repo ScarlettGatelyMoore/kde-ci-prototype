@@ -68,8 +68,8 @@ GroupFile.each { group ->
 					// Process each platform
 					Map pf = job.SetRepoMap()
 					pf.each { PLATFORM , options ->
-						boolean dowebuildtrack = options.get(track)
-						if (dowebuildtrack) {
+						def currtrack = options.get(track)
+						if (currtrack) {
 							String compiler = options.get('compiler')
 							List Variations = options.get('Variations')
 							def jobType
