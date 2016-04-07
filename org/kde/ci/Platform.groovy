@@ -43,7 +43,7 @@ class Platform {
 		this.PLATFORM = platform	
 		this.COMPILER == options.find { key, value -> key == 'compiler' }
 		def var = options.find { key, value -> key == 'Variations' }
-		if (var) {
+		if (var != null ) {
 			this.Variations << var
 		}
 		if (this.Variations) {
