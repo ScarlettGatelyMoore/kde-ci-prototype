@@ -71,7 +71,7 @@ GroupFile.each { group ->
 					pf.each { PLATFORM , options ->	
 						println PLATFORM
 						println options							
-						//Platform platform = new Platform(PLATFORM, options)
+						Platform platform = new Platform(PLATFORM, options)
 						boolean currtrack = platform.genCurrentPlatform(track)
 						if (currtrack) {
 							String compiler = platform.COMPILER
