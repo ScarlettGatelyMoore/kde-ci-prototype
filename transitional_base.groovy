@@ -112,7 +112,7 @@ GroupFile.each { group ->
 					}
 				}
 			}
-			} // end freestyle job
+			} }// end freestyle job
 			} else continue // end platform
 			
 			}
