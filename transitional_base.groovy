@@ -67,11 +67,9 @@ GroupFile.each { group ->
 					def branch = tracks.get(track)
 					// Process each platform
 					Map pf = job.SetPlatformMap()
-					println pf
-					Platform platform = new Platform(pf)
-					pf.each { PLATFORM , options ->	
-						assert platform.PLATFORM == PLATFORM	
-										
+					println pf					
+					pf.each { PLATFORM , options ->								
+						Platform platform = new Platform(PLATFORM, options)
 						boolean currtrack = platform.genCurrentPlatform(track)
 						if (currtrack) {
 							String compiler = platform.COMPILER

@@ -29,23 +29,20 @@ import groovy.lang.Closure;
 */
 
 
-class Platform {	
+class Platform {
 	String PLATFORM
 	String COMPILER
-	Map Variations
-	Map options
+	Map Variations	
 	String jobType
 		
 	Platform() {		
 	}
 	
-	Platform(platform_data) {
-		platform_data.each { pf_key, pf_value ->
-			this.PLATFORM = pf_key
-			this.options << pf_value			
-		}
-		this.COMPILER == this.options.find { key, value -> key == 'compiler' }
-		this.Variations << this.options.find { key, value -> key == 'Variations' }
+	Platform(platform, options) {
+		
+		this.PLATFORM = platform	
+		this.COMPILER == options.find { key, value -> key == 'compiler' }
+		this.Variations << options.find { key, value -> key == 'Variations' }
 		if (this.Variations) {
 			this.jobType = 'matrixJob'
 		} else {
