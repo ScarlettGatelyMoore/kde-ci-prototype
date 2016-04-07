@@ -67,17 +67,16 @@ GroupFile.each { group ->
 					def branch = tracks.get(track)
 					// Process each platform
 					Map pf = job.SetPlatformMap()
-					pf.each { PLATFORM , options ->						
-						def currtrack = options.find { key, value -> value == track }
+					Platform platform = new Platform(pf)
+					pf.each { PLATFORM , options ->	
+						assert platform.PLATFORM == PLATFORM	
+										
+						boolean currtrack = platform.genCurrentPlatform(track)
 						if (currtrack) {
-							String compiler = options.getAt('compiler')
-							List Variations = options.getAt('Variations')
-							def jobType
-							if (Variations) {
-								jobType = matrixJob
-							} else {
-						    	jobType = freestyle
-							}
+							String compiler = platform.COMPILER
+							List Variations = platform.Variations
+							def jobType = platform.jobType
+							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
  			//Bring in our DSL Closure generation classes	
 			DSLMisc misc = new DSLMisc()
