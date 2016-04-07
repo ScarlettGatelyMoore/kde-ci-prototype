@@ -34,12 +34,13 @@ class Platform {
 	String COMPILER
 	Map Variations	
 	String jobType
+	Map options
 		
 	Platform() {		
 	}
 	
 	Platform(platform, options) {
-		
+		this.options << options
 		this.PLATFORM = platform	
 		this.COMPILER == options.find { key, value -> key == 'compiler' }
 		def var = options.find { key, value -> key == 'Variations' }
