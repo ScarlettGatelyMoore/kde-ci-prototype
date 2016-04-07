@@ -39,10 +39,5 @@ class DSLMisc {
 			project << authToken( "${tokenid}")
 		}
 	}	
-	
-	static Closure Logrotator(lr) {		
-		def (daysToKeep, numToKeep, artifactDaysToKeep, artifactNumToKeep) = lr.tokenize(',') ?: ["-1","10","-1","-1"]
-		return daysToKeep.toInteger() + ', ' + numToKeep.toInteger() + ', ' + artifactDaysToKeep.toInteger() + ', ' + artifactNumToKeep.toInteger()	
-		}	
-	
+
 }

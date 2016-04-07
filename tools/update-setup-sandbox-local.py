@@ -36,6 +36,7 @@ JENKINS_METADATA_REPO = config.get( 'Repo', 'jenkinsMetadataRepo' )
 JENKINS_BRANCH = config.get( 'Repo', 'jenkinsBranch' )
 JENKINS_DEPENDENCY_BRANCH = config.get( 'Repo', 'jenkinsDepBranch' )
 JENKINS_CONFIG_BRANCH = config.get( 'Repo', 'jenkinsConfigBranch' )
+REPO_METADATA = config.get( 'Repo', 'repoMetadataRepo' )
 
 #TO-DO Add in output code, could not get it working in port.
 def getRepository(repo_name, repoUrl, repoBranch="master"):
@@ -84,6 +85,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
 getRepository("scripts", JENKINS_MASTER_REPO, JENKINS_BRANCH)
 getRepository("dependencies", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
 getRepository("metadata", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
+getRepository("repometadata", REPO_METADATA, JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
 getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)

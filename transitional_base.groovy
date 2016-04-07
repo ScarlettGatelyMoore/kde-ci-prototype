@@ -25,25 +25,32 @@ import org.kde.ci.*
 import groovy.io.FileType
 import org.yaml.snakeyaml.Yaml
 
+// Begin with the base defaults yaml that get retrieved via update-setup
 def basePath = System.getProperty('user.home') + '/scripts/metadata/'
 def GroupFile = []
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
+// Now lets get the repo-metadata and bring in any overrides
+//def rout = new StringBuilder(), rerr = new StringBuilder()
+//def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
+
 
 
 println(GroupFile.toString())
-assert GroupFile == ['qt.yml', 'frameworks.yml']
+assert GroupFile == ['qt.yml', 'frameworks.yml', 'kdesupport.yml']
 
 
 GroupFile.each { group ->	
 	println(group)
 	// Get the Yaml data into a usable object
 	def yamldata = new ImportConfig().getConfig(basePath, group)	
-	
+	groupName = group - '.yml'	
 	// Now for each project data Map we feed that in a current Project Object Class	
 	yamldata.each { jobkey, curr_project ->
+		
 		def jobname = jobkey				
 		Project job = Project.newInstance(curr_project)
 		//debug only
+		assert job.group_name == groupName
 		println("Processing " + jobname + " Value Dump: " + curr_project.toString() + "\n")	
 		
 		// Lets start with.. Are we active?
