@@ -40,10 +40,10 @@ class Platform {
 	}
 	
 	Platform(pf_platform, pf_options) {
-		this.options << pf_options
+		this.options = pf_options
 		this.PLATFORM = pf_platform	
-		this.COMPILER == pf_options.find { key, value -> key == 'compiler' }
-		def var = pf_options.find { key, value -> key == 'Variations' }
+		this.COMPILER == options.find { key, value -> key == 'compiler' }
+		def var = options.find { key, value -> key == 'Variations' }
 		if (var != null ) {
 			this.Variations 
 		}
