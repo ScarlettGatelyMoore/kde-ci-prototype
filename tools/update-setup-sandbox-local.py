@@ -56,8 +56,10 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       print(process)
       command = "git checkout " + repoBranch
       print( "Checkout " + str(command) )
-      process = subprocess.check_output( command, shell=True )
-      print(process)
+      # We do not want to checkout master as it is default.
+      if not repoBranch == 'master':
+          process = subprocess.check_output( command, shell=True )
+          print(process)
       
     except subprocess.CalledProcessError: 
       print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
