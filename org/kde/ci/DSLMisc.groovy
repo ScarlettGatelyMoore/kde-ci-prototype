@@ -30,6 +30,7 @@ import groovy.lang.Closure;
 
 
 class DSLMisc {	
+		
 	DSLMisc() {		
 	}
 	
@@ -38,6 +39,15 @@ class DSLMisc {
 		return { project ->
 			project << authToken( "${tokenid}")
 		}
-	}	
+	}
+	
+	static Map Variations(job) {
+		Map variations
+		job.Variations.each { key, value ->
+			variations.put(key, value)
+		}
+	
+		return variations
+	}
 
 }

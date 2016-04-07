@@ -55,6 +55,7 @@ GroupFile.each { group ->
 		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
+			assert job.getActive() == true
 			// Bring in development tracks to determine branches.
 			Map tracks = job.getBranch()		
 			// We have branchGroups that split into sections for releases/development 
@@ -64,13 +65,26 @@ GroupFile.each { group ->
 				//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 				bg.each { branchGroup , track  -> 
 					def branch = tracks.get(track)
-					println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
+					// Process each platform
+					Map pf = job.SetRepoMap()
+					pf.each { PLATFORM , options ->
+						boolean dowebuildtrack = options.get(track)
+						if (dowebuildtrack) {
+							String compiler = options.get('compiler')
+							List Variations = options.get('Variations')
+							def jobType
+							if (Variations) {
+								jobType = matrixJob
+							} else {
+						    	jobType = freestyle
+							}
+							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
  			//Bring in our DSL Closure generation classes	
 			DSLMisc misc = new DSLMisc()
 			SCM scm = new SCM()			
 			/* BEGIN DSL CODE */
 		
-			matrixJob(job.SetProjectFullName(jobname, branchGroup, track, branch)) {
+			jobType(job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)) {
 			configure { project ->
 				project / 'actions' {}				
 			}	
@@ -98,7 +112,9 @@ GroupFile.each { group ->
 					}
 				}
 			}
-			}
+			} // end freestyle job
+			} else continue // end platform
+			
 			}
 		}			
 	}
