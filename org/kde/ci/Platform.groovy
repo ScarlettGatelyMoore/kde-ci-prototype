@@ -41,18 +41,18 @@ class Platform {
 	
 	Platform(platform_data) {
 		Map options 
-		this.platform_data.each { pf_key, pf_value ->
+		platform_data.each { pf_key, pf_value ->
 			this.PLATFORM = pf_key
-			value.each { opt_key, opt_value ->
+			pf_value.each { opt_key, opt_value ->
 				this.options.put(opt_key, opt_value)
 			}
 		}
 		this.COMPILER == options.find { key, value -> key == 'compiler' }
 		this.Variations << options.find { key, value -> key == 'Variations' }
 		if (this.Variations) {
-			this.jobType = matrixJob
+			this.jobType = 'matrixJob'
 		} else {
-			this.jobType = freestyleJob
+			this.jobType = 'freestyleJob'
 		}
 	}
 	
@@ -61,7 +61,8 @@ class Platform {
 			return true
 		}
 	}
-	static Closure PlatformVariations() {
+	static Closure PlatformVariations(Variations) {
+		
 		return { project ->
 			project.name = 'matrix-project'
 			project / axes << 'hudson.matrix.TextAxis' {
