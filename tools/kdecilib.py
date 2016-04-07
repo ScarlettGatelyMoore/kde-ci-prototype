@@ -876,7 +876,7 @@ class BuildManager(object):
 		# Do we need to run update-mime-database?
 		buildEnv = self.generate_environment()
 		installRoot = os.path.join( self.projectSources, 'local-inst', makeRelativeLocation(self.installPrefix) )
-		mimeDirectory = os.path.join( installRoot, 'share', 'mime' )
+		mimeDirectory = os.path.join( installRoot, 'usr', 'share', 'mime' )
 		if os.path.exists( mimeDirectory ):
 			# Invoke update-mime-database
 			command = self.config.get('Build', 'updateMimeDatabaseCommand')
