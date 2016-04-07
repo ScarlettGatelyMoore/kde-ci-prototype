@@ -93,7 +93,7 @@ public final class Project {
 	public void setIRC(String irc){
 		this.irc = irc
 	}
-	public void setLogrotator(String logrotator){
+	public void setLogrotator(List logrotator){
 		this.logrotator = logrotator
 	}
 	public void setUpstream(List upstream){
@@ -138,6 +138,7 @@ public final class Project {
 		return this.branchGrouptracks
 	}
 	def List getLogrotator() {
+		lr = 
 		return this.logrotator
 	}
 	
