@@ -36,7 +36,7 @@ def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	
 
 
 println(GroupFile.toString())
-assert GroupFile == ['qt.yml', 'frameworks.yml', 'kdesupport.yml']
+assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
 
 
 GroupFile.each { group ->	
