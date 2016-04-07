@@ -68,7 +68,7 @@ GroupFile.each { group ->
 					// Process each platform
 					Map pf = job.SetRepoMap()
 					pf.each { PLATFORM , options ->
-						def currtrack = options.getAt(track)
+						def currtrack = options.find(track)
 						if (currtrack) {
 							String compiler = options.getAt('compiler')
 							List Variations = options.getAt('Variations')
