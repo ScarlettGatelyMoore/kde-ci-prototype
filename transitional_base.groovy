@@ -161,9 +161,9 @@ GroupFile.each { group ->
 										} else {
 											shell = 'Shell'
 										}
-										"${shell}"("python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
-													"python ${home}/scripts/tools/prepare-environment.py" + \
-													"python ${home}/scripts/tools/perform-build.py"
+										"${shell}"('python '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+													'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
+													'python '+ "${home}" + '/scripts/tools/perform-build.py'
 												  )
 									}
 									
