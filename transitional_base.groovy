@@ -127,7 +127,7 @@ GroupFile.each { group ->
 									customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
-										configure "${variationsClosure}"
+										configure variationClosure
 									}
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
