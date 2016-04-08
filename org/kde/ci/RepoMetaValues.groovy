@@ -31,7 +31,7 @@ import java.util.Map;
 
 
 class RepoMetaValues {
-	def pretty_name
+	def name
 	def description
 	def hasrepo
 	def projectpath
@@ -42,7 +42,7 @@ class RepoMetaValues {
 	def members
 		
 	public void setPrettyName(String name){
-		this.pretty_name = name
+		this.name = name
 	}
 	public void setDescription(String description){
 		this.description = description
