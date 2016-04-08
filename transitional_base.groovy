@@ -75,6 +75,7 @@ GroupFile.each { group ->
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
 						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
+						println compiler
 						println jobType
 						println fullname
 						if (currtrack) {							
