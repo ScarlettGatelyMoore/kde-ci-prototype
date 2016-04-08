@@ -123,15 +123,13 @@ class DSLClosures {
 	}
 	static Closure genWarningsPublisher(platform, compiler) {
 		List parselist = genParsers(platform, compiler)
-		return { project ->
-			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-				publishers {
-					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-						condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
-							arg1 '${ENV,var="compiler"}'
-							arg2 "${compiler}"
+		return 	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+						arg1 '${ENV,var="compiler"}'
+						arg2 "${compiler}"
 					ignoreCase false
-				}
+						}
+				
 				publisherList {
 					'hudson.plugins.warnings.WarningsPublisher' {
 						canRunOnFailed false
@@ -144,26 +142,24 @@ class DSLClosures {
 						parserConfigurations {}
 						consoleParsers {
 							parseList.each { parser ->
-							'hudson.plugins.warnings.ConsoleParser' {
-								parserName { string it }
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName { string it }
+								}							
 							}
-							
-							
-							}
+						}
 						analysisCollector {
 							warnings()
 							computeNew()
 							useStableBuildAsReference()
-						}
-						}
+						}						
 					}
+				}
 				runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
-				}
-			}
 	}
+	
 	static List genParsers(platform, compiler) {
-		def parserList = new List()
+		List parserList
 		
 		parserList.put('Missing Dependencies')						
 		if (platform == 'Linux') {
