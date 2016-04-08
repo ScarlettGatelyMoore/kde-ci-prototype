@@ -125,7 +125,8 @@ class DSLClosures {
 	List parselist = genParsers(platform, compiler)
 	return 	{ project ->
 			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-				publishers << 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+				publishers {
+					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
@@ -160,8 +161,9 @@ class DSLClosures {
 					}						
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
+				}
 			}
-	}
+		}
 	}
 	
 	static List genParsers(platform, compiler) {
