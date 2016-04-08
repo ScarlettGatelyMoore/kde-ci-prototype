@@ -112,18 +112,20 @@ class DSLClosures {
 				}			
 			}
 	}*/
-	def commandBuilder(platform, custom_command) {
+	static String commandBuilder(platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null) {
+		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
 		if (custom_command) {
-		return "${custom_command}" + "\n" + \
-			   'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
-			   'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
-			   'python '+ "${home}" + '/scripts/tools/perform-build.py'
-		} else {
-			return 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
-			   	   'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
-			       'python '+ "${home}" + '/scripts/tools/perform-build.py'
+			jobcommand.append("${custom_command}\n")
 		}
+		if (platform == 'Linux') {
+			jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox-local.py\n')
+			jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
+			jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')
+		}
+		
+		//TODO other platforms.
+		return jobcommand
 	}
 
 }
