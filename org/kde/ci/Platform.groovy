@@ -46,8 +46,7 @@ class Platform {
 	}
 	def genCompilers(options) {
 		def compiler = options.find { key, value -> key == 'compilers' }.getValue()	
-		def num = compiler.size()
-		return compiler.size()
+		def num = compiler.size()		
 		if ( num > 1 ) {
 			List compilers = compiler	
 			return compilers 
