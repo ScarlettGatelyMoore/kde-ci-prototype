@@ -128,36 +128,35 @@ class DSLClosures {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
-					ignoreCase false
-						}
-				
-				publisherList {
-					'hudson.plugins.warnings.WarningsPublisher' {
-						canRunOnFailed false
-						usePreviousBuildAsReference false
-						useStableBuildAsReference false
-						useDeltaValues false
-						shouldDetectModules false
-						dontComputeNew true
-						doNotResolveRelativePaths true
-						parserConfigurations {}
-						consoleParsers {
-							parseList.each { parser ->
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName { string it }
-								}							
+						ignoreCase false
+					}
+					publisherList {
+						'hudson.plugins.warnings.WarningsPublisher' {
+							canRunOnFailed false
+							usePreviousBuildAsReference false
+							useStableBuildAsReference false
+							useDeltaValues false
+							shouldDetectModules false
+							dontComputeNew true
+							doNotResolveRelativePaths true
+							parserConfigurations {}
+							consoleParsers {
+								parseList.each { parser ->
+									'hudson.plugins.warnings.ConsoleParser' {
+										parserName { string it }
+									}							
+								}
 							}
 						}
-						analysisCollector {
-							warnings()
-							computeNew()
-							useStableBuildAsReference()
-						}						
 					}
+					analysisCollector {
+						warnings()
+						computeNew()
+						useStableBuildAsReference()
+					}						
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
-				runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-				}
-		}
+			}
 	}
 	
 	static List genParsers(platform, compiler) {
