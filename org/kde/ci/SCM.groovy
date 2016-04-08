@@ -30,11 +30,11 @@ class SCM {
 	SCM() {		
 	}
 	
-	static Closure generateSCM(jobname, scm, branch) {	
+	static Closure generateSCM(jobname, scm_data, branch) {	
 		
-	def protocol = scm.get('protocol')
-	def address = scm.get('address')
-	boolean showbrowser = scm.get('browser')	
+	def protocol = scm_data.get('protocol')
+	def address = scm_data.get('address')
+	boolean showbrowser = scm_data.get('browser')	
 		switch(protocol) {
 		case 'svn':
 			return { project ->
