@@ -79,6 +79,7 @@ class DSLClosures {
 		} else {
 			shell = 'Shell'
 		}
+		def job_command = this.commandBuilder()
 		return { project ->
 			project / builders <<
 			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
@@ -89,7 +90,7 @@ class DSLClosures {
 			   }
 			   runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 			   buildStep(class: 'hudson.tasks.Shell') {
-				   command this.commandBuilder()
+				   command "${job_command}"
 		   }
 		}
 		}
