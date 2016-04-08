@@ -54,5 +54,40 @@ class DSLClosures {
 			}
 		}
 	}
+	static Closure DownstreamTriggers(downstream, branchGroup, track, branch, platform, compiler) {
+		String downstreamall = ""
+		String downstreamnew
+		downstream.each { currdownstream ->
+			downstreamnew = currdownstream + " " + branchGroup + " " + track  + " " + branch + " " + platform + " " + compiler
+			downstreamall = downstreamall + downstreamnew
+		}
+		
+		downstreamParameterized {
+			trigger(downstreamall.toString() - ~/[^,]*$/) {
+				condition('UNSTABLE_OR_BETTER')
+				parameters {
+					currentBuild()					
+					onlyIfSCMChanges()
+				}
+			}
+		}
+				
+	}
+	static Closure genBuildStep(platform) {
+	def home = System.getProperty('user.home') 
+	def shell
+	if (platform == "Windows") {
+		shell = 'BatchFile'
+	} else {
+		shell = 'Shell'
+	}
+	return { project ->
+			buildStep(class: 'hudson.tasks.' + "${shell}") {
+				command "python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
+						"python ${home}/scripts/tools/prepare-environment.py"
+						"python ${home}/scripts/tools/perform-build.py"
+			}
+		}
+	}
 
 }

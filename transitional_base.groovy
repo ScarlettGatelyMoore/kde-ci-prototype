@@ -149,7 +149,9 @@ GroupFile.each { group ->
 										}	
 									}
 									}
+									blockOnUpstreamProjects()
 									configure scmClosure
+									configure misc.genBuilldStep(PLATFORM)
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
 							// End repo / Failed repo check
