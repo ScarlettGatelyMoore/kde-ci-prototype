@@ -159,6 +159,7 @@ class DSLClosures {
 				}
 			}
 	}
+	}
 	
 	static List genParsers(platform, compiler) {
 		List parserList = []
