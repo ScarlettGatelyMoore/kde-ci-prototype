@@ -71,7 +71,8 @@ GroupFile.each { group ->
 					pf.each { PLATFORM , options ->													
 						Platform platform = new Platform(PLATFORM, options)
 						
-						boolean currtrack = platform.genCurrentPlatform(platform.options, track)
+						def currtrack = platform.genCurrentPlatform(platform.options, track)
+						println currtrack
 						if (currtrack) {
 							String compiler = platform.COMPILER
 							List Variations = platform.Variations
