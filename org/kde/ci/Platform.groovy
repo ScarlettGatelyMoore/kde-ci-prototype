@@ -51,7 +51,7 @@ class Platform {
 			List compilers = compiler	
 			return compilers 
 		} else { 
-			String acompiler = compiler.toString() - ~/[]/
+			String acompiler = compiler.toString().replaceAll(/[/ || /]/, '')
 			return acompiler
 		}
 	}
