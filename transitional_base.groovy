@@ -85,10 +85,12 @@ GroupFile.each { group ->
 							//STUB Future support for multiple compiler matrix builds	
 							println "This needs a matrix build, time to write that code."						
 						} 
+						//Bring in our DSL Closure generation classes
+						DSLClosures misc = new DSLClosures()
 						def variations = platform.PlatformVariations(options)
 						def variationClosure
 						if (variations) {
-							variationClosure = Variations(variations)
+							variationClosure = misc.Variations(variations)
 						}
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
@@ -98,8 +100,7 @@ GroupFile.each { group ->
 						if (currtrack) {
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
 							+ " compiler " + compiler
-							//Bring in our DSL Closure generation classes	
-							DSLClosures misc = new DSLClosures()
+							
 							if ( repometa.hasrepo && repometa.repoactive ) {
 								SCM scm = new SCM()	
 								println job.SetRepoMap()
