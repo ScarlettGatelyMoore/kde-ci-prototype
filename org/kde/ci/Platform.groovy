@@ -50,12 +50,14 @@ class Platform {
 			return acompiler
 		}
 	}
-	def determineJobType(variations, compiler) {
+	static String determineJobType(variations, compiler) {
+		def jobType
 		if (variations != null || compiler.getClass() == List) {
-			this.jobType = 'matrixJob'
+			jobType = 'matrixJob'
 		} else {
-			this.jobType = 'freeStyleJob'
+			jobType = 'freeStyleJob'
 		}
+		return jobType
 	}
 	def PlatformVariations(options) {
 		def var = options.find { key, value -> key == 'Variations' }.getValue()	
