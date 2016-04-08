@@ -82,10 +82,20 @@ class DSLClosures {
 			shell = 'shell'
 		}
 		return { project ->
-			project / steps << "${shell}"('python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
-					'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
-					'python '+ "${home}" + '/scripts/tools/perform-build.py'
-						)
+			project / builders <<
+			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+				condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+					arg1 '${ENV,var="PLATFORM"}'
+					arg2 platform
+					ignoreCase false
+				}
+				runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
+				buildStep(class: 'hudson.tasks.' + "${shell}") {
+					command 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+						'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
+						'python '+ "${home}" + '/scripts/tools/perform-build.py'
+				}
+			}			
 		}
 	}
 
