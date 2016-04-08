@@ -175,7 +175,8 @@ GroupFile.each { group ->
 											publishers {
 											misc.genWarningsPublisher(PLATFORM, compiler)
 											}
-										}							
+										}
+									}							
 									
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
