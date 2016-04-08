@@ -81,7 +81,8 @@ class DSLClosures {
 		} else {
 			shell = 'shell'
 		}
-		return { "${shell}"('python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+		return { project ->
+			project / "${shell}"('python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
 						  'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
 						  'python '+ "${home}" + '/scripts/tools/perform-build.py'
 						)
