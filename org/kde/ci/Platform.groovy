@@ -54,8 +54,8 @@ class Platform {
 		}
 	}
 	
-	def genCurrentPlatform(track) {
-		if ( this.options.containsValue(track)) {
+	def genCurrentPlatform(options, track) {
+		if ( options.containsValue(track)) {
 			return true
 		}
 	}

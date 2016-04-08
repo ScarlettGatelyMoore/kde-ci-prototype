@@ -68,12 +68,10 @@ GroupFile.each { group ->
 					// Process each platform
 					Map pf = job.SetPlatformMap()
 					println pf					
-					pf.each { PLATFORM , options ->	
-						println PLATFORM
-						println options							
+					pf.each { PLATFORM , options ->													
 						Platform platform = new Platform(PLATFORM, options)
-						println platform.options
-						boolean currtrack = platform.genCurrentPlatform(track)
+						
+						boolean currtrack = platform.genCurrentPlatform(platform.options, track)
 						if (currtrack) {
 							String compiler = platform.COMPILER
 							List Variations = platform.Variations
