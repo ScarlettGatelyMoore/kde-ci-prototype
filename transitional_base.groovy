@@ -85,7 +85,7 @@ GroupFile.each { group ->
 							SCM scm = new SCM()			
 							/* BEGIN DSL CODE */
 		
-							jobType(fullname) {
+							"${jobType}"(fullname) {
 								configure { project ->
 									project / 'actions' {}				
 								}	
