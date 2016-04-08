@@ -92,6 +92,7 @@ GroupFile.each { group ->
 						if (variations) {
 							variationClosure = misc.Variations(variations)
 						}
+						println misc.genBuildStep(PLATFORM)
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
