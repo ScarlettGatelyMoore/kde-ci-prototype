@@ -170,10 +170,8 @@ GroupFile.each { group ->
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
 									configure { project ->
-										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-											publishers {
-											misc.genWarningsPublisher(PLATFORM, compiler)
-											}
+										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {											
+											misc.genWarningsPublisher(PLATFORM, compiler)											
 										}
 									}							
 									
