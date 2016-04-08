@@ -80,6 +80,19 @@ class DSLClosures {
 			shell = 'Shell'
 		}
 		return { project ->
+			project / builders <<
+			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+			   condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+				   arg1 '${ENV,var="PLATFORM"}'
+				   arg2 'Linux'
+				   ignoreCase false
+			   }
+			   runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
+			   buildStep(class: 'hudson.tasks.Shell') {
+				   command commandBuilder()
+		   }
+		}
+		/*return { project ->
 				project / builders <<
 				'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
@@ -93,7 +106,7 @@ class DSLClosures {
 					}
 				}			
 			}
-	}
+	}*/
 	def commandBuilder() {
 		def home = System.getProperty('user.home')
 		return 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
