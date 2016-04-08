@@ -45,9 +45,8 @@ class Platform {
 			 else { return false }			
 	}
 	def genCompilers(options) {
-		def compiler = options.find { key, value -> key == 'compilers' }
-		
-		return compiler
+		def compiler = options.find { key, value -> key == 'compilers' }		
+		return compiler.getValue()
 	}
 	def determineJobType(variations, compiler) {
 		if (variations || compiler.getClass() == ArrayList) {
