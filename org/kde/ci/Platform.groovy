@@ -30,12 +30,7 @@ import groovy.lang.Closure;
 
 
 class Platform {
-	String PLATFORM
-	String COMPILER
-	Map Variations	
-	String jobType
-	Map options
-		
+	
 	Platform() {		
 	}
 	

@@ -86,10 +86,6 @@ GroupFile.each { group ->
 						boolean currtrack = platform.genBuildTrack(options, track)
 						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)						
 						if (currtrack) {
-							println compiler
-							println jobType
-							println fullname
-							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
 							DSLClosures misc = new DSLClosures()
@@ -103,7 +99,7 @@ GroupFile.each { group ->
 								// token for api		
 								configure misc.SetToken(jobname)
 								// Job description
-								description job.DefineDescription()
+								description job.DefineDescription(repometa.name)
 								// Set the log history
 								logRotator(job.getLogrotator())
 								// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...

@@ -30,7 +30,6 @@ import static java.lang.String.format;
 
 public final class Project {
 	// Brought in via yaml config
-	String pretty_name
 	String group_name
 	Map branchGrouptracks
 	Map branch
@@ -130,8 +129,12 @@ public final class Project {
 		return data		
 	}
 	
-	def String DefineDescription() {				
-		return this.full_jobname + "\n\n" + this.pretty_name + ":\n" + this.description		
+	def String DefineDescription(pretty_name, repo_desc) {	
+		if (pretty_name && repo_desc) {			
+			return this.full_jobname + "\n\n" + pretty_name + ":\n" + repo_desc	
+		} else {
+			return this.full_jobname + "\n\n" + this.description
+		}	
 	}	
 	
 	def Map getBranchGroupTracks() {
