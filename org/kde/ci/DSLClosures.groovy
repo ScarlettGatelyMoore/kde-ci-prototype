@@ -73,7 +73,7 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(platform) {
+	def genBuildStep(platform) {
 		def home = System.getProperty('user.home')
 		def shell
 		if (platform == "Windows") {
