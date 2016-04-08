@@ -42,7 +42,7 @@ class Platform {
 	Platform(pf_platform, pf_options) {
 		this.options = pf_options
 		this.PLATFORM = pf_platform	
-		this.COMPILER == options.find { key, value -> key == 'compiler' }
+		this.COMPILER == options.find { key, value -> key == 'compiler' }.getValue().toString()
 		def var = options.find { key, value -> key == 'Variations' }
 		if (var != null ) {
 			this.Variations 
