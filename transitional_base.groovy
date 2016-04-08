@@ -152,7 +152,7 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									misc.genBuildStep(PLATFORM)									
+									configure misc.genBuildStep(PLATFORM)									
 									
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
