@@ -74,7 +74,8 @@ GroupFile.each { group ->
 						def variations = platform.PlatformVariations(options)
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
-						println compiler variations
+						println compiler 
+						println variations
 						if (currtrack) {							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
