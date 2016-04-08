@@ -60,24 +60,24 @@ class SCM {
 				project / scm(class: 'hudson.plugins.git.GitSCM') {
 					userRemoteConfigs {
 						'hudson.plugins.git.UserRemoteConfig' {
-							url address
+							url "${address}"
 						}
 					}
 					relativeTargetDir '${WORKSPACE}'
 					branches {
 						'hudson.plugins.git.BranchSpec' {
-							name branch
+							name "${branch}"
 						}
 					}
-					if (showbrowser)	{
-						browser(class: 'hudson.plugins.git.browser.GitWeb') {
-							url 'https://quickgit.kde.org/?p=' + jobname + '.git'
+					if (showbrowser) {
+					browser(class: 'hudson.plugins.git.browser.GitWeb') {
+						url 'https://quickgit.kde.org/?p=' + "${jobname}" + '.git'
 						}
 					}
 					extensions {
 						'hudson.plugins.git.extensions.impl.CloneOption' {
 							shallow false
-							timeout '20'
+							timeout '120'
 						}
 					}
 				}
