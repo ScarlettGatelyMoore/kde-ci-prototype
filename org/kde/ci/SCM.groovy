@@ -30,7 +30,7 @@ class SCM {
 	SCM() {		
 	}
 	
-	static Closure generateSCM(scm, branch) {	
+	static Closure generateSCM(jobname, scm, branch) {	
 		
 	def protocol = scm.get('protocol')
 	def address = scm.get('address')
