@@ -123,7 +123,8 @@ class DSLClosures {
 	}
 	static Closure genWarningsPublisher(platform, compiler) {
 		List parselist = genParsers(platform, compiler)
-		return 	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return 	{ publishers ->
+			publishers << 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
