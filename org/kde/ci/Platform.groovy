@@ -56,18 +56,10 @@ class Platform {
 			this.jobType = 'freestyleJob'
 		}
 	}
-	static Closure PlatformVariations(options) {
+	static List PlatformVariations(options) {
 		def var = options.find { key, value -> key == 'Variations' }
-		return { project ->
-			project.name = 'matrix-project'
-			project / axes << 'hudson.matrix.TextAxis' {
-				name 'Variation'
-				values {
-					Variations.each {
-						if (it) { string it }
-					}
-				}
-			}
+		if (var) {
+			return var
 		}
 	}
 

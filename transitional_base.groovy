@@ -78,7 +78,7 @@ GroupFile.each { group ->
 						if (currtrack) {							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
-							DSLMisc misc = new DSLMisc()
+							DSLClosures misc = new DSLClosures()
 							SCM scm = new SCM()			
 							/* BEGIN DSL CODE */
 		

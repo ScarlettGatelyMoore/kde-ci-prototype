@@ -29,9 +29,9 @@ import groovy.lang.Closure;
 */
 
 
-class DSLMisc {	
+class DSLClosures {	
 		
-	DSLMisc() {		
+	DSLClosures() {		
 	}
 	
 	static Closure SetToken(jobname) {
@@ -41,13 +41,18 @@ class DSLMisc {
 		}
 	}
 	
-	static Map Variations(job) {
-		Map variations
-		job.Variations.each { key, value ->
-			variations.put(key, value)
+	static Closure Variations(Variations) {
+		return { project ->
+			project.name = 'matrix-project'
+			project / axes << 'hudson.matrix.TextAxis' {
+				name 'Variation'
+				values {
+					Variations.each {
+						if (it) { string it }
+					}
+				}
+			}
 		}
-	
-		return variations
 	}
 
 }
