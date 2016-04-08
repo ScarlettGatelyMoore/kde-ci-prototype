@@ -69,12 +69,11 @@ GroupFile.each { group ->
 					Map pf = job.SetPlatformMap()
 					println pf					
 					pf.each { PLATFORM , options ->													
-						Platform platform = new Platform(PLATFORM, options)
-						String compiler = platform.COMPILER
-						List Variations = platform.Variations
+						Platform platform = new Platform()
+						List compiler = platform.genCompilers()						
 						def jobType = platform.jobType
-						def currtrack = platform.genCurrentPlatform(platform.options, track)
-						println currtrack
+						boolean currtrack = platform.genBuildTrack(options, track)
+						println compiler
 						if (currtrack) {							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	

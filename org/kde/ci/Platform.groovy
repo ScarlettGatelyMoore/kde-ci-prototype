@@ -39,28 +39,25 @@ class Platform {
 	Platform() {		
 	}
 	
-	Platform(pf_platform, pf_options) {
-		this.options = pf_options
-		this.PLATFORM = pf_platform	
-		this.COMPILER == options.find { key, value -> key == 'compiler' }.getValue().toString()
-		def var = options.find { key, value -> key == 'Variations' }
-		if (var != null ) {
-			this.Variations 
-		}
-		if (this.Variations) {
+	def genBuildTrack(options, track) {
+		def tracks = options.find { key, value -> key == 'tracks' }
+			 if( tracks.getValue().toString().contains(track) ) {  return true }
+			 else { return false }			
+	}
+	def genCompilers(options) {
+		def compiler = options.find { key, value -> key == 'compiler' }
+		
+		return compiler
+	}
+	def determineJobType(variations, compiler) {
+		if (variations || compiler.getClass() == ArrayList) {
 			this.jobType = 'matrixJob'
 		} else {
 			this.jobType = 'freestyleJob'
 		}
 	}
-	
-	def genCurrentPlatform(options, track) {
-		def tracks = options.find { key, value -> key == 'tracks' }
-			 if( tracks.getValue().toString().contains(track) ) {  return true }
-			 else { return false }			
-	}
-	static Closure PlatformVariations(Variations) {
-		
+	static Closure PlatformVariations(options) {
+		def var = options.find { key, value -> key == 'Variations' }
 		return { project ->
 			project.name = 'matrix-project'
 			project / axes << 'hudson.matrix.TextAxis' {
