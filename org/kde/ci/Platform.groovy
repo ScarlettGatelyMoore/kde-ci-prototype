@@ -57,7 +57,7 @@ class Platform {
 	def genCurrentPlatform(options, track) {
 		def tracks = options.find { key, value -> key == 'tracks' }		
 			if (tracks.value == track)
-			return true		
+			return tracks.value	
 	}
 	static Closure PlatformVariations(Variations) {
 		
