@@ -50,17 +50,17 @@ class Platform {
 		if ( num > 1 ) {
 			List compilers = compiler	
 			return compilers 
-		} else { return compiler }
+		} else { return compiler.toString() }
 	}
 	def determineJobType(variations, compiler) {
-		if (variations || compiler.getClass() == ArrayList) {
+		if (variations != null || compiler.getClass() == ArrayList) {
 			this.jobType = 'matrixJob'
 		} else {
 			this.jobType = 'freestyleJob'
 		}
 	}
 	def PlatformVariations(options) {
-		def var = options.find { key, value -> key == 'Variations' }
+		def var = options.find { key, value -> key == 'Variations' }.getValue()	
 		if (var) {
 			return var
 		}
