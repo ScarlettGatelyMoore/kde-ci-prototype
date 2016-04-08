@@ -84,12 +84,12 @@ class DSLClosures {
 			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
 			   condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 				   arg1 '${ENV,var="PLATFORM"}'
-				   arg2 'Linux'
+				   arg2 "${platform}"
 				   ignoreCase false
 			   }
 			   runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 			   buildStep(class: 'hudson.tasks.Shell') {
-				   command commandBuilder()
+				   command this.commandBuilder()
 		   }
 		}
 		}
