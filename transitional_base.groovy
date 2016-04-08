@@ -22,12 +22,15 @@
 */
 
 import org.kde.ci.*
+
 import groovy.io.FileType
+
 import org.yaml.snakeyaml.Yaml
 
 // Begin with the base defaults yaml that get retrieved via update-setup
 def basePath = System.getProperty('user.home') + '/scripts/metadata/'
 def GroupFile = []
+def allJobsList = []
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 // Now lets get the repo-metadata and bring in any overrides
 //def rout = new StringBuilder(), rerr = new StringBuilder()
@@ -36,23 +39,30 @@ def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	
 
 
 println(GroupFile.toString())
+
 assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
 
 
 GroupFile.each { group ->	
 	println(group)
 	// Get the Yaml data into a usable object
-	def yamldata = new ImportConfig().getConfig(basePath, group)	
+	def defaultyamldata = new ImportConfig().getConfig(basePath, group)	
 	groupName = group - '.yml'	
 	// Now for each project data Map we feed that in a current Project Object Class	
-	yamldata.each { jobkey, curr_project ->
-		
-		def jobname = jobkey				
+	defaultyamldata.each { jobkey, curr_project ->		
+		def jobname = jobkey
+		allJobsList << jobname				
 		Project job = Project.newInstance(curr_project)
 		//debug only
 		assert job.group_name == groupName
-		//println("Processing " + jobname + " Value Dump: " + curr_project.toString() + "\n")	
-		
+		println "Processing group: " + groupName
+		// Get repo-metadata
+		def repoDataFile = []
+		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/' + groupName + '/' + jobname + '/'
+		def repoconfigFiles = new File(repobasePath)
+		def repoyamldata = new ImportConfig().getConfig(repobasePath, 'metadata.yaml')
+		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
+		println repometa.description
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
@@ -74,11 +84,12 @@ GroupFile.each { group ->
 						def variations = platform.PlatformVariations(options)
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
-						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
-						println compiler
-						println jobType
-						println fullname
-						if (currtrack) {							
+						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)						
+						if (currtrack) {
+							println compiler
+							println jobType
+							println fullname
+							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
 							DSLClosures misc = new DSLClosures()
