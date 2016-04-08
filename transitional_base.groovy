@@ -78,49 +78,48 @@ GroupFile.each { group ->
 							def jobType = platform.jobType
 							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
- 			//Bring in our DSL Closure generation classes	
-			DSLMisc misc = new DSLMisc()
-			SCM scm = new SCM()			
-			/* BEGIN DSL CODE */
+							//Bring in our DSL Closure generation classes	
+							DSLMisc misc = new DSLMisc()
+							SCM scm = new SCM()			
+							/* BEGIN DSL CODE */
 		
-			jobType(job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)) {
-			configure { project ->
-				project / 'actions' {}				
-			}	
-			// token for api		
-			configure misc.SetToken(jobname)
-			// Job description
-			description job.DefineDescription()
-			// Set the log history
-			logRotator(job.getLogrotator())
-			// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
-			configure { project ->
-				project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
-					skip false
+							jobType(job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)) {
+								configure { project ->
+									project / 'actions' {}				
+								}	
+								// token for api		
+								configure misc.SetToken(jobname)
+								// Job description
+								description job.DefineDescription()
+								// Set the log history
+								logRotator(job.getLogrotator())
+								// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
+								configure { project ->
+									project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
+										skip false
+									}
+								}
+								// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
+								customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
+								childCustomWorkspace(".")
+								// Make sure qt4 builds are using trusty containers
+								if (branchGroup =~ "qt4") {
+									configure { project ->
+										project.name = 'matrix-project'
+										project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+											groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+										}
+									}
+								}
+								platform.PlatformVariations(Variations)
+							}
+							} else {
+								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
+								return // end freestyle job			
+							}// end platform
+					} 				
 				}
-			}
-			// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
-			customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
-			childCustomWorkspace(".")
-			// Make sure qt4 builds are using trusty containers
-			if (branchGroup =~ "qt4") {
-				configure { project ->
-					project.name = 'matrix-project'
-					project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-					groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
-					}
-				}
-			}
-			platform.PlatformVariations(Variations)
-			} // end freestyle job
-			} else {
-				println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
-				return
-			}// end platform
-			} 
-				
-			}
-		}			
-	}
-}	
+			}			
+		}
+	}	
 }
