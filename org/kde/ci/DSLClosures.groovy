@@ -159,14 +159,14 @@ class DSLClosures {
 	}
 	
 	static List genParsers(platform, compiler) {
-		List parserList
+		List parserList = []
 		
-		parserList.put('Missing Dependencies')						
+		parserList.push('Missing Dependencies')						
 		if (platform == 'Linux') {
-			parserList.put('Appstreamercli')			
+			parserList.push('Appstreamercli')			
 		}
 		if (compiler == 'gcc') {
-			parserList.put('GNU C Compiler 4 (gcc)')
+			parserList.push('GNU C Compiler 4 (gcc)')
 		}
 		return parserList
 	}				
