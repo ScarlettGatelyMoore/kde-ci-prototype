@@ -52,7 +52,7 @@ class Platform {
 			List compilers = compiler	
 			return compilers 
 		} else { 
-			String acompiler = compiler.toString() 
+			String acompiler = compiler.getValue().toString()
 			return acompiler
 		}
 	}
