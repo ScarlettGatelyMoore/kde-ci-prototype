@@ -56,6 +56,7 @@ GroupFile.each { group ->
 		//debug only
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
+		// get repo-metadata for all except the default project		
 		if (jobname != 'project') {
 		// Get repo-metadata
 		def repoDataFile = []
@@ -63,7 +64,7 @@ GroupFile.each { group ->
 		def repoconfigFiles = new File(repobasePath)
 		def repoyamldata = new ImportConfig().getConfig(repobasePath, 'metadata.yaml')
 		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
-		println repometa.description
+		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
@@ -76,61 +77,90 @@ GroupFile.each { group ->
 			bg.each { branchGroup , track  -> 
 				def branch = tracks.get(track)
 				// Process each platform
-				Map pf = job.SetPlatformMap()
-				println pf					
-				pf.each { PLATFORM , options ->													
+				Map pf = job.SetPlatformMap()	
+				pf.each { PLATFORM , options ->																	
 						Platform platform = new Platform()
-						def compiler = platform.genCompilers(options).minus('[').minus(']')	
+						def compiler = platform.genCompilers(options)
+						if (compiler.getClass() == List) { 
+							//STUB Future support for multiple compiler matrix builds	
+							println "This needs a matrix build, time to write that code."						
+						} 
 						def variations = platform.PlatformVariations(options)
+						def variationClosure
+						if (variations) {
+							variationClosure = Variations(variations)
+						}
+						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
-						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)						
+						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
+						// If the current track is enabled for this platform generate job						
 						if (currtrack) {
-							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
+							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
+							+ compiler
 							//Bring in our DSL Closure generation classes	
 							DSLClosures misc = new DSLClosures()
-							SCM scm = new SCM()			
-							/* BEGIN DSL CODE */
-		
-							"${jobType}"(fullname) {
-								configure { project ->
-									project / 'actions' {}				
-								}	
-								// token for api		
-								configure misc.SetToken(jobname)
-								// Job description
-								description job.DefineDescription(repometa.name, repometa.description)
-								// Set the log history
-								logRotator(job.getLogrotator())
-								// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
-								configure { project ->
-									project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
-										skip false
-									}
-								}
-								// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
-								customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
-								if (jobType == 'matrixJob' ) {
-								childCustomWorkspace(".")
-								}
-								// Make sure qt4 builds are using trusty containers
-								if (branchGroup =~ "qt4") {
+							if ( repometa.hasrepo && repometa.repoactive ) {
+								SCM scm = new SCM()	
+								scmClosure = scm.generateSCM(SetRepoMap())
+									
+								/* BEGIN DSL CODE */
+								"${jobType}"(fullname) {
 									configure { project ->
-										project.name = 'matrix-project'
-										project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-											groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+										project / 'actions' {}				
+									}	
+									// token for api		
+									configure misc.SetToken(jobname)
+									// Job description
+									description job.DefineDescription(repometa.name, repometa.description)
+									// Set the log history
+									logRotator(job.getLogrotator())
+									// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
+									configure { project ->
+										project / 'properties' / 'org.jenkins.ci.plugins.html5__notifier.JobPropertyImpl' {
+											skip false
 										}
 									}
-								}
-								
-							}
-							} else {
+									// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
+									customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
+									if (jobType == 'matrixJob' ) {
+										childCustomWorkspace(".")
+										configure "${variationsClosure}"
+									}
+									// Make sure qt4 builds are using trusty containers
+									if (branchGroup =~ "qt4") {
+										configure { project ->									
+											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+												groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+											}
+										}
+									} else if (branchGroup =~ "kf5-minimum") {
+									configure { project ->								
+										project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+											groovyScript 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+										}
+									}
+									} else {
+									configure { project ->				
+										project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+											groovyScript 'def labelMap = [ Linux: "Linux", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+										}	
+									}
+									}
+									configure "${scmClosure}"
+								}// END DSL
+							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
+							// End repo / Failed repo check
+							} else { // end current job track	
 								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
-								return // end freestyle job			
-							}// end platform
-					} 				
-				}
-			}			
-		}
-	}	
-}
+								return	
+							} 	
+					} // End current platform 
+				} // End branchGroup 
+		} else {
+			println "No job creation due to ${jobname} Active status: " + job.getActive()
+			return // end job
+		}	// End Active
+	} } // End current project		
+} // End group	
+

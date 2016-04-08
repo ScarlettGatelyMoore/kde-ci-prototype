@@ -46,8 +46,8 @@ class Platform {
 			List compilers = compiler	
 			return compilers 
 		} else { 
-			String acompiler = compiler.toString()
-			return acompiler
+			String acompiler = compiler.toString()	
+			return acompiler.minus('[').minus(']')
 		}
 	}
 	static String determineJobType(variations, compiler) {

@@ -26,9 +26,12 @@ package org.kde.ci
 #
 */
 class SCM {
-	SCM() {}
+	
+	SCM() {		
+	}
 	
 	static Closure generateSCM(scm) {	
+		
 	def protocol = scm.get('protocol')
 	def address = scm.get('address')
 	def branches = scm.get('branch')
