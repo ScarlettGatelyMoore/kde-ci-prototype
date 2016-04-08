@@ -97,12 +97,12 @@ GroupFile.each { group ->
 						// If the current track is enabled for this platform generate job						
 						if (currtrack) {
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
-							+ compiler
+							+ " compiler " + compiler
 							//Bring in our DSL Closure generation classes	
 							DSLClosures misc = new DSLClosures()
 							if ( repometa.hasrepo && repometa.repoactive ) {
 								SCM scm = new SCM()	
-								scmClosure = scm.generateSCM(SetRepoMap())
+								scmClosure = scm.generateSCM(job.SetRepoMap())
 									
 								/* BEGIN DSL CODE */
 								"${jobType}"(fullname) {
