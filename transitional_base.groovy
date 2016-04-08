@@ -153,8 +153,20 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									steps {
-										misc.genBuildStep(PLATFORM)
+										//misc.genBuildStep(PLATFORM)
+										def home = System.getProperty('user.home')
+										def shell
+										if (PLATFORM == "Windows") {
+											shell = 'BatchFile'
+										} else {
+											shell = 'Shell'
+										}
+										"${shell}"("python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
+													"python ${home}/scripts/tools/prepare-environment.py" + \
+													"python ${home}/scripts/tools/perform-build.py"
+												  )
 									}
+									
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
 							// End repo / Failed repo check
