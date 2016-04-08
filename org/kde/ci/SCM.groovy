@@ -112,6 +112,7 @@ class SCM {
 							+ "rm PyQt-x11-gpl-4.11.3.tar.gz"
 				}
 			}
+			break
 		default:
 			return { project ->				
 				project / scm(class: 'hudson.plugins.git.GitSCM') {

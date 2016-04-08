@@ -102,6 +102,7 @@ GroupFile.each { group ->
 							DSLClosures misc = new DSLClosures()
 							if ( repometa.hasrepo && repometa.repoactive ) {
 								SCM scm = new SCM()	
+								println job.SetRepoMap()
 								scmClosure = scm.generateSCM(job.SetRepoMap(), branch)
 									
 								/* BEGIN DSL CODE */
