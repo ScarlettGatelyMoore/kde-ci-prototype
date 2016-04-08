@@ -70,11 +70,11 @@ GroupFile.each { group ->
 					println pf					
 					pf.each { PLATFORM , options ->													
 						Platform platform = new Platform()
-						List compiler = platform.genCompilers(options)	
-						List variations = platform.PlatformVariations(options)
+						def compiler = platform.genCompilers(options)	
+						def variations = platform.PlatformVariations(options)
 						def jobType = platformdetermineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
-						println compiler
+						println compiler variations
 						if (currtrack) {							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
