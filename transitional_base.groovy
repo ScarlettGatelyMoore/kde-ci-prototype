@@ -153,18 +153,8 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									steps {
-										//misc.genBuildStep(PLATFORM)
-										def home = System.getProperty('user.home')
-										def shell
-										if (PLATFORM == "Windows") {
-											shell = 'BatchFile'
-										} else {
-											shell = 'shell'
-										}
-										"${shell}"('python '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
-													'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
-													'python '+ "${home}" + '/scripts/tools/perform-build.py'
-												  )
+										misc.genBuildStep(PLATFORM)
+										
 									}
 									
 								}// END DSL

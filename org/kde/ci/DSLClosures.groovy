@@ -74,17 +74,17 @@ class DSLClosures {
 				
 	}
 	static Closure genBuildStep(platform) {
-	def home = System.getProperty('user.home') 
-	def shell
-	if (platform == "Windows") {
-		shell = 'BatchFile'
-	} else {
-		shell = 'Shell'
-	}
-	return { "${shell}"("python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
-						"python ${home}/scripts/tools/prepare-environment.py" + \
-						"python ${home}/scripts/tools/perform-build.py") 
-			}
+		def home = System.getProperty('user.home')
+		def shell
+		if (platform == "Windows") {
+			shell = 'BatchFile'
+		} else {
+			shell = 'shell'
+		}
+		return "${shell}"('python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+						  'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
+						  'python '+ "${home}" + '/scripts/tools/perform-build.py'
+						)
 	}
 
 }
