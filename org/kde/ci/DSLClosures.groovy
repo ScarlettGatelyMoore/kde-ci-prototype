@@ -53,6 +53,30 @@ class DSLClosures {
 			}
 		}
 	}
+	static Closure Compilers(compilers) {
+		return { project ->			
+			project / axes / 'hudson.matrix.TextAxis' {
+				name 'compiler'
+				values {
+					 compilers.each {
+						 if (it != null) { string it }
+					}
+				}
+			}
+		}
+	}
+	static Closure OptionalPlatformsMatrix(platforms) {
+		return { project ->			
+			project / axes / 'hudson.matrix.TextAxis' {
+				name 'PLATFORM'
+				values {
+					platforms.each {
+						if (it != null) { string it }
+					}
+				}
+			}
+		}
+	}
 	static Closure DownstreamTriggers(downstream, branchGroup, track, branch, platform, compiler) {
 		String downstreamall = ""
 		String downstreamnew
@@ -97,26 +121,64 @@ class DSLClosures {
 		}
 	
 	}
-		/*return { project ->
-				project / builders <<
-				'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
-					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
-						arg1 '${ENV,var="PLATFORM"}'
-						arg2 "${platform}"
-						ignoreCase false
+	static Closure genWarningsPublisher(platform, compiler) {
+		List parselist = genParsers(platform, compiler)
+		return { project ->
+			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+				publishers {
+					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+						condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+							arg1 '${ENV,var="compiler"}'
+							arg2 "${compiler}"
+					ignoreCase false
+				}
+				publisherList {
+					'hudson.plugins.warnings.WarningsPublisher' {
+						canRunOnFailed false
+						usePreviousBuildAsReference false
+						useStableBuildAsReference false
+						useDeltaValues false
+						shouldDetectModules false
+						dontComputeNew true
+						doNotResolveRelativePaths true
+						parserConfigurations {}
+						consoleParsers {
+							parseList.each { parser ->
+							'hudson.plugins.warnings.ConsoleParser' {
+								parserName { string it }
+							}
+							
+							
+							}
+						analysisCollector {
+							warnings()
+							computeNew()
+							useStableBuildAsReference()
+						}
+						}
 					}
-					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-					buildStep(class: 'hudson.tasks.' + "${shell}") {
-						command commandBuilder()
-					}
-				}			
+				runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
+				}
+				}
 			}
-	}*/
+	}
+	static List genParsers(platform, compiler) {
+		def parserList = new List()
+		
+		parserList.put('Missing Dependencies')						
+		if (platform == 'Linux') {
+			parserList.put('Appstreamercli')			
+		}
+		if (compiler == 'gcc') {
+			parserList.put('GNU C Compiler 4 (gcc)')
+		}
+		return parserList
+	}				
 	static String commandBuilder(platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null) {
 		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
 		if (custom_command) {
-			jobcommand.append("${custom_command}\n")
+			jobcommand.append(custom_command)
 		}
 		if (platform == 'Linux') {
 			jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox-local.py\n')

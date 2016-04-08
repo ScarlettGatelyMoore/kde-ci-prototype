@@ -129,6 +129,9 @@ GroupFile.each { group ->
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
 										configure variationClosure
+										assignedNode <<  'master'
+										canRoam <<	 false
+										}
 									}
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
@@ -149,6 +152,21 @@ GroupFile.each { group ->
 												groovyScript 'def labelMap = [ Linux: "Linux", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 										}	
 									}
+									}
+									wrappers {
+										timestamps()
+										colorizeOutput()
+										environmentVariables {
+											env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
+											env('JENKINS_TEST_HOME', '/home/jenkins')
+											env('ASAN_OPTIONS', 'detect_leaks=0')
+											env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
+											env('XDG_DATA_DIRS', '/usr:/usr/share:${JENKINS_TEST_HOME}/.local/share')
+											env('XDG_DATA_HOME', '$XDG_DATA_HOME:${JENKINS_TEST_HOME}/.qttest/share:${JENKINS_TEST_HOME}/.local/share')
+											env('XDG_RUNTIME_DIR', '/tmp/xdg-runtime-dir')
+											env('XDG_CACHE_HOME', '${JENKINS_TEST_HOME}/.qttest/cache')
+										}
+											  
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
