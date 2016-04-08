@@ -56,7 +56,7 @@ class Platform {
 			this.jobType = 'freestyleJob'
 		}
 	}
-	static List PlatformVariations(options) {
+	def PlatformVariations(options) {
 		def var = options.find { key, value -> key == 'Variations' }
 		if (var) {
 			return var
