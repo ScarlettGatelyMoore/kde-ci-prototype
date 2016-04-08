@@ -171,7 +171,7 @@ GroupFile.each { group ->
 									configure misc.genBuildStep(PLATFORM, job_command)	
 									configure { project ->
 										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {											
-											misc.genWarningsPublisher(PLATFORM, compiler)											
+											publishers << misc.genWarningsPublisher(PLATFORM, compiler)											
 										}
 									}							
 									
