@@ -159,7 +159,7 @@ GroupFile.each { group ->
 										if (PLATFORM == "Windows") {
 											shell = 'BatchFile'
 										} else {
-											shell = 'Shell'
+											shell = 'shell'
 										}
 										"${shell}"('python '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
 													'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
