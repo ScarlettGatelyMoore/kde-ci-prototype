@@ -70,8 +70,9 @@ GroupFile.each { group ->
 					println pf					
 					pf.each { PLATFORM , options ->													
 						Platform platform = new Platform()
-						List compiler = platform.genCompilers()						
-						def jobType = platform.jobType
+						List compiler = platform.genCompilers(options)	
+						List variations = platform.PlatformVariations(options)
+						def jobType = platformdetermineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
 						println compiler
 						if (currtrack) {							
@@ -109,7 +110,7 @@ GroupFile.each { group ->
 										}
 									}
 								}
-								platform.PlatformVariations(Variations)
+								
 							}
 							} else {
 								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
