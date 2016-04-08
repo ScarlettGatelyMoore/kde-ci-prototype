@@ -141,7 +141,7 @@ class DSLClosures {
 							doNotResolveRelativePaths true
 							parserConfigurations {}
 							consoleParsers {
-								parseList.each { parser ->
+								parselist.each { parser ->
 									'hudson.plugins.warnings.ConsoleParser' {
 										parserName { string it }
 									}							
