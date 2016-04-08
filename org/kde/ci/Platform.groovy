@@ -59,7 +59,7 @@ class Platform {
 		if (variations != null || compiler.getClass() == List) {
 			this.jobType = 'matrixJob'
 		} else {
-			this.jobType = 'freestyleJob'
+			this.jobType = 'freeStyleJob'
 		}
 	}
 	def PlatformVariations(options) {
