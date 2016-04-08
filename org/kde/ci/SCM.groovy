@@ -30,12 +30,10 @@ class SCM {
 	SCM() {		
 	}
 	
-	static Closure generateSCM(scm) {	
+	static Closure generateSCM(scm, branch) {	
 		
 	def protocol = scm.get('protocol')
 	def address = scm.get('address')
-	def branches = scm.get('branch')
-	def branch = branches.find { key, value -> key == track }
 	boolean showbrowser = scm.get('browser')	
 		switch(protocol) {
 		case 'svn':
@@ -57,8 +55,7 @@ class SCM {
 			}
 			break
 		case 'git':
-			return { project ->
-				project.name = 'matrix-project'
+			return { project ->				
 				project / scm(class: 'hudson.plugins.git.GitSCM') {
 					userRemoteConfigs {
 						'hudson.plugins.git.UserRemoteConfig' {
@@ -86,8 +83,7 @@ class SCM {
 			}
 			break
 		case 'lp':
-			return { project ->
-				project.name = 'matrix-project'
+			return { project ->				
 				project / scm(class: 'hudson.plugins.bazaar.BazaarSCM') {
 					source address
 					cleantree false
@@ -96,8 +92,7 @@ class SCM {
 				}
 			break
 		case 'hg':
-			 return { project ->
-				project.name = 'matrix-project'
+			 return { project ->				
 				project / scm(class: 'hudson.plugins.mercurial.MercurialSCM') {
 					source address
 					modules ''
@@ -110,8 +105,7 @@ class SCM {
 			}
 			break
 		case 'tar':
-			return { project ->
-				project.name = 'matrix-project'
+			return { project ->				
 				buildStep(class: 'hudson.tasks.' + "${this.shell}") {
 					command "wget " + address + " \n" \
 							+ "tar --strip-components=1 -xf PyQt-x11-gpl-4.11.3.tar.gz \n" \
@@ -119,8 +113,7 @@ class SCM {
 				}
 			}
 		default:
-			return { project ->
-				project.name = 'matrix-project'
+			return { project ->				
 				project / scm(class: 'hudson.plugins.git.GitSCM') {
 					userRemoteConfigs {
 						'hudson.plugins.git.UserRemoteConfig' {

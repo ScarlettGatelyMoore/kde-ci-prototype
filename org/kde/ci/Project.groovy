@@ -142,17 +142,7 @@ public final class Project {
 	}
 	
 	def Map SetRepoMap() {
-		def repo =  [:]
-		this.repositories.each { key, value ->
-			repo.put(key, value)
-		}
-		this.branch.each { key, value ->
-			repo.put(key, value)
-		}
-		this.branchGrouptracks.each { key, value ->
-			repo.put(key, value)
-		}
-		repo.put('excluded', this.excluded_repositories)
+		def repo =  [:] << this.repositories
 		repo.put('browser', this.webview)
 		return repo
 	}
