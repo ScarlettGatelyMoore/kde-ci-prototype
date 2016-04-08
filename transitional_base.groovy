@@ -80,7 +80,7 @@ GroupFile.each { group ->
 				println pf					
 				pf.each { PLATFORM , options ->													
 						Platform platform = new Platform()
-						def compiler = platform.genCompilers(options)	
+						def compiler = platform.genCompilers(options).minus('[').minus(']')	
 						def variations = platform.PlatformVariations(options)
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
