@@ -48,6 +48,7 @@ public final class Project {
 	Integer priority
 	Boolean active
 	Boolean webview
+	String custom_build_command
 	
 	// Internal
 	List viewjobslist
@@ -107,6 +108,9 @@ public final class Project {
 	public void setBrowser(Boolean webview){
 		this.browser = webview
 	}	
+	public void setCustomBuildCommand(String custom_build_command){
+		this.custom_build_command = custom_build_command
+	}
 	
 	Project() {		
 	}

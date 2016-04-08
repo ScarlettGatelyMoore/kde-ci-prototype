@@ -92,7 +92,7 @@ GroupFile.each { group ->
 						if (variations) {
 							variationClosure = misc.Variations(variations)
 						}
-						println misc.genBuildStep(PLATFORM)
+						def job_command = job.custom_build_command
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
@@ -152,7 +152,7 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep(PLATFORM)									
+									configure misc.genBuildStep(PLATFORM, job_command)									
 									
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }

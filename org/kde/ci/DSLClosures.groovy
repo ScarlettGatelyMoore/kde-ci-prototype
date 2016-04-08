@@ -72,14 +72,15 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(platform) {		
+	static Closure genBuildStep(platform, custom_command) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
 		} else {
 			shell = 'Shell'
 		}
-		def job_command = this.commandBuilder()
+		
+		def job_command = commandBuilder(platform, custom_command)		
 		return { project ->
 			project / builders <<
 			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
@@ -94,6 +95,7 @@ class DSLClosures {
 		   }
 		}
 		}
+	
 	}
 		/*return { project ->
 				project / builders <<
@@ -110,11 +112,18 @@ class DSLClosures {
 				}			
 			}
 	}*/
-	def commandBuilder() {
+	def commandBuilder(platform, custom_command) {
 		def home = System.getProperty('user.home')
-		return 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+		if (custom_command) {
+		return "${custom_command}" + "\n" + \
+			   'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
 			   'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
 			   'python '+ "${home}" + '/scripts/tools/perform-build.py'
+		} else {
+			return 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+			   	   'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
+			       'python '+ "${home}" + '/scripts/tools/perform-build.py'
+		}
 	}
 
 }
