@@ -148,7 +148,7 @@ GroupFile.each { group ->
 										}	
 									}
 									}
-									configure "${scmClosure}"
+									configure scmClosure
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
 							// End repo / Failed repo check

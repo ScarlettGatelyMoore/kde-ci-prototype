@@ -55,7 +55,8 @@ class SCM {
 			}
 			break
 		case 'git':
-			return { project ->				
+			return { project ->	
+				project.name = 'project'
 				project / scm(class: 'hudson.plugins.git.GitSCM') {
 					userRemoteConfigs {
 						'hudson.plugins.git.UserRemoteConfig' {
