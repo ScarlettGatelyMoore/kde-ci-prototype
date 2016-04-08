@@ -130,8 +130,7 @@ GroupFile.each { group ->
 										childCustomWorkspace(".")
 										configure variationClosure
 										assignedNode <<  'master'
-										canRoam <<	 false
-										}
+										canRoam <<	 false										
 									}
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
