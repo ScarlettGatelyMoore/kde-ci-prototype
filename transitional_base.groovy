@@ -103,7 +103,9 @@ GroupFile.each { group ->
 								}
 								// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
 								customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
+								if (jobType == 'matrixJob' ) {
 								childCustomWorkspace(".")
+								}
 								// Make sure qt4 builds are using trusty containers
 								if (branchGroup =~ "qt4") {
 									configure { project ->
