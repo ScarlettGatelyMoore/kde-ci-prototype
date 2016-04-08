@@ -72,7 +72,7 @@ class DSLClosures {
 		}
 				
 	}
-	def genBuildStep(platform) {		
+	static Closure genBuildStep(platform) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
