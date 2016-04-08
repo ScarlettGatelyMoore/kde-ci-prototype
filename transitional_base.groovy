@@ -56,6 +56,7 @@ GroupFile.each { group ->
 		//debug only
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
+		if (jobname != 'project') {
 		// Get repo-metadata
 		def repoDataFile = []
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/' + groupName + '/' + jobname + '/'
@@ -70,15 +71,14 @@ GroupFile.each { group ->
 			Map tracks = job.getBranch()		
 			// We have branchGroups that split into sections for releases/development 
 			// We need to process a new jobset for each of these groups.
-			if (jobname != 'project') {
-				Map bg = job.getBranchGrouptracks()
-				//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
-				bg.each { branchGroup , track  -> 
-					def branch = tracks.get(track)
-					// Process each platform
-					Map pf = job.SetPlatformMap()
-					println pf					
-					pf.each { PLATFORM , options ->													
+			Map bg = job.getBranchGrouptracks()
+			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
+			bg.each { branchGroup , track  -> 
+				def branch = tracks.get(track)
+				// Process each platform
+				Map pf = job.SetPlatformMap()
+				println pf					
+				pf.each { PLATFORM , options ->													
 						Platform platform = new Platform()
 						def compiler = platform.genCompilers(options)	
 						def variations = platform.PlatformVariations(options)
