@@ -81,11 +81,9 @@ class DSLClosures {
 	} else {
 		shell = 'Shell'
 	}
-	return { "${shell}"(class: 'hudson.tasks.' + "${shell}") {
-				command "python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
+	return { "${shell}"("python ${home}/scripts/tools/update-setup-sandbox-local.py \n" + \
 						"python ${home}/scripts/tools/prepare-environment.py" + \
-						"python ${home}/scripts/tools/perform-build.py"
-				}			
+						"python ${home}/scripts/tools/perform-build.py") 
 			}
 	}
 
