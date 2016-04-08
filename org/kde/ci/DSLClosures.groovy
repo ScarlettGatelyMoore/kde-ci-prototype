@@ -143,14 +143,11 @@ class DSLClosures {
 							doNotResolveRelativePaths true
 							parserConfigurations {}
 							consoleParsers {
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName 'Missing Dependencies'
-								}
-								/*parselist.each { parser ->
+								parselist.each { parser ->
 									'hudson.plugins.warnings.ConsoleParser' {
 										parserName { string it }
 									}							
-								}*/
+								}
 							}
 						}
 					}
