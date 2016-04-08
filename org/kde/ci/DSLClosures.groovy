@@ -157,6 +157,7 @@ class DSLClosures {
 				}
 				runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
+		}
 	}
 	
 	static List genParsers(platform, compiler) {
