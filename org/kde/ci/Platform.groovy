@@ -50,10 +50,13 @@ class Platform {
 		if ( num > 1 ) {
 			List compilers = compiler	
 			return compilers 
-		} else { return compiler.toString() }
+		} else { 
+			String acompiler = compiler.toString() 
+			return acompiler
+		}
 	}
 	def determineJobType(variations, compiler) {
-		if (variations != null || compiler.getClass() == ArrayList) {
+		if (variations != null || compiler.getClass() == List) {
 			this.jobType = 'matrixJob'
 		} else {
 			this.jobType = 'freestyleJob'
