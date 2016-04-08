@@ -56,7 +56,7 @@ class Platform {
 	
 	def genCurrentPlatform(options, track) {
 		def tracks = options.find { key, value -> key == 'tracks' }
-		if ( tracks.containsValue(track)) {
+		if ( tracks == track ) {
 			return true
 		}
 	}
