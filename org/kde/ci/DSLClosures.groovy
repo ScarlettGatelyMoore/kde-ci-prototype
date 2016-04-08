@@ -72,13 +72,12 @@ class DSLClosures {
 		}
 				
 	}
-	def genBuildStep(platform) {
-		def home = System.getProperty('user.home')
+	def genBuildStep(platform) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
 		} else {
-			shell = 'shell'
+			shell = 'Shell'
 		}
 		return { project ->
 				project / builders <<
@@ -90,12 +89,16 @@ class DSLClosures {
 					}
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 					buildStep(class: 'hudson.tasks.' + "${shell}") {
-						command 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
-							'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
-							'python '+ "${home}" + '/scripts/tools/perform-build.py'
+						command commandBuilder()
 					}
 				}			
 			}
+	}
+	def commandBuilder() {
+		def home = System.getProperty('user.home')
+		return 'python3 '+ "${home}" + '/scripts/tools/update-setup-sandbox-local.py' + "\n" + \
+			   'python '+ "${home}" + '/scripts/tools/prepare-environment.py' + "\n" + \
+			   'python '+ "${home}" + '/scripts/tools/perform-build.py'
 	}
 
 }
