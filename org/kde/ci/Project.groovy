@@ -53,9 +53,6 @@ public final class Project {
 	List viewjobslist
 	String full_jobname
 		
-	public void setPrettyName(String pretty_name){
-		this.pretty_name = pretty_name
-	}
 	public void setGroupName(String group_name){
 		this.group_name = group_name
 	}
