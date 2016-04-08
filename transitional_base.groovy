@@ -70,14 +70,12 @@ GroupFile.each { group ->
 					println pf					
 					pf.each { PLATFORM , options ->													
 						Platform platform = new Platform(PLATFORM, options)
-						
+						String compiler = platform.COMPILER
+						List Variations = platform.Variations
+						def jobType = platform.jobType
 						def currtrack = platform.genCurrentPlatform(platform.options, track)
 						println currtrack
-						if (currtrack) {
-							String compiler = platform.COMPILER
-							List Variations = platform.Variations
-							def jobType = platform.jobType
-							
+						if (currtrack) {							
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch
 							//Bring in our DSL Closure generation classes	
 							DSLMisc misc = new DSLMisc()

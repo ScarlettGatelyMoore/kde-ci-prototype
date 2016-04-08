@@ -161,8 +161,8 @@ public final class Project {
 		return [:] << this.platforms
 	}
 	
-	def String SetProjectFullName(jobname, branchGroup, track, branch) {
-		this.full_jobname = (jobname + " " + branchGroup + " " + track + " " + branch).replaceAll('/','-') 		
+	def String SetProjectFullName(jobname, branchGroup, track, branch, platform, compiler) {
+		this.full_jobname = (jobname + " " + branchGroup + " " + track + " " + branch + " " + platform + " " + compiler).replaceAll('/','-') 		
 		return this.full_jobname
 	}
 	
