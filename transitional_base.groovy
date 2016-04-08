@@ -72,7 +72,7 @@ GroupFile.each { group ->
 						Platform platform = new Platform()
 						def compiler = platform.genCompilers(options)	
 						def variations = platform.PlatformVariations(options)
-						def jobType = platformdetermineJobType(variations, compiler)
+						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
 						println compiler variations
 						if (currtrack) {							

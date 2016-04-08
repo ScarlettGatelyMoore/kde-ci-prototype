@@ -45,7 +45,7 @@ class Platform {
 			 else { return false }			
 	}
 	def genCompilers(options) {
-		def compiler = options.find { key, value -> key == 'compiler' }
+		def compiler = options.find { key, value -> key == 'compilers' }
 		
 		return compiler
 	}
