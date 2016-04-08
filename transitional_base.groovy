@@ -129,8 +129,7 @@ GroupFile.each { group ->
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
 										configure variationClosure
-										assignedNode <<  'master'
-										canRoam <<	 false										
+										label('master')									
 									}
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
