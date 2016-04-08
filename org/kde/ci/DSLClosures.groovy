@@ -92,6 +92,8 @@ class DSLClosures {
 				   command commandBuilder()
 		   }
 		}
+		}
+	}
 		/*return { project ->
 				project / builders <<
 				'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
