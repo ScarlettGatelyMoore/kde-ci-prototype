@@ -122,9 +122,7 @@ class DSLClosures {
 	
 	}
 	static Closure genWarningsPublisher(platform, compiler) {
-	List parselist = genParsers(platform, compiler)
-	
-	return	{ project ->
+		return	{ project ->
 			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
 				publishers {
 					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
@@ -145,11 +143,7 @@ class DSLClosures {
 							parserConfigurations {}
 							consoleParsers {
 								'hudson.plugins.warnings.ConsoleParser' {
-									parselist.each {																				
-										if (it) {  
-											parserName { it }
-										}
-									}
+									genParsers(platform, compiler)
 								}
 							}
 						}
@@ -167,15 +161,14 @@ class DSLClosures {
 		
 	}
 	
-	static List genParsers(platform, compiler) {
-		List parserList = []
-		
-		parserList.push('Missing Dependencies')						
+	static String genParsers(platform, compiler) {
+		def parserList = new StringBuilder()
+				
+		parserList.append(parserName { 'Missing Dependencies' } + '\n')						
 		if (platform == 'Linux') {
-			parserList.push('Appstreamercli')			
-		}
-		if (compiler == 'gcc') {
-			parserList.push('GNU C Compiler 4 (gcc)')
+			parserList.append(parserName { 'Appstreamercli' } + '\n')			
+		} else if (compiler == 'gcc') {
+			parserList.append(parserName { 'GNU C Compiler 4 (gcc)' } + '\n')
 		}
 		return parserList
 	}				
