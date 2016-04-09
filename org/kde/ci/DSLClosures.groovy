@@ -142,9 +142,7 @@ class DSLClosures {
 							doNotResolveRelativePaths true
 							parserConfigurations {}
 							consoleParsers {
-								'hudson.plugins.warnings.ConsoleParser' {
-									genParsers(platform, compiler)
-								}
+								genParsers(platform, compiler)
 							}
 						}
 					}
