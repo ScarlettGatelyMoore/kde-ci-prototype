@@ -152,18 +152,19 @@ class DSLClosures {
 									}
 								}
 							}
+						}
 					}
 					analysisCollector {
 						warnings()
 						computeNew()
 						useStableBuildAsReference()
 					}						
-					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")			
-				
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")					
+					}
+				}
 			}
 		}
-	}
-	
+	}	
 	}
 	
 	static List genParsers(platform, compiler) {
