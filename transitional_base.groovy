@@ -89,8 +89,12 @@ GroupFile.each { group ->
 						DSLClosures misc = new DSLClosures()
 						def variations = platform.PlatformVariations(options)
 						def variationClosure
+						def compilerClosure
 						if (variations) {
 							variationClosure = misc.Variations(variations)
+						}
+						if (compiler.getClass() == List) {
+							compilerClosure = misc.Compilers(compiler)
 						}
 						def job_command = job.custom_build_command
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
@@ -126,11 +130,7 @@ GroupFile.each { group ->
 									}
 									// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
 									customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
-									if (jobType == 'matrixJob' ) {
-										childCustomWorkspace(".")
-										configure variationClosure
-										label('master')									
-									}
+									
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
 										configure { project ->									
@@ -171,7 +171,12 @@ GroupFile.each { group ->
 									configure misc.genBuildStep(PLATFORM, job_command)	
 									configure misc.genWarningsPublisher(PLATFORM, compiler)							
 										
-																
+									if (jobType == 'matrixJob' ) {
+										childCustomWorkspace(".")
+										configure variationClosure
+										configure compilerClosure
+										label('master')
+									}
 									
 								}// END DSL
 							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
