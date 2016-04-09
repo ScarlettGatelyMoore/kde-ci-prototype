@@ -145,9 +145,9 @@ class DSLClosures {
 							parserConfigurations {}
 							consoleParsers {
 								'hudson.plugins.warnings.ConsoleParser' {
-									parserName {
-										parselist.each {
-											if (it) { string it }
+									parselist.each {																				
+										if (it) {  
+											parserName { it }
 										}
 									}
 								}
