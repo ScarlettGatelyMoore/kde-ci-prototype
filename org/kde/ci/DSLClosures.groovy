@@ -142,7 +142,19 @@ class DSLClosures {
 							doNotResolveRelativePaths true
 							parserConfigurations {}
 							consoleParsers {
-								genParsers(platform, compiler)
+								'hudson.plugins.warnings.ConsoleParser' { 
+									parserName 'Missing Dependencies' 
+								}
+								if(platform == 'Linux'){
+								'hudson.plugins.warnings.ConsoleParser' { 
+									parserName 'Appstreamercli' 
+									}
+								}
+								if (compiler == 'gcc') {
+								'hudson.plugins.warnings.ConsoleParser' { 
+									parserName  'GNU C Compiler 4 (gcc)' 
+									}
+								}
 							}
 						}
 					}
@@ -162,12 +174,12 @@ class DSLClosures {
 	static String genParsers(platform, compiler) {
 		def parserList = new StringBuilder()
 				
-		parserList.append(''''hudson.plugins.warnings.ConsoleParser' { parserName 'Missing Dependencies' }\n''')						
+		parserList.append()						
 		if (platform == 'Linux') {
-			parserList.append(''''hudson.plugins.warnings.ConsoleParser' { parserName 'Appstreamercli' }\n''')			
+			parserList.append('''\n''')			
 		} 
 		if (compiler == 'gcc') {
-			parserList.append(''''hudson.plugins.warnings.ConsoleParser' { parserName  'GNU C Compiler 4 (gcc)' }\n''')
+			parserList.append('''\n''')
 		}
 		return parserList
 	}				
