@@ -164,14 +164,15 @@ class DSLClosures {
 	static String genParsers(platform, compiler) {
 		def parserList = new StringBuilder()
 				
-		parserList.append('hudson.plugins.warnings.ConsoleParser\n' \
-				{ parserName 'Missing Dependencies\n' })						
+		parserList.append('hudson.plugins.warnings.ConsoleParser' \
+				{ parserName 'Missing Dependencies' })						
 		if (platform == 'Linux') {
-			parserList.append('hudson.plugins.warnings.ConsoleParser\n' \
-				{ parserName 'Appstreamercli\n' } )			
-		} else if (compiler == 'gcc') {
-			parserList.append('hudson.plugins.warnings.ConsoleParser\n' \
-				{ parserName  'GNU C Compiler 4 (gcc)\n' } )
+			parserList.append('\n' + 'hudson.plugins.warnings.ConsoleParser' \
+				{ parserName 'Appstreamercli' } )			
+		} 
+		if (compiler == 'gcc') {
+			parserList.append('\n' + 'hudson.plugins.warnings.ConsoleParser' \
+				{ parserName  'GNU C Compiler 4 (gcc)' } )
 		}
 		return parserList
 	}				
