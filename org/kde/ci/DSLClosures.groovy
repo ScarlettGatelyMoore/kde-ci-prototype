@@ -124,7 +124,7 @@ class DSLClosures {
 	static Closure genWarningsPublisher(platform, compiler) {
 	List parselist = genParsers(platform, compiler)
 	parselist.each { parser ->
-	return 	{ project ->
+	return	{ project ->
 			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
 				publishers {
 					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
@@ -144,25 +144,26 @@ class DSLClosures {
 							doNotResolveRelativePaths true
 							parserConfigurations {}
 							consoleParsers {
-								
-									'hudson.plugins.warnings.ConsoleParser' {
-										parserName { string it }
-									}							
-								
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName {
+										parselist.each {
+											if (it) { string it }
+										}
+									}
+								}
 							}
-						}
 					}
 					analysisCollector {
 						warnings()
 						computeNew()
 						useStableBuildAsReference()
 					}						
-					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-				}
-				}
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")			
+				
 			}
 		}
 	}
+	
 	}
 	
 	static List genParsers(platform, compiler) {
