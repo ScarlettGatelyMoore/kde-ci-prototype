@@ -205,4 +205,4 @@ GroupFile.each { group ->
 
 Views view = new Views()
 
-view.genListViews(CurrentView, CurrentViewJobs)
+configure view.genListViews(CurrentView, CurrentViewJobs)
