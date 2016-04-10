@@ -30,14 +30,12 @@ class Views {
 	Views() {		
 	}
 	
-	def genListViews(view, jobsList) {
+	def genListViews(String view, jobsList) {
 		return { node ->
-			node / 'views' << 'listViews' {
-			owner('class:"hudson"' + ' reference="../../.."') {}
+			node / 'views' << 'listViews' {			
 			name view
 			filterExecutors false
-			filterQueue false
-			properties(class: "hudson.model.View$PropertyList") {}
+			filterQueue false			
 			jobNames {
 				comparator(class:"hudson.util.CaseInsensitiveComparator") {
 					jobsList.each {
