@@ -32,27 +32,28 @@ class Views {
 	
 	static Closure genListViews(String view, jobsList) {
 		return { node ->
-			node / 'listView'
-			description 'All jobs for group: ' + "${view}"	
-			filterExecutors false
-			filterQueue false
-			jobNames {	
-				jobsList.each { 
-					 string it
-				}		
-			}
-			jobFilters {			
+			node / 'listView' / 'name' << view {
+				description 'All jobs for group: ' + "${view}"	
+				filterExecutors false
+				filterQueue false
+				jobNames {	
+					jobsList.each { 
+						string it
+					}		
 				}
-			//statusFilter(StatusFilter.ENABLED)
-			columns {
-				'hudson.views.StatusColumn'
-				'hudson.views.WeatherColumn'
-				'hudson.views.JobColumn'
-				'hudson.views.LastSuccessColumn'
-				'hudson.views.LastFailureColumn'
-				'hudson.views.LastDurationColumn'
-				'hudson.views.BuildButtonColumn'
-				'hudson.plugins.UpDownStreamViewColumn'
+				jobFilters {			
+					}
+				//statusFilter(StatusFilter.ENABLED)
+				columns {
+					'hudson.views.StatusColumn'
+					'hudson.views.WeatherColumn'
+					'hudson.views.JobColumn'
+					'hudson.views.LastSuccessColumn'
+					'hudson.views.LastFailureColumn'
+					'hudson.views.LastDurationColumn'
+					'hudson.views.BuildButtonColumn'
+					'hudson.plugins.UpDownStreamViewColumn'
+				}
 			}
 		}		
 	}
