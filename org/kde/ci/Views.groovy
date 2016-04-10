@@ -32,30 +32,28 @@ class Views {
 	
 	static Closure genListViews(String view, jobsList) {
 		return { node ->
-			node / 'listView' {	
-				description 'All jobs for group: ' + "${view}"	
-				filterExecutors false
-				filterQueue false
-				jobNames {	
-					jobsList.each { 
-						 string it
-					}		
-				}
-				jobFilters {			
-				}
-				//statusFilter(StatusFilter.ENABLED)
-				columns {
-					status()
-					weather()
-					name()
-					lastSuccess()
-					lastFailure()
-					lastDuration()
-					buildButton()
-					//'hudson.plugins.UpDownStreamViewColumn'
-				}
+			description 'All jobs for group: ' + "${view}"	
+			filterExecutors false
+			filterQueue false
+			jobNames {	
+				jobsList.each { 
+					 string it
+				}		
 			}
-		}
+			jobFilters {			
+				}
+			//statusFilter(StatusFilter.ENABLED)
+			columns {
+				'hudson.views.StatusColumn'
+				'hudson.views.WeatherColumn'
+				'hudson.views.JobColumn'
+				'hudson.views.LastSuccessColumn'
+				'hudson.views.LastFailureColumn'
+				'hudson.views.LastDurationColumn'
+				'hudson.views.BuildButtonColumn'
+				'hudson.plugins.UpDownStreamViewColumn'
+			}
+		}		
 	}
 	static Closure genBGRegexListViews() {
 		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
