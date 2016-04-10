@@ -34,7 +34,7 @@ class Publishers {
 	}
 	def genAllPublishers(platform, compiler) {
 		genWarningsPublisher(platform, compiler)
-		genCppCheckPublisher()
+		//genCppCheckPublisher()
 		//genCoberturaPublisher()
 		//genJunitPublisher()
 	}
@@ -94,54 +94,50 @@ class Publishers {
 	}		
 	
 	def genCppCheckPublisher() {
-		return { node ->
-			node / 'ConditionalPublisher' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-			node / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-					publishers {
-					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
-						file 'build/cppcheck.xml'
-						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
-					}
-					publisherList {
-						'org.jenkinsci.plugins.cppcheck.CppcheckPublisher' {
-							cppcheckConfig {
-								pattern 'build/cppcheck.xml'
-								ignoreBlankFiles true
-								allowNoReport true
-								useWorkspaceAsRootPath true
-								configSeverityEvaluation {
-									severityError true
-									severityWarning true
-									severityStyle true
-									severityPerformance true
-									severityInformation true
-									severityNoCategory true
-									severityPortability true
-								}
+		return { node ->			
+			node / 'publishers' << 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+				condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
+					file 'build/cppcheck.xml'
+					baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
+				}
+				publisherList {
+					'org.jenkinsci.plugins.cppcheck.CppcheckPublisher' {
+						cppcheckConfig {
+							pattern 'build/cppcheck.xml'
+							ignoreBlankFiles true
+							allowNoReport true
+							useWorkspaceAsRootPath true
+							configSeverityEvaluation {
+								severityError true
+								severityWarning true
+								severityStyle true
+								severityPerformance true
+								severityInformation true
+								severityNoCategory true
+								severityPortability true
 							}
-								configGraph {
-									xSize '500'
-									ySize '200'
-									numBuildsInGraph '1'
-									displayAllErrors true
-									displayErrorSeverity true
-									displayWarningSeverity true
-									displayStyleSeverity true
-									displayPerformanceSeverity true
-									displayInformationSeverity true
-									displayNoCategorySeverity true
-									displayPortabilitySeverity true
-								}							
 						}
+						configGraph {
+							xSize '500'
+							ySize '200'
+							numBuildsInGraph '1'
+							displayAllErrors true
+							displayErrorSeverity true
+							displayWarningSeverity true
+							displayStyleSeverity true
+							displayPerformanceSeverity true
+							displayInformationSeverity true
+							displayNoCategorySeverity true
+							displayPortabilitySeverity true
+						}							
 					}
-					
-					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
-					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
-					}
+				}					
+				runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
+				executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 			}
-			}
-			}
-		}// end cppcheck			
+		}
+		
+	}// end cppcheck			
 	
 	static Closure genCoberturaPublisher() {
 		return { project ->
