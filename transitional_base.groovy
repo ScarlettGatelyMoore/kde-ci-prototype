@@ -229,8 +229,8 @@ GroupFile.each { group ->
 	
 	Views view = new Views()
 	
-	configure view.genListViews(CurrentView, CurrentViewJobs)
-	configure view.genBGRegexListViews()
+	view.genListViews(CurrentView, CurrentViewJobs)
+	view.genBGRegexListViews()
 } // End group	
 
 userContent('kde.css', streamFileFromWorkspace('css/kde.css'))
