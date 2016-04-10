@@ -207,7 +207,7 @@ GroupFile.each { group ->
 		filterExecutors false
 		filterBuildQueue false
 		jobs {			
-			names(CurrentViewJobs)		
+			names(CurrentViewJobs.toString())		
 		}
 		jobFilters {
 			status {
