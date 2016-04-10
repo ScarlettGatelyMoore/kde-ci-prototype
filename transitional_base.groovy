@@ -205,7 +205,7 @@ GroupFile.each { group ->
 	listView(CurrentView) {	
 		description 'All jobs for group: ' + "${CurrentView}"	
 		filterExecutors false
-		filterQueue false
+		filterBuildQueue false
 		jobs {			
 			names(CurrentViewJobs)		
 		}
