@@ -31,6 +31,8 @@ import org.yaml.snakeyaml.Yaml
 def basePath = System.getProperty('user.home') + '/scripts/metadata/'
 def GroupFile = []
 def allJobsList = []
+def CurrentView
+def CurrentViewJobs = []
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 // Now lets get the repo-metadata and bring in any overrides
 //def rout = new StringBuilder(), rerr = new StringBuilder()
@@ -56,6 +58,7 @@ GroupFile.each { group ->
 		//debug only
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
+		
 		// get repo-metadata for all except the default project		
 		if (jobname != 'project') {
 		// Get repo-metadata
@@ -101,14 +104,15 @@ GroupFile.each { group ->
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = platform.genBuildTrack(options, track)
 						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
+						CurrentView = job.view
+						CurrentViewJobs << fullname
 						// If the current track is enabled for this platform generate job						
 						if (currtrack) {
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
 							+ " compiler " + compiler
 							
 							if ( repometa.hasrepo && repometa.repoactive ) {
-								SCM scm = new SCM()	
-								println job.SetRepoMap()
+								SCM scm = new SCM()									
 								scmClosure = scm.generateSCM(jobname, job.SetRepoMap(), branch)
 									
 								/* BEGIN DSL CODE */
@@ -199,3 +203,6 @@ GroupFile.each { group ->
 	} } // End current project		
 } // End group	
 
+Views view = new Views()
+
+view.genListViews(CurrentView, CurrentViewJobs)
