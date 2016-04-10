@@ -34,9 +34,9 @@ class Publishers {
 	}
 	def genAllPublishers(platform, compiler) {
 		genWarningsPublisher(platform, compiler)
-		genCppCheckPublisher()
-		genCoberturaPublisher()
-		genJunitPublisher()
+		//genCppCheckPublisher()
+		//genCoberturaPublisher()
+		//genJunitPublisher()
 	}
 	static Closure genWarningsPublisher(platform, compiler) {
 		return	{ project ->
