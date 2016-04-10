@@ -31,32 +31,60 @@ class Views {
 	}
 	
 	def genListViews(String view, jobsList) {
-		return { node ->
-			node / 'views' / 'listView' {			
-			name view
+		return { views ->
+			views <<
+		listView(view) {	
+			description 'All jobs for group: ' + "${view}"	
 			filterExecutors false
-			filterQueue false			
-			jobNames {
-				comparator(class:"hudson.util.CaseInsensitiveComparator") {
-					jobsList.each {
-						if (it != null) { string it }
-					}
-				}
-			}			
-			jobFilters {
-				status {
-					status(Status.ALL)
-				}
+			filterBuildQueue false
+			jobs {	
+				jobsList.each { job ->
+					names(job)
+			}		
 			}
+			jobFilters {			
+			}
+			statusFilter(StatusFilter.ENABLED)
 			columns {
-				'hudson.views.StatusColumn'
-				'hudson.views.WeatherColumn'
-				'hudson.views.JobColumn'
-				'hudson.views.LastSuccessColumn'
-				'hudson.views.LastFailureColumn'
-				'hudson.views.DurationColumn'
-				'hudson.views.BuildButtonColumn'				
+				status()
+				weather()
+				name()
+				lastSuccess()
+				lastFailure()
+				lastDuration()
+				buildButton()
 				'hudson.plugins.UpDownStreamViewColumn'
+			}
+		}
+	}
+	}
+	def genBGRegexListViews() {
+		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
+		branchGroups.each { bg ->
+			return { views ->
+				views <<
+				listView(view) {
+					description 'All jobs for branchGgroup: ' + "${bg}"
+					filterExecutors false
+					filterBuildQueue false
+					jobs {
+						jobsList.each { job ->
+							regex(bg)
+						}
+					}
+					jobFilters {
+					}
+					statusFilter(StatusFilter.ENABLED)
+					columns {
+						status()
+						weather()
+						name()
+						lastSuccess()
+						lastFailure()
+						lastDuration()
+						buildButton()
+						'hudson.plugins.UpDownStreamViewColumn'
+					}
 				}
 			}
 		}
