@@ -161,43 +161,18 @@ class Publishers {
 							maxNumberOfBuilds 10
 							failNoReports false
 							sourceEncoding 'UTF_8'
-							CoberturaTarget {
-								targetType 'METHOD'
-								healthyTarget 8000000
-								unhealthyTarget 0
-								failingTarget 0
+							healthyTarget {
+								targets(class:"enum-map" + 'enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+									METHOD 8000000
+									LINE 8000000
+									CONDITIONAL 7000000
+									PACKAGES 7000000
+									FILES 7000000
+									CLASSES 7000000	
+								}							
 							}
-							CoberturaTarget {
-								targetType 'LINE'
-								healthyTarget 8000000
-								unhealthyTarget 0
-								failingTarget 0
-							}
-							CoberturaTarget {
-								targetType 'CONDITIONAL'
-								healthyTarget 7000000
-								unhealthyTarget 0
-								failingTarget 0
-							}
-							CoberturaTarget {
-								targetType 'PACKAGES'
-								healthyTarget 7000000
-								unhealthyTarget 0
-								failingTarget 0
-							}
-							CoberturaTarget {
-								targetType 'FILES'
-								healthyTarget 7000000
-								unhealthyTarget 0
-								failingTarget 0
-							}
-							CoberturaTarget {
-								targetType 'CLASSES'
-								healthyTarget 7000000
-								unhealthyTarget 0
-								failingTarget 0
-							}
-									
+							unhealthyTarget {}
+							failingTarget {}
 						}
 					}										
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
