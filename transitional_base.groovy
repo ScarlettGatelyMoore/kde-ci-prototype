@@ -209,11 +209,9 @@ GroupFile.each { group ->
 		jobs {			
 			names(CurrentViewJobs.toString())		
 		}
-		jobFilters {
-			status {
-				status(Status.ALL)
-			}
+		jobFilters {			
 		}
+		statusFilter(StatusFilter.ENABLED)
 		columns {
 			status()
 			weather()
