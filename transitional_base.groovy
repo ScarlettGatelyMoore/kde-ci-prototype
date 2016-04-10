@@ -81,12 +81,9 @@ GroupFile.each { group ->
 				pf.each { PLATFORM , options ->																	
 						Platform platform = new Platform()
 						def compiler = platform.genCompilers(options)
-						if (compiler.getClass() == List) { 
-							//STUB Future support for multiple compiler matrix builds	
-							println "This needs a matrix build, time to write that code."						
-						} 
 						//Bring in our DSL Closure generation classes
 						DSLClosures misc = new DSLClosures()
+						Publishers pub = new Publishers()
 						def variations = platform.PlatformVariations(options)
 						def variationClosure
 						def compilerClosure
@@ -169,7 +166,7 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									configure misc.genWarningsPublisher(PLATFORM, compiler)							
+									configure pub.genAllPublishers(PLATFORM, compiler)							
 										
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
