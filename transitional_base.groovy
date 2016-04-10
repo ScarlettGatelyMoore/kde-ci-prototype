@@ -226,7 +226,31 @@ GroupFile.each { group ->
 			//'hudson.plugins.UpDownStreamViewColumn'
 		}
 	}
-	
+	def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
+	branchGroups.each {
+		listView(it) {
+			description 'All jobs for branchGgroup: ' + "${it}"
+			filterExecutors false
+			filterBuildQueue false
+			jobs {
+				jobsList.each { job ->
+					regex(it)
+				}
+			}
+			jobFilters {}
+			statusFilter(StatusFilter.ENABLED)
+			columns {
+				status()
+				weather()
+				name()
+				lastSuccess()
+				lastFailure()
+				lastDuration()
+				buildButton()
+			'hudson.plugins.UpDownStreamViewColumn'
+			}
+		}
+	}
 	//Views view = new Views()
 	
 	/*listView(CurrentView) {
