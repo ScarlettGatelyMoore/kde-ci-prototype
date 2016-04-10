@@ -103,7 +103,7 @@ GroupFile.each { group ->
 						def job_command = job.custom_build_command
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
-						boolean currtrack = platform.genBuildTrack(options, track)
+						boolean currtrack = misc.genBuildTrack(options, track)
 						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
 						CurrentView = job.view
 						CurrentViewJobs << fullname

@@ -36,7 +36,7 @@ public final class Project {
 	Map platforms
 	List products_needed
 	Map repositories
-	List dependencies
+	Map dependencies
 	List excluded_repositories
 	String view
 	String description
@@ -73,7 +73,7 @@ public final class Project {
 	public void setRepositories(Map repositories){
 		this.repositories = repositories
 	}
-	public void setDependencies(List dependencies){
+	public void setDependencies(Map dependencies){
 		this.dependencies = dependencies
 	}
 	public void setExcludedRepositories(List excluded_repositories){

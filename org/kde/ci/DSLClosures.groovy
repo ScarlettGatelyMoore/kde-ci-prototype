@@ -40,6 +40,11 @@ class DSLClosures {
 			project << authToken( "${tokenid}")
 		}
 	}
+	def genBuildTrack(options, track) {
+		def tracks = options.find { key, value -> key == 'tracks' }
+			 if( tracks.getValue().toString().contains(track) ) {  return true }
+			 else { return false }
+	}
 	
 	static Closure Variations(Variations) {
 		return { project ->			

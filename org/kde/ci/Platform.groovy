@@ -34,11 +34,7 @@ class Platform {
 	Platform() {		
 	}
 	
-	def genBuildTrack(options, track) {
-		def tracks = options.find { key, value -> key == 'tracks' }
-			 if( tracks.getValue().toString().contains(track) ) {  return true }
-			 else { return false }			
-	}
+
 	def genCompilers(options) {
 		def compiler = options.find { key, value -> key == 'compilers' }.getValue()	
 		def num = compiler.size()		
