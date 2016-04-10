@@ -34,7 +34,7 @@ class Publishers {
 	}
 	def genAllPublishers(platform, compiler) {
 		genWarningsPublisher(platform, compiler)
-		//genCppCheckPublisher()
+		genCppCheckPublisher()
 		//genCoberturaPublisher()
 		//genJunitPublisher()
 	}
