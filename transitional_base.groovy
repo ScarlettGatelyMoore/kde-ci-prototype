@@ -169,7 +169,7 @@ GroupFile.each { group ->
 									publishers {
 										flexiblePublish {
 											publishers {
-												pub.genAllPublishers(PLATFORM, compiler)
+												pub.genWarningsPublisher(PLATFORM, compiler)
 											}											
 										}
 									}
