@@ -61,9 +61,6 @@ public final class Project {
 	public void setBranchGroupTracks(Map branchGrouptracks){
 		this.branchGrouptracks = branchGrouptracks
 	}
-	public void setBranch(Map branch){
-		this.branch = branch
-	}
 	public void setPlatforms(Map platforms){
 		this.platforms = platforms
 	}

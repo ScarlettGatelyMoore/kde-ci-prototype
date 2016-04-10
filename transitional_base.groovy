@@ -59,12 +59,12 @@ GroupFile.each { group ->
 		//debug only
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
-		
+		def path = groupName + '/'	+ jobname
 		// get repo-metadata for all except the default project		
 		if (jobname != 'project') {
 		// Get repo-metadata
 		def repoDataFile = []
-		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/' + groupName + '/' + jobname + '/'
+		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/' + path + '/'
 		def repoconfigFiles = new File(repobasePath)
 		def repoyamldata = new ImportConfig().getConfig(repobasePath, 'metadata.yaml')
 		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
@@ -73,13 +73,15 @@ GroupFile.each { group ->
 		if(job.getActive()) {	
 			assert job.getActive() == true
 			// Bring in development tracks to determine branches.
-			Map tracks = job.getBranch()		
+			Map tracks = job.SetRepoMap()
+			
 			// We have branchGroups that split into sections for releases/development 
 			// We need to process a new jobset for each of these groups.
 			Map bg = job.getBranchGrouptracks()
 			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 			bg.each { branchGroup , track  -> 
-				def branch = tracks.get(track)
+				def branch = tracks.get(path).get(track)
+				println branch
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
 				pf.each { PLATFORM , options ->																	
