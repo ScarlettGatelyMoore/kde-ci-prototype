@@ -204,30 +204,25 @@ GroupFile.each { group ->
 
 	views {
 		listView {
-		name CurrentView
-		filterExecutors false
-		filterQueue false
-		jobNames {
-			comparator(class:"hudson.util.CaseInsensitiveComparator") {
-				CurrentViewJobs.each {
-					if (it != null) { string it }
+			name CurrentView
+			filterExecutors false
+			filterQueue false
+			jobs {			
+				names(CurrentViewJobs)		
+			}
+			jobFilters {
+				status {
+					status(Status.ALL)
 				}
 			}
-		}
-		jobFilters {
-			status {
-				status(Status.ALL)
-			}
-		}
-		columns {
-			'hudson.views.StatusColumn'
-			'hudson.views.WeatherColumn'
-			'hudson.views.JobColumn'
-			'hudson.views.LastSuccessColumn'
-			'hudson.views.LastFailureColumn'
-			'hudson.views.DurationColumn'
-			'hudson.views.BuildButtonColumn'
-			'hudson.plugins.UpDownStreamViewColumn'
+			columns {
+				status()
+				weather()
+				name()
+				lastSuccess()
+				lastFailure()
+				lastDuration()
+				buildButton()
 			}
 		}
 	}
