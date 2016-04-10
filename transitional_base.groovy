@@ -230,7 +230,7 @@ GroupFile.each { group ->
 	Views view = new Views()
 	
 	view.genListViews(CurrentView, CurrentViewJobs)
-	view.genBGRegexListViews()
+	//view.genBGRegexListViews()
 } // End group	
 
 userContent('kde.css', streamFileFromWorkspace('css/kde.css'))
