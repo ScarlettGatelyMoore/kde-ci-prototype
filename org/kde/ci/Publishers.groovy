@@ -96,7 +96,7 @@ class Publishers {
 	
 	def genCppCheckPublisher() {
 		return { node ->
-			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  node / 'publishers' << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' << 'publishers' <<
 			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 				condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 					file 'build/cppcheck.xml'
@@ -143,7 +143,7 @@ class Publishers {
 	
 	static Closure genCoberturaPublisher() {
 		return { node ->
-			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  node / 'publishers' << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' << 'publishers' <<
 			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/CoberturaLcovResults.xml'
@@ -159,7 +159,7 @@ class Publishers {
 	}
 	static Closure genJunitPublisher() {
 		return { node ->
-			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  node / 'publishers' << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' << 'publishers' <<
 			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/JUnitTestResults.xml'
