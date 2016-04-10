@@ -214,7 +214,7 @@ GroupFile.each { group ->
 		}
 		jobFilters {			
 		}
-		statusFilter(StatusFilter.ENABLED)
+		//statusFilter(StatusFilter.ENABLED)
 		columns {
 			status()
 			weather()
