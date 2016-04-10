@@ -168,7 +168,7 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									if(gen_publishers) {
+									if(gen_publishers != false) {
 									configure pub.genWarningsPublisher(PLATFORM, compiler)	
 									configure pub.genCppCheckPublisher()
 									configure pub.genCoberturaPublisher()
