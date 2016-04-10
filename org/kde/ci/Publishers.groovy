@@ -39,7 +39,7 @@ class Publishers {
 		//genJunitPublisher()
 	}
 	def genWarningsPublisher(platform, compiler) {
-		return	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return	{ 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
@@ -90,7 +90,7 @@ class Publishers {
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 					}
 			}
-					
+	}			
 	
 	def genCppCheckPublisher() {
 		return 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
