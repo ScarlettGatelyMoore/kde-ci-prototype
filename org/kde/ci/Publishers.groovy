@@ -34,9 +34,9 @@ class Publishers {
 	}
 	def genAllPublishers(platform, compiler) {
 		genWarningsPublisher(platform, compiler)
-		//genCppCheckPublisher()
-		//genCoberturaPublisher()
-		//genJunitPublisher()
+		genCppCheckPublisher()
+		genCoberturaPublisher()
+		genJunitPublisher()
 	}
 	def genWarningsPublisher(platform, compiler) {
 		return { node ->
@@ -47,7 +47,7 @@ class Publishers {
 						arg2 "${compiler}"
 						ignoreCase false
 					  }
-					/*publisherList {
+					  publisherList {
 						'hudson.plugins.warnings.WarningsPublisher' {
 							canRunOnFailed false
 							usePreviousBuildAsReference false
@@ -90,14 +90,14 @@ class Publishers {
 						useStableBuildAsReference()
 					}
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-				}*/
-			}
-		}
+				}
+			}		
 	}		
 	
 	def genCppCheckPublisher() {
-		return { node ->			
-			node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return { node ->
+			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 				condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 					file 'build/cppcheck.xml'
 					baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
@@ -142,9 +142,9 @@ class Publishers {
 	}// end cppcheck			
 	
 	static Closure genCoberturaPublisher() {
-		return { project ->
-			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return { node ->
+			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/CoberturaLcovResults.xml'
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$Workspace')
@@ -159,9 +159,9 @@ class Publishers {
 		}
 	}
 	static Closure genJunitPublisher() {
-		return { project ->
-			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-				'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return { node ->
+			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {			
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/JUnitTestResults.xml'
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
