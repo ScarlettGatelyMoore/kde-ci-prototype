@@ -155,6 +155,16 @@ class DSLClosures {
 									parserName  'GNU C Compiler 4 (gcc)' 
 									}
 								}
+								if (compiler == 'clang') {
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName 'Clang (LLVM based)'
+									}
+								}
+								if (compiler == 'vs2015') {
+									'hudson.plugins.warnings.ConsoleParser' {
+										parserName 'MSBuild'
+									}
+								}
 							}
 						}
 					}
@@ -170,19 +180,90 @@ class DSLClosures {
 		}
 		
 	}
-	
-	static String genParsers(platform, compiler) {
-		def parserList = new StringBuilder()
-				
-		parserList.append()						
-		if (platform == 'Linux') {
-			parserList.append('''\n''')			
-		} 
-		if (compiler == 'gcc') {
-			parserList.append('''\n''')
+	static Closure genCppCheckPublisher() {
+		return { project ->
+			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+				'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
+						file 'build/cppcheck.xml'
+						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
+					}
+					publisherList {
+						'org.jenkinsci.plugins.cppcheck.CppcheckPublisher' {
+							cppcheckConfig {
+								pattern 'build/cppcheck.xml'
+								ignoreBlankFiles true
+								allowNoReport true
+								useWorkspaceAsRootPath true
+								configSeverityEvaluation {
+									severityError true
+									severityWarning true
+									severityStyle true
+									severityPerformance true
+									severityInformation true
+									severityNoCategory true
+									severityPortability true
+								}
+								configGraph {
+									xSize '500'
+									ySize '200'
+									numBuildsInGraph '1'
+									displayAllErrors true
+									displayErrorSeverity true
+									displayWarningSeverity true
+									displayStyleSeverity true
+									displayPerformanceSeverity true
+									displayInformationSeverity true
+									displayNoCategorySeverity true
+									displayPortabilitySeverity true
+								}
+							}
+						}
+					}
+					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
+					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
+				}// end cppcheck
+				}
+			}
+	}
+	static Closure genCoberturaPublisher() {
+		return { project ->
+			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+					'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
+						file 'build/CoberturaLcovResults.xml'
+						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$Workspace')
+					}
+					publisherList {
+						cobertura('build/CoberturaLcovResults.xml')
+					}
+					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
+					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
+				}// end cobertura
+			}
 		}
-		return parserList
-	}				
+	}
+	static Closure genJunitPublisher() {
+		return { project ->
+			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+				'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
+						file 'build/JUnitTestResults.xml'
+						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
+					}
+					publisherList {
+						'hudson.tasks.junit.JUnitResultArchiver' {
+							testResults 'build/JUnitTestResults.xml'
+							keepLongStdio true
+							healthScaleFactor '1.0'
+						}
+					}
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
+				}
+			}
+		}
+	}
+	
 	static String commandBuilder(platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null) {
 		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
