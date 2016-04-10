@@ -161,35 +161,50 @@ class Publishers {
 							maxNumberOfBuilds 10
 							failNoReports false
 							sourceEncoding 'UTF_8'
-							healthyTarget {
-								targets('class="enum-map"' + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
-									entry {
-										'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
-										'int' 8000000
-										}
-									entry {
-										'hudson.plugins.cobertura.targets.CoverageMetric' 'LINE'
-										'int' 8000000
-										}
-									entry {
-										'hudson.plugins.cobertura.targets.CoverageMetric' 'CONDITIONAL'
-										'int' 7000000
-										}
-								}
+							CoberturaTarget {
+								targetType: 'METHOD'
+								healthyTarget: 8000000
+								unhealthyTarget: 0
+								failingTarget: 0
 							}
-							unheathyTarget {
-								'hudson.plugins.cobertura.targets.CoverageMetric' {}
+							CoberturaTarget {
+								targetType: 'LINE'
+								healthyTarget: 8000000
+								unhealthyTarget: 0
+								failingTarget: 0
 							}
-							failingTarget {
-								'hudson.plugins.cobertura.targets.CoverageMetric' {}
+							CoberturaTarget {
+								targetType: 'CONDITIONAL'
+								healthyTarget: 7000000
+								unhealthyTarget: 0
+								failingTarget: 0
 							}
-						}							
-					}
+							CoberturaTarget {
+								targetType: 'PACKAGES'
+								healthyTarget: 7000000
+								unhealthyTarget: 0
+								failingTarget: 0
+							}
+							CoberturaTarget {
+								targetType: 'FILES'
+								healthyTarget: 7000000
+								unhealthyTarget: 0
+								failingTarget: 0
+							}
+							CoberturaTarget {
+								targetType: 'CLASSES'
+								healthyTarget: 7000000
+								unhealthyTarget: 0
+								failingTarget: 0
+							}
+									
+						}
+					}										
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
-				}// end cobertura
+				}
 			}		
-	}
+	}// end cobertura
 	static Closure genJunitPublisher() {
 		return { node ->
 			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
