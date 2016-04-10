@@ -229,7 +229,9 @@ GroupFile.each { group ->
 	
 	Views view = new Views()
 	
-	configure view.genListViews(CurrentView, CurrentViewJobs)
+	listView(CurrentView) {
+		configure view.genListViews(CurrentView, CurrentViewJobs)
+	}
 	//view.genBGRegexListViews()
 } // End group	
 
