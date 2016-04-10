@@ -200,11 +200,44 @@ GroupFile.each { group ->
 			println "No job creation due to ${jobname} Active status: " + job.getActive()
 			return // end job
 		}	// End Active
-	} } // End current project		
+	} } // End current project	
+
+	views {
+		listView {
+		name CurrentView
+		filterExecutors false
+		filterQueue false
+		jobNames {
+			comparator(class:"hudson.util.CaseInsensitiveComparator") {
+				CurrentViewJobs.each {
+					if (it != null) { string it }
+				}
+			}
+		}
+		jobFilters {
+			status {
+				status(Status.ALL)
+			}
+		}
+		columns {
+			'hudson.views.StatusColumn'
+			'hudson.views.WeatherColumn'
+			'hudson.views.JobColumn'
+			'hudson.views.LastSuccessColumn'
+			'hudson.views.LastFailureColumn'
+			'hudson.views.DurationColumn'
+			'hudson.views.BuildButtonColumn'
+			'hudson.plugins.UpDownStreamViewColumn'
+			}
+		}
+	}
+
 } // End group	
 
 userContent('kde.css', streamFileFromWorkspace('css/kde.css'))
 
 Views view = new Views()
 
-view.genListViews(CurrentView, CurrentViewJobs)
+//view.genListViews(CurrentView, CurrentViewJobs)
+
+
