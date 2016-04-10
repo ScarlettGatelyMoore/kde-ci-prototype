@@ -169,10 +169,10 @@ class Publishers {
 								}
 							}
 							unheathyTarget {
-								'hudson.plugins.cobertura.targets.CoverageMetric' {
+								'hudson.plugins.cobertura.targets.CoverageMetric' {}
 							}
 							failingTarget {
-								'hudson.plugins.cobertura.targets.CoverageMetric' {
+								'hudson.plugins.cobertura.targets.CoverageMetric' {}
 							}
 						}							
 					}
