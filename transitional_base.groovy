@@ -202,8 +202,8 @@ GroupFile.each { group ->
 		}	// End Active
 	} } // End current project	
 
-	listView {
-		name CurrentView
+	listView(CurrentView) {	
+		description 'All jobs for group: ' + "${CurrentView}"	
 		filterExecutors false
 		filterQueue false
 		jobs {			
