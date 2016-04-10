@@ -162,13 +162,18 @@ class Publishers {
 							failNoReports false
 							sourceEncoding 'UTF_8'
 							healthyTarget {
-								targets {
-									'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
-									'int' 8000000
+								'hudson.plugins.cobertura.targets.CoverageMetric' {
+									 'METHOD' 8000000
+									 'LINE' 8000000
+									 'CONDITIONAL' 7000000
 								}
 							}
-							unheathyTarget {}
-							failingTarget {}
+							unheathyTarget {
+								'hudson.plugins.cobertura.targets.CoverageMetric' {
+							}
+							failingTarget {
+								'hudson.plugins.cobertura.targets.CoverageMetric' {
+							}
 						}							
 					}
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
