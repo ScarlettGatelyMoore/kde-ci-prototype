@@ -140,8 +140,8 @@ class Publishers {
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 				}// end cppcheck
-				}
 			}
+			
 	}
 	static Closure genCoberturaPublisher() {
 		return { project ->
