@@ -59,15 +59,15 @@ class Views {
 	}
 	static Closure genBGRegexListViews() {
 		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
-		branchGroups.each { bg ->
+		branchGroups.each {
 			return { views ->
-				views << listView(bg) {
-					description 'All jobs for branchGgroup: ' + "${bg}"
+				views << listView(it) {
+					description 'All jobs for branchGgroup: ' + "${it}"
 					filterExecutors false
 					filterBuildQueue false
 					jobs {
 						jobsList.each { job ->
-							regex(bg)
+							regex(it)
 						}
 					}
 					jobFilters {
