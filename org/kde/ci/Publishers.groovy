@@ -162,20 +162,91 @@ class Publishers {
 							failNoReports false
 							sourceEncoding 'UTF_8'
 							healthyTarget {
-								targets(class:"enum-map" + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+								targets('class:"enum-map"' + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
 									entry {
 										'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
 										'int' 8000000
 									}
-									LINE 8000000
-									CONDITIONAL 7000000
-									PACKAGES 7000000
-									FILES 7000000
-									CLASSES 7000000	
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'LINE'
+										'int' 8000000
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CONDITIONAL'
+										'int' 8000000
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'PACKAGES'
+										'int' 7000000
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'FILES'
+										'int' 7000000
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CLASSES'
+										'int' 7000000
+									}
 								}							
 							}
-							unhealthyTarget {}
-							failingTarget {}
+							unhealthyTarget {
+								targets('class:"enum-map"' + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'LINE'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CONDITIONAL'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'PACKAGES'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'FILES'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CLASSES'
+										'int' 0
+									}
+								}
+							}
+							}
+							failingTarget {
+								targets('class:"enum-map"' + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'LINE'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CONDITIONAL'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'PACKAGES'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'FILES'
+										'int' 0
+									}
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'CLASSES'
+										'int' 0
+									}
+								}
+							}
+							}
 						}
 					}										
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
