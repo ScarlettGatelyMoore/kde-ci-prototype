@@ -223,7 +223,7 @@ GroupFile.each { group ->
 			lastFailure()
 			lastDuration()
 			buildButton()
-			'hudson.plugins.UpDownStreamViewColumn'
+			//'hudson.plugins.UpDownStreamViewColumn'
 		}
 	}
 	
