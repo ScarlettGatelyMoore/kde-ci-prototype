@@ -99,8 +99,8 @@ class Publishers {
 	}
 	static Closure genCppCheckPublisher() {
 		return { project ->
-			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-				'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' \
+				<< 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/cppcheck.xml'
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
