@@ -40,8 +40,7 @@ class Publishers {
 	}
 	def genWarningsPublisher(platform, compiler) {
 		return	{ node ->
-				  node / 'publishers' 
-				  'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+				  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
@@ -96,8 +95,7 @@ class Publishers {
 	
 	def genCppCheckPublisher() {
 		return { node ->			
-			node / 'publishers' 
-             'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+			node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 				condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 					file 'build/cppcheck.xml'
 					baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
