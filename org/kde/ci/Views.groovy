@@ -30,10 +30,9 @@ class Views {
 	Views() {		
 	}
 	
-	def genListViews(String view, jobsList) {
+	static Closure genListViews(String view, jobsList) {
 		return { views ->
-			views <<
-			listView(view) {	
+			views << listView(view) {	
 				description 'All jobs for group: ' + "${view}"	
 				filterExecutors false
 				filterBuildQueue false
@@ -58,12 +57,11 @@ class Views {
 			}
 		}
 	}
-	def genBGRegexListViews() {
+	static Closure genBGRegexListViews() {
 		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
 		branchGroups.each { bg ->
 			return { views ->
-				views <<
-				listView(view) {
+				views << listView(bg) {
 					description 'All jobs for branchGgroup: ' + "${bg}"
 					filterExecutors false
 					filterBuildQueue false
