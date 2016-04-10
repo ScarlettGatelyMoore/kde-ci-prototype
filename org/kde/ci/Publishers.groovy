@@ -89,9 +89,9 @@ class Publishers {
 					}
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 					}
-				}
+			}
 					
-	}
+	
 	static Closure genCppCheckPublisher() {
 		return 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
@@ -114,6 +114,7 @@ class Publishers {
 									severityNoCategory true
 									severityPortability true
 								}
+							}
 								configGraph {
 									xSize '500'
 									ySize '200'
@@ -126,15 +127,15 @@ class Publishers {
 									displayInformationSeverity true
 									displayNoCategorySeverity true
 									displayPortabilitySeverity true
-								}
-							}
+								}							
 						}
 					}
+					
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
-				}// end cppcheck			
-			
-	}
+					}
+	}// end cppcheck			
+	
 	static Closure genCoberturaPublisher() {
 		return { project ->
 			project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
