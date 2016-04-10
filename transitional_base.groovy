@@ -207,8 +207,10 @@ GroupFile.each { group ->
 		description 'All jobs for group: ' + "${CurrentView}"	
 		filterExecutors false
 		filterBuildQueue false
-		jobs {			
-			names(CurrentViewJobs.toString().minus('[').minus(']'))		
+		jobs {	
+			CurrentViewJobs.each { job ->
+				names(job)
+			}		
 		}
 		jobFilters {			
 		}
