@@ -229,13 +229,11 @@ GroupFile.each { group ->
 	def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
 	branchGroups.each {
 		listView(it) {
-			description 'All jobs for branchGgroup: ' + "${it}"
+			description 'All jobs for branchGroup: ' + "${it}"
 			filterExecutors false
 			filterBuildQueue false
 			jobs {
-				jobsList.each { job ->
-					regex(it)
-				}
+				regex(it)				
 			}
 			jobFilters {}
 			statusFilter(StatusFilter.ENABLED)
