@@ -32,13 +32,11 @@ class Views {
 	
 	static Closure genListViews(String view, jobsList) {
 		return { node ->
-			node {
 				description 'All jobs for group: ' + "${view}"	
 				filterExecutors false
 				filterQueue false
 				jobNames {	
-					jobsList.each { 
-						string it
+					jobsList.each { string it
 					}		
 				}
 				jobFilters {			
@@ -54,8 +52,7 @@ class Views {
 					'hudson.views.BuildButtonColumn'
 					'hudson.plugins.UpDownStreamViewColumn'
 				}
-			}
-		}		
+			}				
 	}
 	static Closure genBGRegexListViews() {
 		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
