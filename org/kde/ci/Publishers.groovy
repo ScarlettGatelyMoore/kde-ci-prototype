@@ -45,8 +45,8 @@ class Publishers {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
 						ignoreCase false
-					}
-					publisherList {
+					  }
+					/*publisherList {
 						'hudson.plugins.warnings.WarningsPublisher' {
 							canRunOnFailed false
 							usePreviousBuildAsReference false
@@ -89,8 +89,9 @@ class Publishers {
 						useStableBuildAsReference()
 					}
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-				}
+				}*/
 			}
+		}
 	}		
 	
 	def genCppCheckPublisher() {
