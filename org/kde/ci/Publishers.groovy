@@ -40,64 +40,58 @@ class Publishers {
 	}
 	def genWarningsPublisher(platform, compiler) {
 		return	{ node ->
-				  node / 'ConditionalPublisher' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-					node / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-					publishers {
-						'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-							condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
-								arg1 '${ENV,var="compiler"}'
-								arg2 "${compiler}"
-								ignoreCase false
-							}
-							publisherList {
-								'hudson.plugins.warnings.WarningsPublisher' {
-									canRunOnFailed false
-									usePreviousBuildAsReference false
-									useStableBuildAsReference false
-									useDeltaValues false
-									shouldDetectModules false
-									dontComputeNew true
-									doNotResolveRelativePaths true
-									parserConfigurations {}
-									consoleParsers {
-										'hudson.plugins.warnings.ConsoleParser' {
-											parserName 'Missing Dependencies'
-										}
-										if(platform == 'Linux'){
-										'hudson.plugins.warnings.ConsoleParser' {
-											parserName 'Appstreamercli'
-											}
-										}
-										if (compiler == 'gcc') {
-										'hudson.plugins.warnings.ConsoleParser' {
-											parserName  'GNU C Compiler 4 (gcc)'
-											}
-										}
-										if (compiler == 'clang') {
-										'hudson.plugins.warnings.ConsoleParser' {
-											parserName 'Clang (LLVM based)'
-											}
-										}
-										if (compiler == 'vs2015') {
-										'hudson.plugins.warnings.ConsoleParser' {
-											parserName 'MSBuild'
-											}
-										}
+				  node / 'publishers' << 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+						arg1 '${ENV,var="compiler"}'
+						arg2 "${compiler}"
+						ignoreCase false
+					}
+					publisherList {
+						'hudson.plugins.warnings.WarningsPublisher' {
+							canRunOnFailed false
+							usePreviousBuildAsReference false
+							useStableBuildAsReference false
+							useDeltaValues false
+							shouldDetectModules false
+							dontComputeNew true
+							doNotResolveRelativePaths true
+							parserConfigurations {}
+							consoleParsers {
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName 'Missing Dependencies'
+								}
+								if(platform == 'Linux'){
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName 'Appstreamercli'
+									}
+								}
+								if (compiler == 'gcc') {
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName  'GNU C Compiler 4 (gcc)'
+									}
+								}
+								if (compiler == 'clang') {
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName 'Clang (LLVM based)'
+									}
+								}
+								if (compiler == 'vs2015') {
+								'hudson.plugins.warnings.ConsoleParser' {
+									parserName 'MSBuild'
 									}
 								}
 							}
-							analysisCollector {
-								warnings()
-								computeNew()
-								useStableBuildAsReference()
-							}
-							runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 						}
 					}
+					analysisCollector {
+						warnings()
+						computeNew()
+						useStableBuildAsReference()
+					}
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
 			}
-		}
-	}			
+	}		
 	
 	def genCppCheckPublisher() {
 		return { node ->
