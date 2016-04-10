@@ -161,6 +161,9 @@ class Publishers {
 							maxNumberOfBuilds 10
 							failNoReports false
 							sourceEncoding 'UTF_8'
+							healthyTarget {}
+							unheathyTarget {}
+							failingTarget {}
 						}							
 					}
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
