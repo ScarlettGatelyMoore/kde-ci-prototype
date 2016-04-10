@@ -32,7 +32,7 @@ class Views {
 	
 	def genListViews(view, jobsList) {
 		return { node ->
-			node / 'listView'
+			node / 'listView' {
 			owner('class:"hudson"' + ' reference="../../.."') {}
 			name view
 			filterExecutors false
@@ -60,6 +60,7 @@ class Views {
 				'hudson.views.BuildButtonColumn'				
 				'hudson.plugins.UpDownStreamViewColumn'
 			}
+		}
 		}
 	}
 }
