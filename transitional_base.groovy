@@ -166,8 +166,8 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									configure { project ->
-										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+									publishers {
+										flexiblePublish {
 											publishers {
 												pub.genAllPublishers(PLATFORM, compiler)
 											}											
