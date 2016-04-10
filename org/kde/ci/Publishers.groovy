@@ -162,10 +162,17 @@ class Publishers {
 							failNoReports false
 							sourceEncoding 'UTF_8'
 							healthyTarget {
-								'hudson.plugins.cobertura.targets.CoverageMetric' {
-									 'METHOD' 8000000
-									 'LINE' 8000000
-									 'CONDITIONAL' 7000000
+								targets('class="enum-map" enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+									entry
+										'hudson.plugins.cobertura.targets.CoverageMetric' {
+											METHOD 8000000
+										}
+										'hudson.plugins.cobertura.targets.CoverageMetric' {
+											LINE 8000000
+										}
+										'hudson.plugins.cobertura.targets.CoverageMetric' {
+											CONDITIONAL 7000000
+										}
 								}
 							}
 							unheathyTarget {
