@@ -233,7 +233,7 @@ GroupFile.each { group ->
 			filterExecutors false
 			filterBuildQueue false
 			jobs {
-				regex(bg.toString())				
+				regex("'" + bg.toString() + "'")				
 			}
 			jobFilters {}
 			statusFilter(StatusFilter.ENABLED)
