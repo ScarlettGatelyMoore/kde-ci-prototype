@@ -166,7 +166,10 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									configure pub.genAllPublishers(PLATFORM, compiler)																						
+									configure pub.genWarningsPublisher(PLATFORM, compiler)	
+									configure pub.genCppCheckPublisher()
+									configure pub.genCoberturaPublisher()
+									configure pub.genJunitPublisher()
 										
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
