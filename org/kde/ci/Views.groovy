@@ -32,7 +32,7 @@ class Views {
 	
 	static Closure genListViews(String view, jobsList) {
 		return { node ->
-			node / 'listView' / 'name' << view {
+			node / 'listView'  {
 				description 'All jobs for group: ' + "${view}"	
 				filterExecutors false
 				filterQueue false
