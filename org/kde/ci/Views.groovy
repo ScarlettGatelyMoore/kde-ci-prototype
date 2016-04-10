@@ -32,7 +32,7 @@ class Views {
 	
 	def genListViews(view, jobsList) {
 		return { node ->
-			node / 'listView' {
+			node / 'views' << 'listViews' {
 			owner('class:"hudson"' + ' reference="../../.."') {}
 			name view
 			filterExecutors false
