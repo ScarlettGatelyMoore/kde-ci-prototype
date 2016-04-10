@@ -39,61 +39,71 @@ class Publishers {
 		//genJunitPublisher()
 	}
 	def genWarningsPublisher(platform, compiler) {
-		return	{ 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
-						arg1 '${ENV,var="compiler"}'
-						arg2 "${compiler}"
-						ignoreCase false
-					}
-					publisherList {
-						'hudson.plugins.warnings.WarningsPublisher' {
-							canRunOnFailed false
-							usePreviousBuildAsReference false
-							useStableBuildAsReference false
-							useDeltaValues false
-							shouldDetectModules false
-							dontComputeNew true
-							doNotResolveRelativePaths true
-							parserConfigurations {}
-							consoleParsers {
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName 'Missing Dependencies'
-								}
-								if(platform == 'Linux'){
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName 'Appstreamercli'
-									}
-								}
-								if (compiler == 'gcc') {
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName  'GNU C Compiler 4 (gcc)'
-									}
-								}
-								if (compiler == 'clang') {
-								'hudson.plugins.warnings.ConsoleParser' {
-									parserName 'Clang (LLVM based)'
-									}
-								}
-								if (compiler == 'vs2015') {
-									'hudson.plugins.warnings.ConsoleParser' {
-										parserName 'MSBuild'
+		return	{ node ->
+				  node / 'ConditionalPublisher' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					node / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+					publishers {
+						'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+							condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+								arg1 '${ENV,var="compiler"}'
+								arg2 "${compiler}"
+								ignoreCase false
+							}
+							publisherList {
+								'hudson.plugins.warnings.WarningsPublisher' {
+									canRunOnFailed false
+									usePreviousBuildAsReference false
+									useStableBuildAsReference false
+									useDeltaValues false
+									shouldDetectModules false
+									dontComputeNew true
+									doNotResolveRelativePaths true
+									parserConfigurations {}
+									consoleParsers {
+										'hudson.plugins.warnings.ConsoleParser' {
+											parserName 'Missing Dependencies'
+										}
+										if(platform == 'Linux'){
+										'hudson.plugins.warnings.ConsoleParser' {
+											parserName 'Appstreamercli'
+											}
+										}
+										if (compiler == 'gcc') {
+										'hudson.plugins.warnings.ConsoleParser' {
+											parserName  'GNU C Compiler 4 (gcc)'
+											}
+										}
+										if (compiler == 'clang') {
+										'hudson.plugins.warnings.ConsoleParser' {
+											parserName 'Clang (LLVM based)'
+											}
+										}
+										if (compiler == 'vs2015') {
+										'hudson.plugins.warnings.ConsoleParser' {
+											parserName 'MSBuild'
+											}
+										}
 									}
 								}
 							}
+							analysisCollector {
+								warnings()
+								computeNew()
+								useStableBuildAsReference()
+							}
+							runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 						}
 					}
-					analysisCollector {
-						warnings()
-						computeNew()
-						useStableBuildAsReference()
-					}
-					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-					}
+				}
 			}
+		}
 	}			
 	
 	def genCppCheckPublisher() {
-		return { 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return { node ->
+			node / 'ConditionalPublisher' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+			node / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+					publishers {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/cppcheck.xml'
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
@@ -134,6 +144,8 @@ class Publishers {
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 					}
+			}
+			}
 			}
 		}// end cppcheck			
 	
