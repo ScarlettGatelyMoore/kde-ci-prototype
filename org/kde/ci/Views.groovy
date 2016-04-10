@@ -61,13 +61,13 @@ class Views {
 		def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
 		branchGroups.each {
 			return { views ->
-				views << listView(it) {
+				views << listView("${it}") {
 					description 'All jobs for branchGgroup: ' + "${it}"
 					filterExecutors false
 					filterBuildQueue false
 					jobs {
 						jobsList.each { job ->
-							regex(it)
+							regex("${it}")
 						}
 					}
 					jobFilters {
