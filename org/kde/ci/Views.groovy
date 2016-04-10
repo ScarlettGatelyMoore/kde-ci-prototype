@@ -57,8 +57,9 @@ class Views {
 				'hudson.views.DurationColumn'
 				'hudson.views.BuildButtonColumn'				
 				'hudson.plugins.UpDownStreamViewColumn'
+				}*/
 			}
-		}*/
 		}
 	}
 }
+	
