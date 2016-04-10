@@ -162,40 +162,40 @@ class Publishers {
 							failNoReports false
 							sourceEncoding 'UTF_8'
 							CoberturaTarget {
-								targetType: 'METHOD'
-								healthyTarget: 8000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'METHOD'
+								healthyTarget 8000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 							CoberturaTarget {
-								targetType: 'LINE'
-								healthyTarget: 8000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'LINE'
+								healthyTarget 8000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 							CoberturaTarget {
-								targetType: 'CONDITIONAL'
-								healthyTarget: 7000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'CONDITIONAL'
+								healthyTarget 7000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 							CoberturaTarget {
-								targetType: 'PACKAGES'
-								healthyTarget: 7000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'PACKAGES'
+								healthyTarget 7000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 							CoberturaTarget {
-								targetType: 'FILES'
-								healthyTarget: 7000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'FILES'
+								healthyTarget 7000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 							CoberturaTarget {
-								targetType: 'CLASSES'
-								healthyTarget: 7000000
-								unhealthyTarget: 0
-								failingTarget: 0
+								targetType 'CLASSES'
+								healthyTarget 7000000
+								unhealthyTarget 0
+								failingTarget 0
 							}
 									
 						}
