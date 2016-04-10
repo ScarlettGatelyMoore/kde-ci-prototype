@@ -40,8 +40,9 @@ class Publishers {
 	}
 	def genWarningsPublisher(platform, compiler) {
 		return	{ node ->
-				  node / 'FlexiblePublisher' / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+				  node / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers'
+				  'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+					  condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
 						arg2 "${compiler}"
 						ignoreCase false
