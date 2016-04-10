@@ -93,7 +93,7 @@ class Publishers {
 	}			
 	
 	def genCppCheckPublisher() {
-		return 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+		return { 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/cppcheck.xml'
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace')
@@ -134,7 +134,8 @@ class Publishers {
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 					}
-	}// end cppcheck			
+			}
+		}// end cppcheck			
 	
 	static Closure genCoberturaPublisher() {
 		return { project ->
