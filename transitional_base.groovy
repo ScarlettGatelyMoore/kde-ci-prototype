@@ -105,7 +105,7 @@ GroupFile.each { group ->
 						boolean currtrack = platform.genBuildTrack(options, track)
 						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
 						CurrentView = job.view
-						CurrentViewJobs << fullname
+						CurrentViewJobs << "'" + fullname + "'"
 						// If the current track is enabled for this platform generate job						
 						if (currtrack) {
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
