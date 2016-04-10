@@ -162,8 +162,11 @@ class Publishers {
 							failNoReports false
 							sourceEncoding 'UTF_8'
 							healthyTarget {
-								targets(class:"enum-map" + 'enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
-									METHOD 8000000
+								targets(class:"enum-map" + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
+									entry {
+										'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
+										'int' 8000000
+									}
 									LINE 8000000
 									CONDITIONAL 7000000
 									PACKAGES 7000000
