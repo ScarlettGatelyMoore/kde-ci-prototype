@@ -150,7 +150,7 @@ class Publishers {
 						baseDir(class: 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory\$Workspace')
 					}
 					publisherList {
-						'hudson.plugins.cobertura.CoberturaPublisher'
+						'hudson.plugins.cobertura.CoberturaPublisher' {
 							coberturaReportFile 'build/CoberturaLcovResults.xml'
 							onlyStable false
 							failUnhealthy false
@@ -160,7 +160,8 @@ class Publishers {
 							zoomCoverageChart false
 							maxNumberOfBuilds 10
 							failNoReports false
-							sourceEncoding 'UTF_8'							
+							sourceEncoding 'UTF_8'
+						}							
 					}
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
