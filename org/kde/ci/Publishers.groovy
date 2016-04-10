@@ -161,7 +161,12 @@ class Publishers {
 							maxNumberOfBuilds 10
 							failNoReports false
 							sourceEncoding 'UTF_8'
-							healthyTarget {}
+							healthyTarget {
+								targets {
+									'hudson.plugins.cobertura.targets.CoverageMetric' 'METHOD'
+									'int' 8000000
+								}
+							}
 							unheathyTarget {}
 							failingTarget {}
 						}							
