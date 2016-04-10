@@ -28,16 +28,15 @@ import groovy.lang.Closure;
 #
 */
 
-class Publishers {
+public final class Publishers {
+	boolean gen_publishers
 	
-	Publishers() {			
+	public void setGeneratePublishers(boolean gen_publishers){
+		this.gen_publishers = gen_publishers	
 	}
-	def genAllPublishers(platform, compiler) {
-		genWarningsPublisher(platform, compiler)
-		genCppCheckPublisher()
-		genCoberturaPublisher()
-		genJunitPublisher()
+	Publishers() {				
 	}
+
 	def genWarningsPublisher(platform, compiler) {
 		return { node ->
 			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
@@ -270,6 +269,6 @@ class Publishers {
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
 			}
-		}
+	}
 	
 }

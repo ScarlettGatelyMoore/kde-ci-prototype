@@ -49,6 +49,7 @@ public final class Project {
 	Boolean active
 	Boolean webview
 	String custom_build_command
+	boolean gen_publishers
 	
 	// Internal
 	List viewjobslist
@@ -111,7 +112,10 @@ public final class Project {
 	public void setCustomBuildCommand(String custom_build_command){
 		this.custom_build_command = custom_build_command
 	}
-	
+	public void setGeneratePublishers(boolean gen_publishers){
+		this.gen_publishers = gen_publishers	
+	}
+		
 	Project() {		
 	}
 	
