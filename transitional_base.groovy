@@ -207,4 +207,4 @@ userContent('kde.css', streamFileFromWorkspace('css/kde.css'))
 
 Views view = new Views()
 
-configure view.genListViews(CurrentView, CurrentViewJobs)
+view.genListViews(CurrentView, CurrentViewJobs)
