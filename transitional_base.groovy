@@ -203,7 +203,7 @@ GroupFile.each { group ->
 		}	// End Active
 	} } // End current project	
 
-/*	listView(CurrentView) {	
+	listView(CurrentView) {	
 		description 'All jobs for group: ' + "${CurrentView}"	
 		filterExecutors false
 		filterBuildQueue false
@@ -225,13 +225,13 @@ GroupFile.each { group ->
 			buildButton()
 			//'hudson.plugins.UpDownStreamViewColumn'
 		}
-	}*/
-	
-	Views view = new Views()
-	
-	listView(CurrentView) {
-		configure view.genListViews(CurrentView, CurrentViewJobs)
 	}
+	
+	//Views view = new Views()
+	
+	/*listView(CurrentView) {
+		configure view.genListViews(CurrentView, CurrentViewJobs)
+	}*/
 	//view.genBGRegexListViews()
 } // End group	
 
