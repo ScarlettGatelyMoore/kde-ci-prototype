@@ -166,11 +166,8 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									publishers {
-										flexiblePublish {
-											pub.genWarningsPublisher(PLATFORM, compiler)																						
-										}
-									}
+									configure pub.genWarningsPublisher(PLATFORM, compiler)																						
+										
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
 										configure variationClosure
