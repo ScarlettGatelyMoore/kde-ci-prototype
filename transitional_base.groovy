@@ -168,9 +168,7 @@ GroupFile.each { group ->
 									configure misc.genBuildStep(PLATFORM, job_command)	
 									publishers {
 										flexiblePublish {
-											publishers {
-												pub.genWarningsPublisher(PLATFORM, compiler)
-											}											
+											pub.genWarningsPublisher(PLATFORM, compiler)																						
 										}
 									}
 									if (jobType == 'matrixJob' ) {
