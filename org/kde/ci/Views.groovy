@@ -36,7 +36,7 @@ class Views {
 			name view
 			filterExecutors false
 			filterQueue false			
-			jobNames {
+/*			jobNames {
 				comparator(class:"hudson.util.CaseInsensitiveComparator") {
 					jobsList.each {
 						if (it != null) { string it }
@@ -58,7 +58,7 @@ class Views {
 				'hudson.views.BuildButtonColumn'				
 				'hudson.plugins.UpDownStreamViewColumn'
 			}
-		}
+		}*/
 		}
 	}
 }
