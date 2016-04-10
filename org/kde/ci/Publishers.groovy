@@ -216,8 +216,7 @@ class Publishers {
 										'int' 0
 									}
 								}
-							}
-							}
+							}							
 							failingTarget {
 								targets('class:"enum-map"' + ' enum-type="hudson.plugins.cobertura.targets.CoverageMetric"') {
 									entry {
@@ -245,8 +244,7 @@ class Publishers {
 										'int' 0
 									}
 								}
-							}
-							}
+							}							
 						}
 					}										
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
