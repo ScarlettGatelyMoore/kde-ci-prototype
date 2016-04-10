@@ -138,7 +138,7 @@ class Publishers {
 				executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 			}
 		}
-		
+				
 	}// end cppcheck			
 	
 	static Closure genCoberturaPublisher() {
@@ -155,8 +155,7 @@ class Publishers {
 					runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Run')
 					executionStrategy(class: "org.jenkins_ci.plugins.flexible_publish.strategy.FailAtEndExecutionStrategy")
 				}// end cobertura
-			}
-		}
+			}		
 	}
 	static Closure genJunitPublisher() {
 		return { node ->
@@ -177,6 +176,5 @@ class Publishers {
 				}
 			}
 		}
-	}
-
+	
 }
