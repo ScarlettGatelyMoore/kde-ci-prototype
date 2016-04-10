@@ -32,7 +32,7 @@ class Views {
 	
 	def genListViews(String view, jobsList) {
 		return { node ->
-			node / 'views' << 'listViews' {			
+			node / 'views' / 'listView' {			
 			name view
 			filterExecutors false
 			filterQueue false			
