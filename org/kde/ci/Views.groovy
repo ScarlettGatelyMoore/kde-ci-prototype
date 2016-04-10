@@ -37,8 +37,8 @@ class Views {
 				filterExecutors false
 				filterBuildQueue false
 				jobs {	
-					jobsList.each { job ->
-						names(job)
+					jobsList.each { 
+						if (it) { string it }
 					}		
 				}
 				jobFilters {			
