@@ -35,10 +35,10 @@ class Views {
 			node / 'listView' {	
 				description 'All jobs for group: ' + "${view}"	
 				filterExecutors false
-				filterBuildQueue false
-				jobs {	
+				filterQueue false
+				jobNames {	
 					jobsList.each { 
-						if (it) { string it }
+						 string it
 					}		
 				}
 				jobFilters {			
