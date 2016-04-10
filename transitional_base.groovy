@@ -168,9 +168,7 @@ GroupFile.each { group ->
 									configure misc.genBuildStep(PLATFORM, job_command)	
 									configure { project ->
 										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
-											publishers {
-												pub.genAllPublishers(PLATFORM, compiler)							
-											}
+											pub.genAllPublishers(PLATFORM, compiler)											
 										}
 									}
 									if (jobType == 'matrixJob' ) {
