@@ -84,8 +84,8 @@ GroupFile.each { group ->
 						//Bring in our DSL Closure generation classes
 						DSLClosures misc = new DSLClosures()
 						Publishers pub = new Publishers()
-						def gen_publishers = job.gen_publishers ?: true
-						pub.setGeneratePublishers(gen_publishers)
+						println job.gen_publishers
+						def gen_publishers = job.gen_publishers ?: true						
 						def variations = platform.PlatformVariations(options)
 						def variationClosure
 						def compilerClosure
@@ -168,7 +168,7 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									if(pub.gen_publishers) {
+									if(gen_publishers) {
 									configure pub.genWarningsPublisher(PLATFORM, compiler)	
 									configure pub.genCppCheckPublisher()
 									configure pub.genCoberturaPublisher()

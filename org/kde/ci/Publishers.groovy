@@ -29,11 +29,6 @@ import groovy.lang.Closure;
 */
 
 public final class Publishers {
-	boolean gen_publishers
-	
-	public void setGeneratePublishers(boolean gen_publishers){
-		this.gen_publishers = gen_publishers	
-	}
 	Publishers() {				
 	}
 
