@@ -52,7 +52,7 @@ class Views {
 					lastFailure()
 					lastDuration()
 					buildButton()
-					'hudson.plugins.UpDownStreamViewColumn'
+					//'hudson.plugins.UpDownStreamViewColumn'
 				}
 			}
 		}
