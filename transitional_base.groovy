@@ -202,30 +202,30 @@ GroupFile.each { group ->
 		}	// End Active
 	} } // End current project	
 
-	views {
-		listView {
-			name CurrentView
-			filterExecutors false
-			filterQueue false
-			jobs {			
-				names(CurrentViewJobs)		
-			}
-			jobFilters {
-				status {
-					status(Status.ALL)
-				}
-			}
-			columns {
-				status()
-				weather()
-				name()
-				lastSuccess()
-				lastFailure()
-				lastDuration()
-				buildButton()
+	listView {
+		name CurrentView
+		filterExecutors false
+		filterQueue false
+		jobs {			
+			names(CurrentViewJobs)		
+		}
+		jobFilters {
+			status {
+				status(Status.ALL)
 			}
 		}
+		columns {
+			status()
+			weather()
+			name()
+			lastSuccess()
+			lastFailure()
+			lastDuration()
+			buildButton()
+			'hudson.plugins.UpDownStreamViewColumn'
+		}
 	}
+	
 
 } // End group	
 
