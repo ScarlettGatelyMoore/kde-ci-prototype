@@ -166,8 +166,13 @@ GroupFile.each { group ->
 									blockOnUpstreamProjects()
 									configure scmClosure
 									configure misc.genBuildStep(PLATFORM, job_command)	
-									configure pub.genAllPublishers(PLATFORM, compiler)							
-										
+									configure { project ->
+										project / publishers << 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
+											publishers {
+												pub.genAllPublishers(PLATFORM, compiler)							
+											}
+										}
+									}
 									if (jobType == 'matrixJob' ) {
 										childCustomWorkspace(".")
 										configure variationClosure
