@@ -47,6 +47,7 @@ assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
 
 GroupFile.each { group ->	
 	println(group)
+	CurrentViewJobs = []
 	// Get the Yaml data into a usable object
 	def defaultyamldata = new ImportConfig().getConfig(basePath, group)	
 	groupName = group - '.yml'	
