@@ -38,7 +38,7 @@ class Publishers {
 		//genCoberturaPublisher()
 		//genJunitPublisher()
 	}
-	static Closure genWarningsPublisher(platform, compiler) {
+	def genWarningsPublisher(platform, compiler) {
 		return	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
 						arg1 '${ENV,var="compiler"}'
@@ -92,7 +92,7 @@ class Publishers {
 			}
 					
 	
-	static Closure genCppCheckPublisher() {
+	def genCppCheckPublisher() {
 		return 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
 					condition(class: 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition') {
 						file 'build/cppcheck.xml'
