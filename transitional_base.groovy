@@ -37,10 +37,10 @@ def repofiles
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def dir = new File(System.getProperty('user.home') + '/scripts/repometadata/projects/')
 dir.eachFileRecurse (FileType.FILES) { file ->
-		if(file != null) { println file }
+		if(file != null) { repofiles << file }
 }
 println repofiles
-def repoDataFile = configs.genListOfFilesinDir(repobasePath)
+//def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 println repoDataFile
 repoDataFile.each { file ->
 	if(file =~ 'metadata.yaml'){		
