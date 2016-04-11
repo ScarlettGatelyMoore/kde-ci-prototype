@@ -56,10 +56,7 @@ class ImportConfig {
 	}
 
 	def Object getConfig(file) throws IOException {
-		String configFile
-		configFile = path + file
-		assert configFile : "Invalid Config File" + configFile
-		def yamldata = new Yaml().load(new FileReader(new File(configFile)))		
+		def yamldata = new Yaml().load(new FileReader(new File(file)))		
 		return yamldata
 	}
 }
