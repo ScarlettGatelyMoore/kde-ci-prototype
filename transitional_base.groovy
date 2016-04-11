@@ -39,7 +39,7 @@ repoDataFile.each { file ->
 	def project = file.toString().minus(repobasePath).minus('/metadata.yaml')
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
-	println rd
+	println rd.repopath
 }
 
 println repoConfig
