@@ -38,7 +38,7 @@ def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/proj
 def dir = new File(System.getProperty('user.home') + '/scripts/repometadata/projects/')
 while(dir) {
 	dir.eachFileRecurse (FileType.FILES) { file ->
-		if(file != null) { repofiles.put(file) }
+		if(file != null) { println file }
 }}
 println repofiles
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
