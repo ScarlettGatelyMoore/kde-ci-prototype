@@ -64,17 +64,21 @@ GroupFile.each { group ->
 		if (jobname != 'project') {
 		// Get repo-metadata
 		def repoDataFile = []
-		
+		def repoConfig
+		def repoyamldata
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def dir = new File(repobasePath)
 		dir.eachFileRecurse (FileType.FILES) { file ->
 		  repoDataFile << file
 		}
-		println repoDataFile
-		def repoconfigFiles = new File(repobasePath)
-		def repoyamldata = new ImportConfig().getConfig(repobasePath, 'metadata.yaml')
+		repoDataFile.each { file -> 
+			if(file =~ 'metadata.yaml'){
+				repoConfig = file
+				repoyamldata = new ImportConfig().getConfig(repoConfig)
+			}
+		}		
 		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
-		
+		path = repometa.projectpath
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
