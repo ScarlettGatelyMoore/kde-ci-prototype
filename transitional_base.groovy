@@ -64,7 +64,13 @@ GroupFile.each { group ->
 		if (jobname != 'project') {
 		// Get repo-metadata
 		def repoDataFile = []
-		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/' + path + '/'
+		
+		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
+		def dir = new File(repobasePath)
+		dir.eachFileRecurse (FileType.FILES) { file ->
+		  repoDataFile << file
+		}
+		println repoDataFile
 		def repoconfigFiles = new File(repobasePath)
 		def repoyamldata = new ImportConfig().getConfig(repobasePath, 'metadata.yaml')
 		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
@@ -80,7 +86,7 @@ GroupFile.each { group ->
 			Map bg = job.getBranchGrouptracks()
 			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 			bg.each { branchGroup , track  -> 
-				Map branches = tracks.getAt('branches')
+				Map branches = tracks.getAt(path)
 				def branch = branches.get(track)				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
