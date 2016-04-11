@@ -38,7 +38,8 @@ def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->
 	def aconfig = [:]
 	aconfig = configs.getConfig(file)
-    repoConfig << aconfig
+    //repoConfig << aconfig
+	println aconfig
 }
 
 println repoConfig
