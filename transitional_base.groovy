@@ -33,13 +33,19 @@ import org.yaml.snakeyaml.Yaml
 def configs = new ImportConfig()
 // Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py
 Map repoConfig
+def repofiles
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
+def dir = new File(repobasePath)
+dir.eachFileRecurse (FileType.FILES) { file ->
+  repofiles << file
+}
+println repofiles
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 println repoDataFile
 repoDataFile.each { file ->
 	if(file =~ 'metadata.yaml'){		
 		def aconfig = new ImportConfig().getConfig(file)
-		repoConfig << aconfig
+		//repoConfig << aconfig
 	}
 }
 
