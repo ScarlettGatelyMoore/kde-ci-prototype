@@ -35,10 +35,10 @@ def configs = new ImportConfig()
 Map repoConfig
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
-println repoDataFile
 repoDataFile.each { file ->
-	def aconfig = configs.getConfig(file)
-		repoConfig << aconfig
+	def aconfig = []
+	aconfig = configs.getConfig(file)
+    repoConfig << aconfig
 }
 
 println repoConfig
