@@ -41,7 +41,7 @@ repoDataFile.each { file ->
 	project = projectpart =~ /\s(\w+)$/	
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
-	println project[0]
+	println project[0][1]
 	println rd.projectpath
 }
 
