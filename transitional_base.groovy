@@ -35,14 +35,13 @@ def configs = new ImportConfig()
 Map repoConfig
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
-repoDataFile.each { file ->	
-	def project
+repoDataFile.each { file ->		
 	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml').replaceAll('/', ' ')
-	
-	def findlast = (projectpart =~ /\s\w$/)
-	project = findlast.getAt(0)
+	def regexp = /(\w+) (\w+)$/
+	def (exp, group, project) = (projectpart =~ regexp)[0]	
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+	println group
 	println project
 	println rd.projectpath
 }
