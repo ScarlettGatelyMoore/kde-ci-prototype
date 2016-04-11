@@ -25,7 +25,7 @@ package org.kde.ci
 # 
 #
 */
-
+import groovy.io.FileType
 /*@Grapes([
  @Grab('org.yaml:snakeyaml:1.13'),
  @Grab('com.google.guava:guava:18.0'),
@@ -44,8 +44,17 @@ import com.google.common.io.ByteStreams
 class ImportConfig {
 	
 	ImportConfig() {}
+	
+	def ArrayList genListOfFilesinDir(filename) {
+		def repofiles
+		def dir = new File(filename)
+		dir.eachFileRecurse (FileType.FILES) { file ->
+		  repofiles << file
+		}
+		return repofiles
+	}
 
-	def Object getConfig(path, file) throws IOException {
+	def Object getConfig(file) throws IOException {
 		String configFile
 		configFile = path + file
 		assert configFile : "Invalid Config File" + configFile

@@ -27,17 +27,45 @@ import groovy.io.FileType
 
 import org.yaml.snakeyaml.Yaml
 
+
+
+// Initialize config class
+def configs = new ImportConfig()
+// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py
+Map repoConfig
+def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
+def repoDataFile = configs.genListOfFilesinDir(repobasePath)
+repoDataFile.each { file ->
+	if(file =~ 'metadata.yaml'){		
+		def aconfig = new ImportConfig().getConfig(file)
+		repoConfig << aconfig
+	}
+}
+
+println repoConfig
+
 // Begin with the base defaults yaml that get retrieved via update-setup
 def basePath = System.getProperty('user.home') + '/scripts/metadata/'
 def GroupFile = []
 def allJobsList = []
 def CurrentView
 def CurrentViewJobs = []
-def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
+
+def fileList = configs.genListOfFilesinDir(basePath)
+//def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
+fileList.each { file ->
+	if(file =~ '.yml'){
+		metadataConfig = file
+		defaultyamldata = new ImportConfig().getConfig(metadataConfig)
+	}
+}
 // Now lets get the repo-metadata and bring in any overrides
 //def rout = new StringBuilder(), rerr = new StringBuilder()
 //def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
+// Get repo-metadata
 
+RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
+path = repometa.projectpath
 
 
 println(GroupFile.toString())
@@ -61,24 +89,7 @@ GroupFile.each { group ->
 		println "Processing group: " + groupName
 		def path = groupName + '/'	+ jobname
 		// get repo-metadata for all except the default project		
-		if (jobname != 'project') {
-		// Get repo-metadata
-		def repoDataFile = []
-		def repoConfig
-		def repoyamldata
-		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
-		def dir = new File(repobasePath)
-		dir.eachFileRecurse (FileType.FILES) { file ->
-		  repoDataFile << file
-		}
-		repoDataFile.each { file -> 
-			if(file =~ 'metadata.yaml'){
-				repoConfig = file
-				repoyamldata = new ImportConfig().getConfig(repoConfig)
-			}
-		}		
-		RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
-		path = repometa.projectpath
+		if (jobname != 'project') {		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
