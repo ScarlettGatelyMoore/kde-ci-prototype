@@ -55,8 +55,8 @@ class ImportConfig {
 		return repofiles
 	}
 
-	def Object getConfig(file) throws IOException {
-		def yamldata = new Yaml().load(new FileReader(new File(file)))		
+	def Object getConfig(afile) throws IOException {
+		def yamldata = new Yaml().load(new FileReader(new File(afile)))		
 		return yamldata
 	}
 }
