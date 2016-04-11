@@ -37,8 +37,8 @@ def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/proj
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->	
 	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml')
-	def project = projectpart =~ /\w$/
-	
+	projectpart =~ /\w$/
+	def project = projectpart
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
 	println project
