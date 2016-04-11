@@ -51,7 +51,7 @@ class ImportConfig {
 		dir.eachFileRecurse (FileType.FILES) { file ->
 			repofiles << file
 		}
-		repofiles.removeAll(~/i18n/)
+		repofiles.removeAll { it =~ /i18n/ }
 		return repofiles
 	}
 
