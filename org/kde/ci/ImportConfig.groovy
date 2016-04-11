@@ -55,8 +55,11 @@ class ImportConfig {
 		return repofiles
 	}
 
-	def Object getConfig(afile) throws IOException {
-		def yamldata = new Yaml().load(new FileReader(new File(afile)))		
+	def Object getConfig(file) throws IOException {
+		String configFile
+		configFile = file
+		assert configFile : "Invalid Config File" + configFile
+		def yamldata = new Yaml().load(new FileReader(new File(configFile)))		
 		return yamldata
 	}
 }
