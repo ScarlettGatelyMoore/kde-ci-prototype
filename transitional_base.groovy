@@ -36,7 +36,7 @@ Map repoConfig
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->
-	def aconfig = []
+	def aconfig = [:]
 	aconfig = configs.getConfig(file)
     repoConfig << aconfig
 }
