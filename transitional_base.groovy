@@ -36,10 +36,10 @@ Map repoConfig
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->
-	Map aconfig
-	aconfig = configs.getConfig(file)
-    repoConfig << aconfig
-	println aconfig
+	def project = file.minus(repobasePath).minus('/metadata.yaml')
+	def projrepoyaml = configs.getConfig(file)
+	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+	repoConfig << rd
 }
 
 println repoConfig
@@ -64,7 +64,7 @@ fileList.each { file ->
 //def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
 // Get repo-metadata
 
-RepoMetaValues repometa = RepoMetaValues.newInstance(repoyamldata)
+
 path = repometa.projectpath
 
 
