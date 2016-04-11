@@ -36,8 +36,9 @@ Map repoConfig
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->	
-	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml')
-	def project = projectpart.replaceAll('/', '-') =~ /-.*$/	
+	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml').replaceAll('/', '-')
+	projectpart =~ /-.*$/	
+	def project = projectpart
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
 	println project
