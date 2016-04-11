@@ -57,7 +57,7 @@ class ImportConfig {
 		repofiles.removeAll { it =~ /websites/ }
 		repofiles.removeAll { it =~ /kde-build-metadata/ }
 		repofiles.removeAll { it =~ /others/ }
-		repofiles.removeAll { it =~ /repomanagement/ }
+		repofiles.removeAll { it =~ /repo-management/ }
 		return repofiles
 	}
 
