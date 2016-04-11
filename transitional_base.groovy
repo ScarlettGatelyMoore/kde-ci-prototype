@@ -35,7 +35,7 @@ def configs = new ImportConfig()
 Map repoConfig
 def repofiles = []
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
-def dir = new File(System.getProperty('user.home') + '/scripts/repometadata/projects/')
+def dir = new File(repobasePath)
 dir.eachFileRecurse (FileType.FILES) { file ->
 		if(file != null) { repofiles << file }
 }
