@@ -38,10 +38,12 @@ def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->	
 	def project
 	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml').replaceAll('/', ' ')
-	project = projectpart =~ /\s(\w+)$/	
+	
+	def findlast = (projectpart =~ /\s\w$/)
+	project = findlast.getAt(1)
 	def projrepoyaml = configs.getConfig(file)
 	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
-	println project[0]
+	println project
 	println rd.projectpath
 }
 
