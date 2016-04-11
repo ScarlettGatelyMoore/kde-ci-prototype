@@ -80,9 +80,8 @@ GroupFile.each { group ->
 			Map bg = job.getBranchGrouptracks()
 			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 			bg.each { branchGroup , track  -> 
-				def branch = tracks.get(path)
-				println path
-				println tracks
+				Map branches = tracks.getAt('branches')
+				def branch = branches.get(track)				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
 				pf.each { PLATFORM , options ->																	
