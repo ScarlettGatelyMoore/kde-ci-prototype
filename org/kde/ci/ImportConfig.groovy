@@ -46,10 +46,10 @@ class ImportConfig {
 	ImportConfig() {}
 	
 	def ArrayList genListOfFilesinDir(filename) {
-		def repofiles
+		def repofiles = []
 		def dir = new File(filename)
 		dir.eachFileRecurse (FileType.FILES) { file ->
-		  repofiles << file
+			repofiles << file
 		}
 		return repofiles
 	}
