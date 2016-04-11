@@ -36,10 +36,9 @@ Map repoConfig
 def repofiles
 def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 def dir = new File(System.getProperty('user.home') + '/scripts/repometadata/projects/')
-while(dir) {
-	dir.eachFileRecurse (FileType.FILES) { file ->
+dir.eachFileRecurse (FileType.FILES) { file ->
 		if(file != null) { println file }
-}}
+}
 println repofiles
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 println repoDataFile
