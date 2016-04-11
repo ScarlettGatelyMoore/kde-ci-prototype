@@ -37,10 +37,8 @@ def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/proj
 def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 println repoDataFile
 repoDataFile.each { file ->
-	if(file =~ 'metadata.yaml'){		
-		def aconfig = new ImportConfig().getConfig(file)
-		//repoConfig << aconfig
-	}
+	def aconfig = configs.getConfig(file)
+		repoConfig << aconfig
 }
 
 println repoConfig
