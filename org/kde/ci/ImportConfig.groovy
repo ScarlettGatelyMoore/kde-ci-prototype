@@ -52,6 +52,12 @@ class ImportConfig {
 			repofiles << file
 		}
 		repofiles.removeAll { it =~ /i18n/ }
+		repofiles.removeAll { it =~ /sysadmin/ }
+		repofiles.removeAll { it =~ /unmaintained/ }
+		repofiles.removeAll { it =~ /websites/ }
+		repofiles.removeAll { it =~ /kde-build-metadata/ }
+		repofiles.removeAll { it =~ /others/ }
+		repofiles.removeAll { it =~ /repomanagement/ }
 		return repofiles
 	}
 
