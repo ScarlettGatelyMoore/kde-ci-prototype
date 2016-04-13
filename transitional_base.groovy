@@ -31,21 +31,6 @@ import org.yaml.snakeyaml.Yaml
 
 // Initialize config class
 def configs = new ImportConfig()
-// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py
-Map repoConfig
-def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
-def repoDataFile = configs.genListOfFilesinDir(repobasePath)
-repoDataFile.each { file ->		
-	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml').replaceAll('/', ' ')
-	def regexp = /(\w+) (\w+)$/
-	def (exp, group, project) = (projectpart =~ regexp)
-	
-	println group
-	println project
-	println rd.projectpath
-}
-
-println repoConfig
 
 // Begin with the base defaults yaml that get retrieved via update-setup
 def basePath = System.getProperty('user.home') + '/scripts/metadata/'
@@ -87,15 +72,20 @@ GroupFile.each { group ->
 		def jobname = jobkey
 		allJobsList << jobname				
 		Project job = Project.newInstance(curr_project)
-		def projrepoyaml = configs.getConfig(repoDataFile.list.find { it =~ jobname })
+		if (jobname != 'project') {
+		// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
+		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
+		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
+		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname })
 		println projrepoyaml
-		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
-		
+		if (projrepoyaml) {
+			RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+		}
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
 		def path = groupName + '/'	+ jobname
 		// get repo-metadata for all except the default project		
-		if (jobname != 'project') {		
+			
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
