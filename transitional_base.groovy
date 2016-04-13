@@ -87,8 +87,8 @@ GroupFile.each { group ->
 			assert job.getActive() == true
 			// Bring in development tracks to determine branches.
 			Map repository = job.SetRepoMap()
-			println repository.branches
-			def tracks = repository.findAll( path )
+			
+			def tracks = repository.branches
 			// We have branchGroups that split into sections for releases/development 
 			// We need to process a new jobset for each of these groups.
 			Map bg = job.getBranchGrouptracks()
