@@ -60,6 +60,14 @@ class ImportConfig {
 		repofiles.removeAll { it =~ /repo-management/ }
 		return repofiles
 	}
+	
+	def ArrayList removeExcludedRepositories(ArrayList repolist, ArrayList repostoremove) {
+		ArrayList newlist
+		repostoremove.each { repo ->
+			repolist.removeAll { it =~ /"${repo}"/ }
+		}
+		return newlist
+	}
 
 	def Object getConfig(file) throws IOException {
 		String configFile

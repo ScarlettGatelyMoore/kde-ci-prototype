@@ -69,6 +69,8 @@ GroupFile.each { group ->
 		// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
+		//Remove all excluded_repositories
+		repoDataFile = configs.removeExcludedRepositories(job.excluded_repositories, repoDataFile)
 		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname })
 		println projrepoyaml
 		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
