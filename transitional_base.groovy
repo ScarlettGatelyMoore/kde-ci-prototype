@@ -70,8 +70,10 @@ GroupFile.each { group ->
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 		//Remove all excluded_repositories
+		println job.excluded_repositories 
+		println repoDataFile
 		repoDataFile = configs.removeExcludedRepositories(job.excluded_repositories, repoDataFile)
-		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname })
+		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname + '/' + 'metadata.yaml' })
 		println projrepoyaml
 		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
 
