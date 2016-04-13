@@ -38,9 +38,8 @@ def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 repoDataFile.each { file ->		
 	def projectpart = file.toString().minus(repobasePath).minus('/metadata.yaml').replaceAll('/', ' ')
 	def regexp = /(\w+) (\w+)$/
-	def (exp, group, project) = (projectpart =~ regexp)[0]	
-	def projrepoyaml = configs.getConfig(file)
-	RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+	def (exp, group, project) = (projectpart =~ regexp)
+	
 	println group
 	println project
 	println rd.projectpath
@@ -56,7 +55,7 @@ def CurrentView
 def CurrentViewJobs = []
 
 def fileList = configs.genListOfFilesinDir(basePath)
-//def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
+def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 fileList.each { file ->
 	if(file =~ '.yml'){
 		metadataConfig = file
@@ -88,7 +87,10 @@ GroupFile.each { group ->
 		def jobname = jobkey
 		allJobsList << jobname				
 		Project job = Project.newInstance(curr_project)
-		//debug only
+		def projrepoyaml = configs.getConfig(repoDataFile.list.find { it =~ jobname })
+		println projrepoyaml
+		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+		
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
 		def path = groupName + '/'	+ jobname
