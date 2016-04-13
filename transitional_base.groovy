@@ -53,9 +53,6 @@ fileList.each { file ->
 // Get repo-metadata
 
 
-path = repometa.projectpath
-
-
 println(GroupFile.toString())
 
 assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
@@ -78,12 +75,12 @@ GroupFile.each { group ->
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname })
 		println projrepoyaml
-		if (projrepoyaml) {
-			RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
-		}
+		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+
+		def path = rd.projectpath ?: groupName + '/'	+ jobname
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
-		def path = groupName + '/'	+ jobname
+		//def path = 
 		// get repo-metadata for all except the default project		
 			
 		// Lets start with.. Are we active?
