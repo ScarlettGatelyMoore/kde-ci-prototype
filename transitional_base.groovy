@@ -125,9 +125,7 @@ GroupFile.each { group ->
 						if (currtrack) {
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
 							+ " compiler " + compiler
-							
-							if ( repometa.hasrepo && repometa.repoactive ) {
-								SCM scm = new SCM()									
+						SCM scm = new SCM()									
 								scmClosure = scm.generateSCM(jobname, job.SetRepoMap(), branch)
 									
 								/* BEGIN DSL CODE */
@@ -202,9 +200,7 @@ GroupFile.each { group ->
 										label('master')
 									}
 									
-								}// END DSL
-							} else { "Repo status: " + repometa.repoactive + "Has Repo? " + repometa.hasrepo }
-							// End repo / Failed repo check
+								}// END DSL							
 							} else { // end current job track	
 								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
 								return	
