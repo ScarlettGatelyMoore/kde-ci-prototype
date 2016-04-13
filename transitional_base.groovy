@@ -62,7 +62,7 @@ GroupFile.each { group ->
 	println(group)
 	CurrentViewJobs = []
 	// Get the Yaml data into a usable object
-	def defaultyamldata = new ImportConfig().getConfig(basePath, group)	
+	def defaultyamldata = new ImportConfig().getConfig(fileList.find { it =~ group })	
 	groupName = group - '.yml'	
 	// Now for each project data Map we feed that in a current Project Object Class	
 	defaultyamldata.each { jobkey, curr_project ->		
