@@ -50,10 +50,6 @@ fileList.each { file ->
 // Now lets get the repo-metadata and bring in any overrides
 //def rout = new StringBuilder(), rerr = new StringBuilder()
 //def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
-// Get repo-metadata
-
-
-println(GroupFile.toString())
 
 assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
 
@@ -88,14 +84,15 @@ GroupFile.each { group ->
 			assert job.getActive() == true
 			// Bring in development tracks to determine branches.
 			Map tracks = job.SetRepoMap()
-			println job.repositories
+			println tracks
 			// We have branchGroups that split into sections for releases/development 
 			// We need to process a new jobset for each of these groups.
 			Map bg = job.getBranchGrouptracks()
 			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 			bg.each { branchGroup , track  -> 
+				println path
 				Map branches = tracks.getAt(path)
-				def branch = branches.get(track)				
+				def branch = branches.getAt(track)				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
 				pf.each { PLATFORM , options ->																	
