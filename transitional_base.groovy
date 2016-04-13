@@ -96,6 +96,7 @@ GroupFile.each { group ->
 			bg.each { branchGroup , track  -> 
 				println path
 				println track
+				println repository.branches
 				//Map branches = tracks.getAt(path)
 				def branch = tracks.getAt(track)				
 				// Process each platform
