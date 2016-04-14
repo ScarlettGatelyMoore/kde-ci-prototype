@@ -93,8 +93,7 @@ GroupFile.each { group ->
 			bg.each { branchGroup , track  -> 
 				println path
 				println track		
-				//def tracks = repository.findAll { it =~ groupName && it.value =~ track }
-				def tracks = repository[2]
+				def tracks = repository.findAll { it =~ groupName && it.value =~ track }				
 				println tracks
 				//Map branches = tracks.getAt(path)
 				def branch = tracks.getAt(track)
