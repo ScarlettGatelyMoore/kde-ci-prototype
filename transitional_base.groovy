@@ -85,7 +85,7 @@ GroupFile.each { group ->
 			// Bring in development tracks to determine branches.
 			Map repository = job.SetRepoMap()
 			
-			println tracks
+		
 			// We have branchGroups that split into sections for releases/development 
 			// We need to process a new jobset for each of these groups.
 			Map bg = job.getBranchGrouptracks()
@@ -94,6 +94,7 @@ GroupFile.each { group ->
 				println path
 				println track		
 				def tracks = repository.findAll { it =~ groupName && it =~ track }
+				println tracks
 				//Map branches = tracks.getAt(path)
 				def branch = tracks.get(track)
 				println branch				
