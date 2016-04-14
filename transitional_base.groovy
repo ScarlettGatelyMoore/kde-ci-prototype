@@ -69,19 +69,15 @@ GroupFile.each { group ->
 		// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
-		//Remove all excluded_repositories
-		println job.excluded_repositories 		
-		//repoDataFile = configs.removeExcludedRepositories(job.excluded_repositories, repoDataFile)
+		//Remove all excluded_repositories 		
+		repoDataFile = configs.removeExcludedRepositories( repoDataFile, job.excluded_repositories)
 		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname + '/' + 'metadata.yaml' })
-		println projrepoyaml
-		RepoMetaValues rd = RepoMetaValues.newInstance(projrepoyaml)
+		RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
 
-		def path = rd.projectpath ?: groupName + '/'	+ jobname
+		def path = repodata.projectpath ?: groupName + '/' + jobname
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
-		//def path = 
-		// get repo-metadata for all except the default project		
-			
+		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
 			assert job.getActive() == true
@@ -98,7 +94,8 @@ GroupFile.each { group ->
 				println track
 				println repository.branches
 				//Map branches = tracks.getAt(path)
-				def branch = repository.getAt(track)				
+				def branch = repository.getAt(track)
+				println branch				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
 				pf.each { PLATFORM , options ->																	
@@ -141,7 +138,7 @@ GroupFile.each { group ->
 									// token for api		
 									configure misc.SetToken(jobname)
 									// Job description
-									description job.DefineDescription(rd.name, rd.description) ?: job.description
+									description job.DefineDescription(repodata.name, repodata.description) ?: job.description
 									// Set the log history
 									logRotator(job.getLogrotator())
 									// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
