@@ -92,10 +92,9 @@ GroupFile.each { group ->
 			//Now we determine which track this branchGroup wishes to use. Which will determine the branch.
 			bg.each { branchGroup , track  -> 
 				println path
-				println track
-				println repository.branches
+				println track				
 				//Map branches = tracks.getAt(path)
-				def branch = repository.getAt(track)
+				def branch = repository.find(track).value
 				println branch				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
