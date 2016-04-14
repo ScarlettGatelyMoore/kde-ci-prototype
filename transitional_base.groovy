@@ -94,7 +94,7 @@ GroupFile.each { group ->
 				println path
 				println track				
 				//Map branches = tracks.getAt(path)
-				def branch = repository.find(track).value
+				def branch = repository.get(track)
 				println branch				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
