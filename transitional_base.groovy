@@ -51,7 +51,7 @@ fileList.each { file ->
 //def rout = new StringBuilder(), rerr = new StringBuilder()
 //def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
 
-assert GroupFile == ['qt5.yml', 'frameworks.yml', 'kdesupport.yml']
+assert GroupFile == ['kdesupport.yml', 'qt5.yml', 'frameworks.yml']
 
 
 GroupFile.each { group ->	
