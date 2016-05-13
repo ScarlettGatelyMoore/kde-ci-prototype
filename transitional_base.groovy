@@ -128,7 +128,7 @@ GroupFile.each { group ->
 									// token for api		
 									configure misc.SetToken(jobname)
 									// Job description
-									description job.DefineDescription(repodata.name, repodata.description) ?: job.description
+									description job.DefineDescription(/*repodata.name, repodata.description*/ jobname) ?: job.description
 									// Set the log history
 									logRotator(job.getLogrotator())
 									// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
