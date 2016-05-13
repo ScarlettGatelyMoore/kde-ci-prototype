@@ -34,8 +34,12 @@ class SCM {
 		
 	def protocol = scm_data.get('protocol')
 	def address = scm_data.get('address')
-	if (address =~ "jobkey" ) {
-		address.replaceAll(~/\$\{jobkey\}/, jobname)
+	/* The YAML jobkey did not quite achieve desired results, but workable, 
+	 * just added a statement to replace with jobname if present.This allows 
+	 * the DSL not to fail, and only replaces if variable and not a legitimate address.
+	 */
+	if (address == '${jobkey}' ) {
+		address.replaceAll('${jobkey}', jobname)
 	}
 	boolean showbrowser = scm_data.get('browser')	
 		switch(protocol) {
