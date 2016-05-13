@@ -41,22 +41,11 @@ def CurrentViewJobs = []
 
 def fileList = configs.genListOfFilesinDir(basePath)
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
-fileList.each { file ->
-	if(file =~ '.yml'){
-		metadataConfig = file
-		defaultyamldata = new ImportConfig().getConfig(metadataConfig)
-	}
-}
-// Now lets get the repo-metadata and bring in any overrides
-//def rout = new StringBuilder(), rerr = new StringBuilder()
-//def getFile = 'git archive --remote=git://anongit.kde.org/sysadmin/repo-metadata.git HEAD:path/to/directory filename | tar -x'
 
 assert GroupFile == ['kdesupport.yml', 'qt5.yml', 'frameworks.yml']
 
 
 GroupFile.each { group ->	
-	println(group)
-	CurrentViewJobs = []
 	// Get the Yaml data into a usable object
 	def defaultyamldata = new ImportConfig().getConfig(fileList.find { it =~ group })	
 	groupName = group - '.yml'	
@@ -66,17 +55,17 @@ GroupFile.each { group ->
 		allJobsList << jobname				
 		Project job = Project.newInstance(curr_project)
 		if (jobname != 'project') {
-		// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
+		/*// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 		//Remove all excluded_repositories 		
 		def arepoDataFile = configs.removeExcludedRepositories( repoDataFile, job.excluded_repositories)
-		println arepoDataFile
+
 		def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname + '/' + 'metadata.yaml' })
 		RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
 
 		def path = repodata.projectpath ?: groupName + '/' + jobname
-		assert job.group_name == groupName
+		assert job.group_name == groupName*/
 		println "Processing group: " + groupName
 		
 		// Lets start with.. Are we active?
