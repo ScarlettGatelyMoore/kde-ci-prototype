@@ -34,6 +34,9 @@ class SCM {
 		
 	def protocol = scm_data.get('protocol')
 	def address = scm_data.get('address')
+	if (address =~ "jobkey" ) {
+		address.replaceAll(~/\$\{jobkey\}/, jobname)
+	}
 	boolean showbrowser = scm_data.get('browser')	
 		switch(protocol) {
 		case 'svn':
