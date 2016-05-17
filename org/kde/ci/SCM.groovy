@@ -38,7 +38,7 @@ class SCM {
 	 * just added a statement to replace with jobname if present.This allows 
 	 * the DSL not to fail, and only replaces if variable and not a legitimate address.
 	 */
-	if (address == '${jobkey}' ) {
+	if (address =~ '${jobkey}' ) {
 		address.replaceAll('${jobkey}', jobname)
 	}
 	boolean showbrowser = scm_data.get('browser')	
