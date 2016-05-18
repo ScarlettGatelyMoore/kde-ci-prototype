@@ -55,7 +55,7 @@ GroupFile.each { group ->
 		allJobsList << jobname				
 		Project job = Project.newInstance(curr_project)
 		if (jobname != 'project') {
-		/*// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
+		// Setup repo-metadata (https://anongit.kde.org/sysadmin/repo-metadata) Repo is updated via update-setup.py		
 		def repobasePath = System.getProperty('user.home') + '/scripts/repometadata/projects/'
 		def repoDataFile = configs.genListOfFilesinDir(repobasePath)
 		//Remove all excluded_repositories 		
@@ -65,7 +65,7 @@ GroupFile.each { group ->
 		RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
 
 		def path = repodata.projectpath ?: groupName + '/' + jobname
-		assert job.group_name == groupName*/
+		assert job.group_name == groupName
 		println "Processing group: " + groupName
 		
 		// Lets start with.. Are we active?
@@ -126,7 +126,7 @@ GroupFile.each { group ->
 									// token for api		
 									configure misc.SetToken(jobname)
 									// Job description
-									description /*job.DefineDescription(repodata.name, repodata.description) ?:*/ job.description
+									description job.DefineDescription(repodata.name, repodata.description) ?: job.description
 									// Set the log history
 									logRotator(job.getLogrotator())
 									// Setting this to false, I have never seen it set to true in the last year. Not even sure why we have it...
