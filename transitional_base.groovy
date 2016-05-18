@@ -42,7 +42,7 @@ def CurrentViewJobs = []
 def fileList = configs.genListOfFilesinDir(basePath)
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 
-assert GroupFile == ['kdesupport.yml', 'qt5.yml', 'frameworks.yml']
+assert GroupFile.any { it =~ /kdesupport.yml/ && /qt5.yml/ && /frameworks.yml/ }
 
 
 GroupFile.each { group ->	
