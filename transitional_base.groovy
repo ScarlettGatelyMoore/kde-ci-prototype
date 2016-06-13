@@ -62,13 +62,13 @@ GroupFile.each { group ->
 		def arepoDataFile = configs.removeExcludedRepositories( repoDataFile, job.excluded_repositories)
         
 		//For reasons unknown ki18n barfs, set path.
+		def projrepoyaml
 		if(jobname == 'ki18n') {
-			def projrepoyaml = 'ki18n/metadata.yaml'
+			projrepoyaml = 'ki18n/metadata.yaml'
 		} else {
-			def projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname + '/' + 'metadata.yaml' })
-			RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
+			projrepoyaml = configs.getConfig(repoDataFile.find { it =~ jobname + '/' + 'metadata.yaml' })			
 		}
-
+		RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
 		def path = repodata.projectpath ?: groupName + '/' + jobname
 		assert job.group_name == groupName
 		println "Processing group: " + groupName
