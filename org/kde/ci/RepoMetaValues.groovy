@@ -63,7 +63,7 @@ class RepoMetaValues {
 		this.type = type
 	}
 	public void setIcon(String icon){
-		this.icon = icon
+		this.icon = icon ?: "none"
 	}
 	public void setMembers(List members){
 		this.members = members
