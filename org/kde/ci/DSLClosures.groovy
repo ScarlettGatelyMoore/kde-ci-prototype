@@ -131,7 +131,7 @@ class DSLClosures {
 		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
 		if (custom_command) {
-			jobcommand.append(custom_command)
+			jobcommand.append(custom_command + '\n')
 		}
 		if (platform == 'Linux') {
 			jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox-local.py\n')
