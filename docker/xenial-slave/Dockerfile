@@ -135,7 +135,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     libgif-dev \
     libgtk-3-dev \
     libclang-3.5-dev \
-    libgsl0-dev \
+    libgsl-dev \
     fontforge \
     libblkid-dev \
     libatasmart-dev \
@@ -148,7 +148,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     libgstreamer0.10-dev \
     libxerces-c-dev \
     xsdcxx swig3.0 \
-    mono-gmcs \
+    mono-mcs \
     libshp-dev \
     libevent-pthreads-2.0-5 \
     libtool \
