@@ -63,11 +63,7 @@ class RepoMetaValues {
 		this.type = type
 	}
 	public void setIcon(String icon){
-		if (icon != null) {
 			this.icon = icon
-		} else {
-			this.icon = "no-icon"
-		}
 	}
 	public void setMembers(List members){
 		this.members = members
@@ -79,20 +75,5 @@ class RepoMetaValues {
 		if (this.description) {
 			return this.description
 		}
-	}
-	
-	static Closure Variations(Variations) {
-		return { project ->
-			project.name = 'matrix-project'
-			project / axes << 'hudson.matrix.TextAxis' {
-				name 'Variation'
-				values {
-					Variations.each {
-						if (it) { string it }
-					}
-				}
-			}
-		}
-	}
-
+	}	
 }
