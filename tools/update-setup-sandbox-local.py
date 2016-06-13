@@ -82,7 +82,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
 			
   os.chdir(originalDir)			
 	
-getRepository("scripts", JENKINS_MASTER_REPO, JENKINS_BRANCH)
+#getRepository("scripts", JENKINS_MASTER_REPO, JENKINS_BRANCH)
 getRepository("dependencies", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
 getRepository("metadata", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
 getRepository("repometadata", REPO_METADATA, JENKINS_DEPENDENCY_BRANCH)
