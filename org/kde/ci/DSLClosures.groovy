@@ -127,20 +127,68 @@ class DSLClosures {
 	
 	}
 		
-	static String commandBuilder(platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null) {
+	static String commandBuilder(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
 		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
 		if (custom_command) {
 			jobcommand.append(custom_command + '\n')
 		}
-		if (platform == 'Linux') {
-			jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox-local.py\n')
-			jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
-			jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')
-		}
-		
-		//TODO other platforms.
-		return jobcommand
+		switch(platform) {
+			case 'Linux':
+			{
+				if (lin_custom_command) {
+					jobcommand.append(lin_custom_command)
+				} else {
+					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
+					jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')
+				}
+			} return jobcommand
+				break
+		    case 'Windows':
+			{				
+				if (win_custom_command) {
+					jobcommand.append(win_custom_command)
+				} else {
+					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('emerge' + " " + project)
+				}
+			} return jobcommand
+				break
+			case 'OSX':
+			{				
+				if (osx_custom_command) {
+					jobcommand.append(osx_custom_command)
+				} else {
+					jobcommand.append('python2.7 -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py')
+				}
+			} return jobcommand
+				break
+			case 'Android':
+			{				
+				if (and_custom_command) {
+					jobcommand.append(and_custom_command)
+				} else {
+					jobcommand.append('kdesource-build ' + project)
+				}
+			} return jobcommand
+				break
+			case 'ubuntu-phone':
+			{
+				if(snappy_job_command) {
+					jobcommand.append(snap_custom_command)
+				} else {
+					jobcommand.append('snapcraft ' + project)
+				}
+			} return jobcommand
+			default:
+			 {
+				jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
+				jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
+				jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')			
+			} return jobcommand
+			 	break
+		}		
 	}
 
 }

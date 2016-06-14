@@ -110,6 +110,11 @@ GroupFile.each { group ->
 							compilerClosure = misc.Compilers(compiler)
 						}
 						def job_command = job.custom_build_command
+						def win_job_command = job.platforms.windows.win_custom_build_command
+						def osx_job_command = job.platforms.osx.osx_custom_build_command
+						def android_job_command = job.platforms.android.and_custom_build_command
+						def snappy_job_command = job.platforms.ubuntu-phone.snap_custom_build_command
+						
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = misc.genBuildTrack(options, track)
@@ -121,7 +126,7 @@ GroupFile.each { group ->
 							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
 							+ " compiler " + compiler
 						SCM scm = new SCM()									
-								scmClosure = scm.generateSCM(jobname, job.SetRepoMap(), branch)
+						scmClosure = scm.generateSCM(jobname, job.SetRepoMap(), branch)
 									
 								/* BEGIN DSL CODE */
 								"${jobType}"(fullname) {
@@ -159,28 +164,30 @@ GroupFile.each { group ->
 									} else {
 										configure { project ->				
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												groovyScript 'def labelMap = [ Linux: "Linux", Windows: "WINBUILDER", OSX: "OSXBUILDER"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												groovyScript 'def labelMap = [ Linux: "Linux", Windows: "Windows", OSX: "OSX", android: "Android", ubuntu-phone: "snappy"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 										}	
 									}
 									}
 									wrappers {
 										timestamps()
 										colorizeOutput()
-										environmentVariables {
-											env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
-											env('JENKINS_TEST_HOME', '/home/jenkins')
-											env('ASAN_OPTIONS', 'detect_leaks=0')
-											env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
-											env('XDG_DATA_DIRS', '/usr:/usr/share:${JENKINS_TEST_HOME}/.local/share')
-											env('XDG_DATA_HOME', '$XDG_DATA_HOME:${JENKINS_TEST_HOME}/.qttest/share:${JENKINS_TEST_HOME}/.local/share')
-											env('XDG_RUNTIME_DIR', '/tmp/xdg-runtime-dir')
-											env('XDG_CACHE_HOME', '${JENKINS_TEST_HOME}/.qttest/cache')
+										if ( PLATFORM == "Linux") {
+											environmentVariables {
+												env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
+												env('JENKINS_TEST_HOME', '/home/jenkins')
+												env('ASAN_OPTIONS', 'detect_leaks=0')
+												env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
+												env('XDG_DATA_DIRS', '/usr:/usr/share:${JENKINS_TEST_HOME}/.local/share')
+												env('XDG_DATA_HOME', '$XDG_DATA_HOME:${JENKINS_TEST_HOME}/.qttest/share:${JENKINS_TEST_HOME}/.local/share')
+												env('XDG_RUNTIME_DIR', '/tmp/xdg-runtime-dir')
+												env('XDG_CACHE_HOME', '${JENKINS_TEST_HOME}/.qttest/cache')
+											}
 										}
 											  
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep(PLATFORM, job_command)	
+									configure misc.genBuildStep(jobname, PLATFORM, job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
 									if(gen_publishers != false) {
 										configure pub.genWarningsPublisher(PLATFORM, compiler)	
 										configure pub.genCppCheckPublisher()
