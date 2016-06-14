@@ -151,7 +151,7 @@ class DSLClosures {
 					jobcommand.append(win_custom_command)
 				} else {
 					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('emerge ' + project)
+					jobcommand.append('emerge ' + jobname)
 				}
 					return jobcommand
 				break
