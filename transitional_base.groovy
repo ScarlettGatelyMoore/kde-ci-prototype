@@ -110,6 +110,7 @@ GroupFile.each { group ->
 							compilerClosure = misc.Compilers(compiler)
 						}
 						def job_command = job.custom_build_command
+						def lin_job_command = job.platforms.Linux.lin_custom_build_command
 						def win_job_command = job.platforms.windows.win_custom_build_command
 						def osx_job_command = job.platforms.osx.osx_custom_build_command
 						def android_job_command = job.platforms.android.and_custom_build_command
@@ -187,7 +188,7 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep(jobname, PLATFORM, job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
+									configure misc.genBuildStep(jobname, PLATFORM, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
 									if(gen_publishers != false) {
 										configure pub.genWarningsPublisher(PLATFORM, compiler)	
 										configure pub.genCppCheckPublisher()
