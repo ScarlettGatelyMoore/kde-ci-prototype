@@ -135,7 +135,6 @@ class DSLClosures {
 		}
 		switch(platform) {
 			case 'Linux':
-			{
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command)
 				} else {
@@ -143,50 +142,46 @@ class DSLClosures {
 					jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
 					jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')
 				}
-			} return jobcommand
+					return jobcommand
 				break
 		    case 'Windows':
-			{				
 				if (win_custom_command) {
 					jobcommand.append(win_custom_command)
 				} else {
 					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('emerge' + " " + project)
 				}
-			} return jobcommand
+					return jobcommand
 				break
 			case 'OSX':
-			{				
 				if (osx_custom_command) {
 					jobcommand.append(osx_custom_command)
 				} else {
 					jobcommand.append('python2.7 -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py')
 				}
-			} return jobcommand
+				 	return jobcommand
 				break
 			case 'Android':
-			{				
-				if (and_custom_command) {
-					jobcommand.append(and_custom_command)
+				if (android_job_command) {
+					jobcommand.append(android_job_command)
 				} else {
 					jobcommand.append('kdesource-build ' + project)
 				}
-			} return jobcommand
+					 return jobcommand
 				break
 			case 'ubuntu-phone':
-			{
 				if(snappy_job_command) {
-					jobcommand.append(snap_custom_command)
+					jobcommand.append(snappy_job_command)
 				} else {
 					jobcommand.append('snapcraft ' + project)
 				}
-			} return jobcommand
+					return jobcommand
+				break
 			default:
-			 {
-				jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
+			 	jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
 				jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
 				jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')			
-			} return jobcommand
+					return jobcommand
 			 	break
 		}		
 	}
