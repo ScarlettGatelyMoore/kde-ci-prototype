@@ -113,7 +113,7 @@ GroupFile.each { group ->
 						def win_job_command = job.platforms.windows.win_custom_build_command
 						def osx_job_command = job.platforms.osx.osx_custom_build_command
 						def android_job_command = job.platforms.android.and_custom_build_command
-						def snappy_job_command = job.platforms.ubuntu-phone.snap_custom_build_command
+						def snappy_job_command = job.platforms.snappy.snap_custom_build_command
 						
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
