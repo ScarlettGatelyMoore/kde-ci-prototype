@@ -101,7 +101,7 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(platform, custom_command) {		
+	static Closure genBuildStep(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
@@ -109,7 +109,7 @@ class DSLClosures {
 			shell = 'Shell'
 		}
 		
-		def job_command = commandBuilder(platform, custom_command)		
+		def job_command = commandBuilder(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null)	{	
 		return { project ->
 			project / builders <<
 			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
@@ -149,7 +149,7 @@ class DSLClosures {
 					jobcommand.append(win_custom_command)
 				} else {
 					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('emerge' + " " + project)
+					jobcommand.append('emerge ' + project)
 				}
 					return jobcommand
 				break
