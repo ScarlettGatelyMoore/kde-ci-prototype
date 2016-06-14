@@ -101,7 +101,7 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
+	static Closure genBuildStep(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
@@ -109,7 +109,8 @@ class DSLClosures {
 			shell = 'Shell'
 		}
 		
-		def job_command = commandBuilder(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null)	{	
+		def job_command = commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null)
+			
 		return { project ->
 			project / builders <<
 			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
@@ -121,13 +122,14 @@ class DSLClosures {
 			   runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 			   buildStep(class: 'hudson.tasks.Shell') {
 				   command "${job_command}"
-		   }
+			   }	
+			}
 		}
-		}
+	
 	
 	}
 		
-	static String commandBuilder(project, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
+	static String commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
 		def jobcommand = new StringBuilder()
 		def home = System.getProperty('user.home')
 		if (custom_command) {
@@ -165,7 +167,7 @@ class DSLClosures {
 				if (android_job_command) {
 					jobcommand.append(android_job_command)
 				} else {
-					jobcommand.append('kdesource-build ' + project)
+					jobcommand.append('kdesource-build ' + jobname)
 				}
 					 return jobcommand
 				break
@@ -173,7 +175,7 @@ class DSLClosures {
 				if(snappy_job_command) {
 					jobcommand.append(snappy_job_command)
 				} else {
-					jobcommand.append('snapcraft ' + project)
+					jobcommand.append('snapcraft ' + jobname)
 				}
 					return jobcommand
 				break
