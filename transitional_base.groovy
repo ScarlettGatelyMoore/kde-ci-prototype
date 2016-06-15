@@ -161,7 +161,13 @@ GroupFile.each { group ->
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
 												groovyScript 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 										}
-									}
+									} 
+									} else if (PLATFORM == "android") {
+										configure { project ->								
+											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
+												groovyScript 'def labelMap = [ android: "Android"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+											}
+										}
 									} else {
 										configure { project ->				
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
@@ -239,6 +245,48 @@ GroupFile.each { group ->
 			//'hudson.plugins.UpDownStreamViewColumn'
 		}
 	}
+	listView('Windows') {
+		description 'All jobs for group: ' + "Windows"
+		filterExecutors false
+		filterBuildQueue false
+		jobs {
+				regex(".* " + "windows" + ".+")
+			}
+		jobFilters {
+		}
+		//statusFilter(StatusFilter.ENABLED)
+		columns {
+			status()
+			weather()
+			name()
+			lastSuccess()
+			lastFailure()
+			lastDuration()
+			buildButton()
+			//'hudson.plugins.UpDownStreamViewColumn'
+		}
+	}
+	listView('Android') {
+		description 'All jobs for group: ' + "Android"
+		filterExecutors false
+		filterBuildQueue false
+		jobs {
+				regex(".* " + "android" + ".+")
+			}
+		jobFilters {
+		}
+		//statusFilter(StatusFilter.ENABLED)
+		columns {
+			status()
+			weather()
+			name()
+			lastSuccess()
+			lastFailure()
+			lastDuration()
+			buildButton()
+			//'hudson.plugins.UpDownStreamViewColumn'
+		}
+	}
 	def branchGroups = ['kf5-qt5', 'stable-kf5-qt5', 'kf5-minimum', 'kf5-qt5-patch', 'qt4-stable']
 	branchGroups.each { bg ->
 		listView(bg) {
@@ -246,7 +294,7 @@ GroupFile.each { group ->
 			filterExecutors false
 			filterBuildQueue false
 			jobs {
-				regex(".* " + bg.toString() + ".+")				
+				regex(".* " + bg.toString() + ".+")
 			}
 			jobFilters {}
 			statusFilter(StatusFilter.ENABLED)
