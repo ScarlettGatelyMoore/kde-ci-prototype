@@ -79,7 +79,7 @@ public final class Publishers {
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
 			}		
-	}		
+		
 	
 	def genCppCheckPublisher() {
 		return { node ->
