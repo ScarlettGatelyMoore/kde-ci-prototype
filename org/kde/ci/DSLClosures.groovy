@@ -146,7 +146,7 @@ class DSLClosures {
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command)
 				} else {
-				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
 				}
@@ -174,7 +174,7 @@ class DSLClosures {
 				if (android_job_command) {
 					jobcommand.append(android_job_command)
 				} else {
-				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
 				}
@@ -184,13 +184,13 @@ class DSLClosures {
 				if(snappy_job_command) {
 					jobcommand.append(snappy_job_command)
 				} else {
-				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('snapcraft ' + jobname)
 				}
 					return jobcommand
 				break
 			default:
-			    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+			    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 			 	jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 				jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')			
 					return jobcommand
