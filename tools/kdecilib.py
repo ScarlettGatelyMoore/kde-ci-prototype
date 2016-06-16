@@ -701,7 +701,7 @@ class BuildManager(object):
 				envChanges['QMAKEFEATURES'].append( extraLocation )
 
 		# Finally, we can merge this into the real environment
-		clonedEnv = copy.deepcopy(os.environ.__dict__('data'))
+		clonedEnv = copy.deepcopy(os.environ)
 		for variableName, variableEntries in envChanges.iteritems():
 			# Join them
 			newEntry = splitChar.join( variableEntries )
