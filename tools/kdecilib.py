@@ -986,6 +986,7 @@ class BuildManager(object):
 			else:
 				command = self.config.get('Test', 'dbusLaunchCommand')
 				process = check_output( shlex.split(command), env=runtimeEnv )
+				#TO-DO fix for py3
 # 				for variable in process:
 # 					splitVars = variable.split('=', 1)
 # 					runtimeEnv[ splitVars[0] ] = splitVars[1].strip()			

@@ -144,49 +144,49 @@ class DSLClosures {
 		switch(platform) {
 			case 'Linux':
 				if (lin_custom_command) {
-					jobcommand.append(lin_custom_command)
-				} else {
-				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append(lin_custom_command + '\n')
+				} 
+					jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
-				}
+				
 					return jobcommand
 				break
 		    case 'Windows':
 				if (win_custom_command) {
-					jobcommand.append(win_custom_command)
-				} else {
+					jobcommand.append(win_custom_command + '\n')
+				} 
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('emerge --install-deps' + jobname)
 					jobcommand.append('emerge ' + jobname)
-				}
+				
 					return jobcommand
 				break
 			case 'OSX':
 				if (osx_custom_command) {
-					jobcommand.append(osx_custom_command)
-				} else {
+					jobcommand.append(osx_custom_command + '\n')
+				} 
 					jobcommand.append('python3.5 -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py')
-				}
+				
 				 	return jobcommand
 				break
 			case 'android':
 				if (android_job_command) {
-					jobcommand.append(android_job_command)
-				} else {
+					jobcommand.append(android_job_command + '\n')
+				} 
 				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
-				}
+				
 					 return jobcommand
 				break
 			case 'snappy':
 				if(snappy_job_command) {
-					jobcommand.append(snappy_job_command)
-				} else {
+					jobcommand.append(snappy_job_command + '\n')
+				} 
 				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('snapcraft ' + jobname)
-				}
+				
 					return jobcommand
 				break
 			default:
