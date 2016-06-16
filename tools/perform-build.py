@@ -19,8 +19,7 @@ environmentArgs = check_jenkins_environment()
 arguments = parser.parse_args( namespace=environmentArgs )
 
 # Load our configuration, projects and dependencies
-print( "Loading config with the following parameters: " + arguments.project + " " + arguments.branchGroup \
-	+ " " + arguments.platform + " " + arguments.compiler + " " + arguments.variation )
+print( arguments )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
 load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' )
 
