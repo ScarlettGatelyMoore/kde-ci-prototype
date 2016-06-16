@@ -87,13 +87,12 @@ manager.compile_build()
 
 # Install the project
 print( "\n== Installing the Build\n")
-if not manager.install_build():
-	sys.exit("Installation step exited with non-zero code, assuming failure to install from source for project %s." % project.identifier)
+manager.install_build()
+
 
 # Deploy the newly completed build to the local tree as well as the master server
 print( "\n== Deploying Installation\n")
-if not manager.deploy_installation():
-	sys.exit("Deployment of completed installation failed for project %s." % project.identifier)
+manager.deploy_installation()
 
 # Execute the tests
 print("\n== Executing Tests\n")

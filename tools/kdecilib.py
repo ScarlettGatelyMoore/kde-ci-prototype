@@ -869,6 +869,7 @@ class BuildManager(object):
 			buildCommands.append( command )
 
 		# Do the installation
+		print(buildCommands)
 		if not self.run_build_commands( buildCommands ):
 			return False
 
