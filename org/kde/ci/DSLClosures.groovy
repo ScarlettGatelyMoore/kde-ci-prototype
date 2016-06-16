@@ -103,7 +103,7 @@ class DSLClosures {
 	}
 	static Closure genBuildStep(jobType, jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
 		def shell
-		if (platform == "Windows") {
+		if (platform == "windows") {
 			shell = 'BatchFile'
 		} else {
 			shell = 'Shell'
@@ -152,7 +152,7 @@ class DSLClosures {
 				
 					return jobcommand
 				break
-		    case 'Windows':
+		    case 'windows':
 				if (custom_command) {
 					jobcommand.append(custom_command + '\n')
 				}
@@ -165,7 +165,7 @@ class DSLClosures {
 				
 					return jobcommand
 				break
-			case 'OSX':
+			case 'osx':
 				if (custom_command) {
 					jobcommand.append(custom_command + '\n')
 				}
