@@ -140,7 +140,7 @@ class ProjectManager(object):
 		# First, remove any empty lines as well as comments
 		ignoreList = [ project.strip() for project in ignoreData if project.find("#") == -1 and project.strip() ]
 		# Now mark any listed project as ignored
-		for entry in ignoreList:
+		for entry in ignoreData:
 			print(entry)
 			project = ProjectManager.lookup( entry )
 			project.ignore = True
