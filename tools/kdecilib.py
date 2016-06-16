@@ -142,7 +142,7 @@ class ProjectManager(object):
 		# Now mark any listed project as ignored
 		for entry in ignoreList:
 			project = ProjectManager.lookup( entry )
-			if ignore:
+			if entry:
 				project.ignore = True
 
 	# Setup the dependencies from kde-build-metadata.git
