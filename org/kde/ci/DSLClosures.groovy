@@ -143,6 +143,9 @@ class DSLClosures {
 		}
 		switch(platform) {
 			case 'Linux':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command + '\n')
 				} 
@@ -153,6 +156,9 @@ class DSLClosures {
 					return jobcommand
 				break
 		    case 'Windows':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
 				if (win_custom_command) {
 					jobcommand.append(win_custom_command + '\n')
 				} 
@@ -163,6 +169,9 @@ class DSLClosures {
 					return jobcommand
 				break
 			case 'OSX':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
 				if (osx_custom_command) {
 					jobcommand.append(osx_custom_command + '\n')
 				} 
@@ -171,6 +180,9 @@ class DSLClosures {
 				 	return jobcommand
 				break
 			case 'android':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
 				if (android_job_command) {
 					jobcommand.append(android_job_command + '\n')
 				} 
@@ -181,6 +193,9 @@ class DSLClosures {
 					 return jobcommand
 				break
 			case 'snappy':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
 				if(snappy_job_command) {
 					jobcommand.append(snappy_job_command + '\n')
 				} 
