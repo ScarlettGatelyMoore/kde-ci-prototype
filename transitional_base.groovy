@@ -42,7 +42,7 @@ def CurrentViewJobs = []
 def fileList = configs.genListOfFilesinDir(basePath)
 def configFiles = new File(basePath).eachFileMatch(FileType.FILES, ~/.*.yml/) {	GroupFile << it.name }
 
-assert GroupFile.any { it =~ /kdesupport.yml/ && /qt5.yml/ && /frameworks.yml/ }
+assert GroupFile.any { it =~ /kdesupport.yml/ && /qt5.yml/ && /frameworks.yml/ && /applications.yml/}
 
 
 GroupFile.each { group ->	
@@ -91,7 +91,8 @@ GroupFile.each { group ->
 				println branch				
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
-				pf.each { PLATFORM , options ->																	
+				pf.each { PLATFORM , options ->	
+					if (options.enabled == true) {																
 						Platform platform = new Platform()
 						def compiler = platform.genCompilers(options)
 						//Bring in our DSL Closure generation classes
@@ -134,7 +135,11 @@ GroupFile.each { group ->
 									configure { project ->
 										project / 'actions' {}				
 									}	
-									// token for api		
+									configure { project ->
+										project / assignedNode(PLATFORM)
+										project / canRoam(false) // If canRoam is true, the label will not be used
+									}
+								    // token for api		
 									configure misc.SetToken(jobname)
 									// Job description
 									description job.DefineDescription(repodata.name, repodata.description) ?: job.description
@@ -147,31 +152,43 @@ GroupFile.each { group ->
 										}
 									}
 									// Jenkins likes to get creative with workspaces, especially with matrix jobs. Putting in sane place.
-									customWorkspace(System.getProperty('user.home') + '/sources/' + "${branchGroup}" + '/' + "${jobname}")
+									customWorkspace( 'sources/' + "${branchGroup}" + '/' + "${jobname}")
 									
 									// Make sure qt4 builds are using trusty containers
 									if (branchGroup =~ "qt4") {
 										configure { project ->									
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												groovyScript 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												secureGroovyScript {
+												script 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												sandbox false
+												}
 											}
 										}
 									} else if (branchGroup =~ "kf5-minimum") {
 										configure { project ->								
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												groovyScript 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												secureGroovyScript {
+												script 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												sandbox false
+												}
 										}
 									} 
 									} else if (PLATFORM == "android") {
 										configure { project ->								
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												groovyScript 'def labelMap = [ android: "Android"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												secureGroovyScript {
+												script 'def labelMap = [ android: "Android"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												sandbox false
+												}
 											}
 										}
 									} else {
 										configure { project ->				
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												groovyScript 'def labelMap = [ Linux: "Linux", Windows: "Windows", OSX: "OSX", android: "Android", ubuntu-phone: "snappy"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												secureGroovyScript {
+												script 'def labelMap = [ Linux: "Linux", Windows: "Windows", OSX: "OSX", android: "Android", snappy: "snappy"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												sandbox false
+												}
 										}	
 									}
 									}
@@ -180,7 +197,8 @@ GroupFile.each { group ->
 										colorizeOutput()
 										if ( PLATFORM == "Linux") {
 											environmentVariables {
-												env('JENKINS_SLAVE_HOME', '/home/jenkins/scripts')
+												env('JENKINS_SLAVE_HOME', '/home/jenkins')
+												env('PLATFORM', PLATFORM)
 												env('JENKINS_TEST_HOME', '/home/jenkins')
 												env('ASAN_OPTIONS', 'detect_leaks=0')
 												env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
@@ -194,7 +212,7 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep(jobname, PLATFORM, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
+									configure misc.genBuildStep("${jobType}", jobname, PLATFORM, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
 									if(gen_publishers != false) {
 										configure pub.genWarningsPublisher(PLATFORM, compiler)	
 										configure pub.genCppCheckPublisher()
@@ -213,7 +231,8 @@ GroupFile.each { group ->
 							} else { // end current job track	
 								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
 								return	
-							} 	
+							} 
+						} // End enabled platform chaeck.	
 					} // End current platform 
 				} // End branchGroup 
 		} else {
@@ -226,10 +245,16 @@ GroupFile.each { group ->
 		description 'All jobs for group: ' + "${CurrentView}"	
 		filterExecutors false
 		filterBuildQueue false
-		jobs {	
-			CurrentViewJobs.each { job ->
-				names(job)
-			}		
+		if (CurrentView == 'QT') {
+			jobs {
+				regex("qt5 " + ".+")
+			}
+		} else {
+			jobs {	
+				CurrentViewJobs.each { job ->
+					names(job)
+				}		
+			}
 		}
 		jobFilters {			
 		}
@@ -272,6 +297,27 @@ GroupFile.each { group ->
 		filterBuildQueue false
 		jobs {
 				regex(".* " + "android" + ".+")
+			}
+		jobFilters {
+		}
+		//statusFilter(StatusFilter.ENABLED)
+		columns {
+			status()
+			weather()
+			name()
+			lastSuccess()
+			lastFailure()
+			lastDuration()
+			buildButton()
+			//'hudson.plugins.UpDownStreamViewColumn'
+		}
+	}
+	listView('Linux') {
+		description 'All jobs for group: ' + "Android"
+		filterExecutors false
+		filterBuildQueue false
+		jobs {
+				regex(".* " + "Linux" + ".+")
 			}
 		jobFilters {
 		}

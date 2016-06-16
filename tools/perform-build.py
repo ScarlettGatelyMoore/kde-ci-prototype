@@ -1,17 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 import argparse
+from load_configuration import *
 from kdecilib import *
 from appstreamtest import *
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
 parser.add_argument('--project', type=str)
-parser.add_argument('--branchGroup', type=str, default='latest-qt4')
+parser.add_argument('--branchGroup', type=str, default='kf5-qt5')
 parser.add_argument('--sources', type=str)
 parser.add_argument('--variation', type=str)
-parser.add_argument('--platform', type=str, choices=['linux64-g++', 'darwin-mavericks', 'windows64-vs2013'], default='linux64-g++')
-parser.add_argument('--compiler', type=str, choices=['gcc', 'clang', 'mingw', 'vs2013'], default='gcc')
+parser.add_argument('--platform', type=str, choices=['Linux', 'OSX', 'Windows', 'android', 'snappy', 'flatpak'], default='Linux')
+parser.add_argument('--compiler', type=str, choices=['gcc', 'clang', 'mingw', 'vs2013', 'arm-android-gcc'], default='gcc')
 
 # Parse the arguments
 environmentArgs = check_jenkins_environment()
@@ -32,23 +33,23 @@ if project is None:
 manager = BuildManager(project, arguments.branchGroup, arguments.sources, config, arguments.platform)
 
 # Give out some information on what we are going to do...
-print "\nKDE Continuous Integration Build"
-print "== Building Project: %s - Branch %s" % (project.identifier, manager.projectBranch)
-print "== Build Dependencies:"
+print("\nKDE Continuous Integration Build")
+print("== Building Project: %s - Branch %s" % (project.identifier, manager.projectBranch))
+print( "== Build Dependencies:")
 for dependency, dependencyBranch in manager.dependencies:
-	print "==== %s - Branch %s" %(dependency.identifier, dependencyBranch)
+	print( "==== %s - Branch %s" %(dependency.identifier, dependencyBranch))
 
 # Apply any necessary patches if we have them
-print "\n== Applying Patches"
+print( "\n== Applying Patches")
 if not manager.apply_patches():
 	sys.exit("Applying patches to project %s failed." % project.identifier)
 
 # Sync all the dependencies
-print "\n== Syncing Dependencies from Master Server\n"
+print( "\n== Syncing Dependencies from Master Server\n")
 if not manager.sync_dependencies():
 	sys.exit("Syncing dependencies from master server for project %s failed." % project.identifier)
 	
-print "\n== Preparing the Environment\n"
+print( "\n== Preparing the Environment\n")
 environment = manager.generate_environment(True)
 
 # We care about these environment variables
@@ -64,65 +65,59 @@ osxneededVariables = [
 	'SHARE_INSTALL_PREFIX', 'BUNDLE_INSTALL_DIR'
 ]
 # Generate the shell format environment file, suitable for sourcing
-if sys.platform == 'darwin':
+if sys.platform == 'OSX':
 	for variable in osxneededVariables:
 		if variable in environment:
-			print 'export %s="%s"' % (variable, environment[variable])
+			print( 'export %s="%s"' % (variable, environment[variable]))
 else:
 	for variable in neededVariables:
 		if variable in environment:			
-			print 'export %s="%s"' % (variable, environment[variable])
+			print( 'export %s="%s"' % (variable, environment[variable]))
 
 # Configure the build
-print "\n== Configuring Build\n"
+print( "\n== Configuring Build\n")
 if not manager.configure_build():
 	sys.exit("Configure step exited with non-zero code, assuming failure to configure for project %s." % project.identifier)
 
 # Build the project
-print "\n== Commencing the Build\n"
+print( "\n== Commencing the Build\n")
 if not manager.compile_build():
 	sys.exit("Compilation step exited with non-zero code, assuming failure to build from source for project %s." % project.identifier)
 
 # Install the project
-print "\n== Installing the Build\n"
+print( "\n== Installing the Build\n")
 if not manager.install_build():
 	sys.exit("Installation step exited with non-zero code, assuming failure to install from source for project %s." % project.identifier)
 
 # Deploy the newly completed build to the local tree as well as the master server
-print "\n== Deploying Installation\n"
+print( "\n== Deploying Installation\n")
 if not manager.deploy_installation():
 	sys.exit("Deployment of completed installation failed for project %s." % project.identifier)
 
-pretest = False
-if not pretest:
-   print "\n Pre test is disabled"
-else:
-   run_pre_test(manager)
-
 # Execute the tests
-print "\n== Executing Tests\n"
+print("\n== Executing Tests\n")
 manager.execute_tests()
 
 # Run cppcheck
-print "\n== Executing cppcheck\n"
+print( "\n== Executing cppcheck\n")
 manager.execute_cppcheck()
 
 # Perform a lcov processing run
-print "\n== Performing lcov processing\n"
+print( "\n== Performing lcov processing\n")
 manager.generate_lcov_data_in_cobertura_format()
 
 # Extract dependency data from CMake
-print "\n== Extracting dependency information from CMake\n"
+print( "\n== Extracting dependency information from CMake\n")
 manager.extract_dependency_information()
 manager.extract_cmake_dependency_metadata()
 
 # Run appstreamcli tests
-print "\n== Running Appstreamcli Test\n"
+print( "\n== Running Appstreamcli Test\n")
 enableTest = manager.config.getboolean('AppstreamcliTest', 'appstreamcliEnabled')
 
 if not enableTest:
-   print "\n Appstream test is disabled"  
+   print( "\n Appstream test is disabled")  
 else:
    run_appstreamcli_test(manager)
 
-print "\n== Run Completed Successfully\n"
+print( "\n== Run Completed Successfully\n")

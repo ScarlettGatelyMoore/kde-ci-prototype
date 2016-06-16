@@ -3,12 +3,12 @@ FROM ubuntu:16.04
 MAINTAINER Scarlett Clark <sgclark@kde.org>
 
 #Strange changes and deb-src is no longer in base..
-RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ wily main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ wily main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ wily-updates main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ wily-backports main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ xenial main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ xenial main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb http://ca.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb-src http://ca.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
 # Needed for add-apt-repository.
 RUN apt-get update && apt-get -y install software-properties-common \
 	&& add-apt-repository -y ppa:ximion/packagekit \
@@ -55,6 +55,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     libldap2-dev \
     libfakekey-dev \
     python3-dev \
+    python3-lxml \
     libclang-3.5-dev \
     libcdparanoia-dev \
     clang \
@@ -72,15 +73,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     libaccounts-glib-dev \    
     libboost1.58-all-dev \
     libglew-dev \
-    libavutil-ffmpeg-dev \
-    libavcodec-ffmpeg-dev \
-    libavdevice-ffmpeg-dev \
-    libavformat-ffmpeg-dev \
-    libavfilter-ffmpeg-dev \
-    libpostproc-ffmpeg-dev \
-    libswscale-ffmpeg-dev \
-    libswresample-ffmpeg-dev \
-    libavresample-ffmpeg-dev \
+    libavutil-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavformat-dev \
+    libavfilter-dev \
+    libpostproc-dev \
+    libswscale-dev \
+    libswresample-dev \
     libclucene-dev \
     libsane-dev \
     libhunspell-dev \

@@ -6,13 +6,13 @@ import time
 import copy
 import json
 import shlex
-import urllib
+import urllib.request
 import shutil
 import socket
 import fnmatch
 import argparse
 import subprocess
-import ConfigParser
+import configparser
 import multiprocessing
 import distutils
 from distutils import dir_util
@@ -64,7 +64,7 @@ class ProjectManager(object):
 	@staticmethod
 	def load_extra_project( projectFilename ):
 		# Read the project configuration
-		projectData = ConfigParser.SafeConfigParser()
+		projectData = configparser.ConfigParser()
 		projectData.read( projectFilename )
 
 		# Determine if we already know a project by this name (ie. override rather than create)
@@ -448,7 +448,6 @@ class BuildManager(object):
 
 		# If we have a Linux destination, but a Windows source we have to specify the permissions to be used
 		if source[1:9] == 'cygdrive' and not destination[1:9] == 'cygdrive':
-			print (source[1:9])
 			rsyncCommand.append("--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r")
 
 		# Add the source and destination to our arguments
@@ -488,7 +487,6 @@ class BuildManager(object):
 				if sys.platform == "win32":
 					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
 				else:
-					print command
 					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
 			except subprocess.CalledProcessError:
 				# Abort if it fails to complete
@@ -511,33 +509,33 @@ class BuildManager(object):
 			# Execute the command
 			if not self.perform_rsync( source=hostPath, destination=localPath ):
 				return False
-			if sys.platform == "darwin":
-			  if os.path.isdir(localPath + "/Library/Application Support") == True:
-			      datadir = localPath + "/Library/Application Support"
-			      dstroot = HOME +  "/Library/Application Support"			      
-			      try:
-				distutils.dir_util.copy_tree(datadir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
-			      
-			  if os.path.isdir(localPath + "/Applications/KF5") == True:
-			      bundledir = localPath + "/Applications/KF5"
-			      dstroot = HOME + "/Applications/KF5"			     
-			      try:
-				distutils.dir_util.copy_tree(bundledir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
-			     
-			  if os.path.isdir(localPath + "/Library/Preferences") == True:
-			      configdir = localPath + "/Library/Preferences"
-			      dstroot = HOME + "/Library/Preferences"			     
-			      try:
-				distutils.dir_util.copy_tree(configdir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
+# 			if sys.platform == "OSX":
+# 				if os.path.isdir(localPath + "/Library/Application Support") == True:
+# 					datadir = localPath + "/Library/Application Support"
+# 			     	dstroot = HOME +  "/Library/Application Support"			      
+# 			    	try:
+# 			      		distutils.dir_util.copy_tree(datadir, dstroot)
+# 			      	except distutils.dir_util.log.DEBUG as e:
+# 			      		print( "Oh No! Something went wrong. Error: %s" % e)
+# 			      		return False
+# 			      	
+# 			      	if os.path.isdir(localPath + "/Applications/KF5") == True:
+# 			    		bundledir = localPath + "/Applications/KF5"
+# 			      		dstroot = HOME + "/Applications/KF5"			     
+# 			      		try:
+# 			      			distutils.dir_util.copy_tree(bundledir, dstroot)
+# 			      		except distutils.dir_util.log.DEBUG as e:
+# 			      			print( "Oh No! Something went wrong. Error: %s" % e)
+# 			      			return False
+# 			     
+# 			      	if os.path.isdir(localPath + "/Library/Preferences") == True:
+# 			      		configdir = localPath + "/Library/Preferences"
+# 			      		dstroot = HOME + "/Library/Preferences"			     
+# 			      		try:
+# 							distutils.dir_util.copy_tree(configdir, dstroot)
+# 			      		except distutils.dir_util.log.DEBUG as e:
+# 							print( "Oh No! Something went wrong. Error: %s" % e)
+# 							return False
 			    
 		return True
 
@@ -743,30 +741,30 @@ class BuildManager(object):
 		# Ensure our desired branch is in place
 		# Disable this for kf5-minimum, we only have a tag available.
 		if self.branchGroup == "kf5-minimum":
-		  command = self.config.get('Source', 'gitSetBranchCommand')
-		  command = command.format( targetBranch=self.projectBranch )
-		  try:
-			  subprocess.check_call( shlex.split(command), cwd=self.projectSources )
-		  except subprocess.CalledProcessError:
-			  return False
+		  	command = self.config.get('Source', 'gitSetBranchCommand')
+		  	command = command.format( targetBranch=self.projectBranch )
+		  	try:
+			  	subprocess.check_call( shlex.split(command), cwd=self.projectSources )
+		  	except subprocess.CalledProcessError:
+		  		return False
 
 		elif self.config.getboolean('Source', 'alwaysCheckoutSources') or doCheckout:
 		# Check the sources out
-		  command = self.config.get('Source', 'gitCheckoutCommand')
-		  command = command.format( branch=self.projectBranch )
-		  try:
-			subprocess.check_call( shlex.split(command), cwd=self.projectSources )
-		  except subprocess.CalledProcessError:
-			return False
+		  	command = self.config.get('Source', 'gitCheckoutCommand')
+		  	command = command.format( branch=self.projectBranch )
+		  	try:
+		  		subprocess.check_call( shlex.split(command), cwd=self.projectSources )
+		  	except subprocess.CalledProcessError:
+		  		return False
 
 		# Do we need to run a post-checkout command?
 		if self.config.getboolean('Source', 'runPostCheckoutCommand'):
 			# Get the command in question and run it
 			command = self.config.get('Source', 'postCheckoutCommand')
 			if sys.platform == "win32":
-			  command = command.format( sources=self.projectSources.replace("\\","/"))
+			  	command = command.format( sources=self.projectSources.replace("\\","/"))
 			else:
-			  command = command.format( sources=self.projectSources )
+			  	command = command.format( sources=self.projectSources )
 			try:
 				subprocess.check_call( shlex.split(command), cwd=self.projectSources )
 			except subprocess.CalledProcessError:
@@ -812,11 +810,11 @@ class BuildManager(object):
 		# Do we have anything to apply?	
 		scriptsLocation=  expanduser("~") + '/scripts'
 		if os.path.isdir(os.path.join(scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )) == True:
-		  patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )
+		  	patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )
 		else: 
-		  patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup )
+		  	patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup )
 		if not os.path.exists(patchesDir):
-			print "=== No patches to apply"
+			print( "=== No patches to apply")
 			return True
 
 		# Iterate over the patches and apply them
@@ -824,12 +822,11 @@ class BuildManager(object):
 		for dirname, dirnames, filenames in os.walk(patchesDir):
 			for filename in filenames:
 				# Get the full path to the patch
-				patchPath = os.path.join( dirname, filename )
+				patchPath = os.path.join( dirname, filename )	
 				# Apply the patch
 				try:
-					print "=== Applying: %s\n" % patchPath
+					print( "=== Applying: %s\n" % patchPath)
 					process = subprocess.check_call( command + [patchPath], stdout=sys.stdout, stderr=sys.stderr, cwd=self.projectSources )
-					print ""
 				except subprocess.CalledProcessError:
 					# Make sure the patch applied successfully - if it failed, then we should halt here
 					return False
@@ -884,34 +881,34 @@ class BuildManager(object):
 
 		#OSX will not play nice with our env paths, so we must copy the files into 
 		# a destination that compile time qt will find them.
-		if sys.platform == "darwin":
-			  HOME=expanduser("~")
-			  if os.path.isdir(installRoot + "/Library/Application Support") == True:
-			      datadir = installRoot + "/Library/Application Support"
-			      dstroot = HOME + "/Library/Application Support"			     
-			      try:
-				distutils.dir_util.copy_tree(datadir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
-			     
-			  if os.path.isdir(installRoot + "/Applications/KF5") == True:
-			      bundledir = installRoot + "/Applications/KF5"
-			      dstroot = HOME + "/Applications/KF5"			      
-			      try:
-				distutils.dir_util.copy_tree(bundledir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
-			     
-			  if os.path.isdir(installRoot + "/Library/Preferences") == True:
-			      configdir = installRoot + "/Library/Preferences"
-			      dstroot = HOME + "/Library/Preferences"			     
-			      try:
-				distutils.dir_util.copy_tree(configdir, dstroot)
-			      except distutils.dir_util.log.DEBUG as e:
-				print "Oh No! Something went wrong. Error: %s" % e
-				return False
+# 		if sys.platform == "darwin":
+# 			  HOME=expanduser("~")
+# 			  if os.path.isdir(installRoot + "/Library/Application Support") == True:
+# 			      datadir = installRoot + "/Library/Application Support"
+# 			      dstroot = HOME + "/Library/Application Support"			     
+# 			      try:
+# 				distutils.dir_util.copy_tree(datadir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
+# 			     
+# 			  if os.path.isdir(installRoot + "/Applications/KF5") == True:
+# 			      bundledir = installRoot + "/Applications/KF5"
+# 			      dstroot = HOME + "/Applications/KF5"			      
+# 			      try:
+# 				distutils.dir_util.copy_tree(bundledir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
+# 			     
+# 			  if os.path.isdir(installRoot + "/Library/Preferences") == True:
+# 			      configdir = installRoot + "/Library/Preferences"
+# 			      dstroot = HOME + "/Library/Preferences"			     
+# 			      try:
+# 				distutils.dir_util.copy_tree(configdir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
 			      		
 		# None of the commands failed, so assume we succeeded
 		return True
@@ -1017,10 +1014,10 @@ class BuildManager(object):
 		# Execute CTest
 		command = self.config.get('Test', 'ctestRunCommand')
                 #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-                if sys.platform == "win32":
-                    ctestProcess = subprocess.Popen( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=runtimeEnv )
-                else:
-                    ctestProcess = subprocess.Popen( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=runtimeEnv )
+		if sys.platform == "win32":
+			ctestProcess = subprocess.Popen( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=runtimeEnv )
+		else:
+			ctestProcess = subprocess.Popen( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=runtimeEnv )
 
 		# Determine the maximum amount of time we will permit CTest to run for
 		# To accomodate for possible inconsistencies, we allow an extra 2 lots of the permissible time per test
@@ -1102,19 +1099,18 @@ class BuildManager(object):
 
 		# Run cppcheck and wait for it to finish
 		with open(cppcheckFilename, 'w') as cppcheckXml:
-                    #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-                    if sys.platform == "win32":
-                        process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
-                    else:
-			process = subprocess.Popen( command, stdout=sys.stdout, stderr=cppcheckXml, cwd=self.projectSources, env=runtimeEnv )
-                    process.wait()
+        #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
+			if sys.platform == "win32":
+				process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
+			else:
+				process = subprocess.Popen( command, stdout=sys.stdout, stderr=cppcheckXml, cwd=self.projectSources, env=runtimeEnv )
+				process.wait()
 
 	def generate_lcov_data_in_cobertura_format(self):
 		# Prepare to execute gcovr
 		coberturaFile = os.path.join( self.build_directory(), 'CoberturaLcovResults.xml' )
 		command = self.config.get('QualityCheck', 'gcovrCommand')		
 		command = command.format( scriptsLocation=self.scriptsLocation, sources=self.projectSources )
-		print command
 		command = shlex.split(command)
 
 		# Run gcovr to gather up the lcov data and present it in Cobertura format
@@ -1133,11 +1129,7 @@ class BuildManager(object):
 		command = shlex.split(command)
 
 		# Run depdiagram-prepare to extract the dependency information in *.dot format
-                #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-                if sys.platform == "win32":
-                   process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, env=runtimeEnv )
-                else:
-                    process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, env=runtimeEnv )
+		process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, env=runtimeEnv )
 		process.wait()
 
 		# Next we ensure the remote directory exists
@@ -1173,11 +1165,8 @@ class BuildManager(object):
 
 		# Run depdiagram-prepare to extract the dependency information in *.dot format
 		with open(metaFilename, 'w') as metadataOutput:
-                    if sys.platform == "win32":
-                        process = subprocess.Popen( command, stdout=metadataOutput, stderr=metadataOutput, shell=True, env=runtimeEnv, cwd=buildDirectory )
-                    else:
 			process = subprocess.Popen( command, stdout=metadataOutput, stderr=metadataOutput, env=runtimeEnv, cwd=buildDirectory )
-                    process.wait()
+			process.wait()
 
 		# Now we need to transfer the data to it's final home, so it can be picked up by the API generation runs
 		return self.perform_rsync( source=metadataPath, destination=serverPath )
@@ -1202,29 +1191,30 @@ class BuildManager(object):
 		return True
 
 # Loads a configuration for a given project
-def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
-	# Create a configuration parser
-	config = ConfigParser.SafeConfigParser()
-	# List of prospective files to parse
-	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
-	configFiles += ['{branchGroup}-{platform}.cfg']
-	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
-	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
-	# Go over the list and load in what we can
-	for confFile in configFiles:
-		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
-		config.read( 'config/build/' + confFile )		
-	# All done, return the configuration		
-	return config
+# def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
+# 	# Create a configuration parser
+# 	config = ConfigParser.SafeConfigParser()
+# 	# List of prospective files to parse
+# 	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
+# 	configFiles += ['{branchGroup}-{platform}.cfg']
+# 	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
+# 	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
+# 	# Go over the list and load in what we can
+# 	for confFile in configFiles:
+# 		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
+# 		config.read( 'config/build/' + confFile )		
+# 	# All done, return the configuration		
+# 	return config
 
 # Loads the projects
 def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):
 	# Download the list of projects if necessary
 	if not os.path.exists(projectFile) or time.time() > os.path.getmtime(projectFile) + 60*60:
-		urllib.urlretrieve(projectFileUrl, projectFile)
+		urllib.request.urlretrieve(projectFileUrl, projectFile)
 
 	# Now load the list of projects into the project manager
 	with open(projectFile, 'r') as fileHandle:
+		print( fileHandle )
 		try:
 			ProjectManager.load_projects( etree.parse(fileHandle) )
 		except:
@@ -1268,50 +1258,50 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 	# Load the dependencies - now platform specific ones if it exists
 	if os.path.isfile( baseDepDirectory + baseName + '-' + platform ) == True:
 	    with open( baseDepDirectory + baseName  + '-' + platform, 'r' ) as fileHandle:
-		ProjectManager.setup_dependencies( fileHandle )
+	    	ProjectManager.setup_dependencies( fileHandle )
 	if os.path.isfile(  globalDepDirectory + 'dependency-data-' + baseName  + '-' + platform ) == True:
 	    with open(  globalDepDirectory + 'dependency-data-' + baseName  + '-' + platform, 'r' ) as fileHandle:
-		ProjectManager.setup_dependencies( fileHandle )
+	    	ProjectManager.setup_dependencies( fileHandle )
 
 # Checks for a Jenkins environment, and sets up a argparse.Namespace appropriately if found
-def check_jenkins_environment():
-	# Prepare
-	arguments = argparse.Namespace()
-
-	# Do we have a job name?
-	if 'JOB_NAME' in os.environ:
-		# Split it out
-		jobMatch = re.match("(?P<project>[^_]+)_?(?P<branch>[^_]+)?_?(?P<base>[^_/]+)?", os.environ['JOB_NAME'])
-		# Now transfer in any non-None attributes
-		# If we have the project name, transfer it
-		if jobMatch.group('project') is not None:
-			arguments.project = jobMatch.group('project')
-		# Determine our branch group, based on the given branch/base combo
-		if jobMatch.group('base') == 'qt5':
-			if jobMatch.group('branch') == 'stable':
-				arguments.branchGroup = 'stable-kf5-qt5'
-			else:
-				arguments.branchGroup = 'kf5-qt5'
-		elif jobMatch.group('branch') == 'oldstable':
-			arguments.branchGroup = 'oldstable-qt4'
-		elif jobMatch.group('branch') == 'stable':
-			arguments.branchGroup = 'stable-qt4'
-		elif jobMatch.group('branch') == 'master':
-			arguments.branchGroup = 'latest-qt4'
-
-	# Do we have a workspace?
-	if 'WORKSPACE' in os.environ:
-		# Transfer it
-		arguments.sources = os.environ['WORKSPACE']
-
-	# Do we have a build variation?
-	if 'Variation' in os.environ:
-		# We need this to determine our specific build variation
-		arguments.variation = os.environ['Variation']
-
-	# Do we need to change into the proper working directory?
-	if 'JENKINS_SLAVE_HOME' in os.environ:
-		# Change working directory
-		os.chdir( os.environ['JENKINS_SLAVE_HOME'] )
-
-	return arguments
+# def check_jenkins_environment():
+# 	# Prepare
+# 	arguments = argparse.Namespace()
+# 
+# 	# Do we have a job name?
+# 	if 'JOB_NAME' in os.environ:
+# 		# Split it out
+# 		jobMatch = re.match("(?P<project>[^_]+)_?(?P<branch>[^_]+)?_?(?P<base>[^_/]+)?", os.environ['JOB_NAME'])
+# 		# Now transfer in any non-None attributes
+# 		# If we have the project name, transfer it
+# 		if jobMatch.group('project') is not None:
+# 			arguments.project = jobMatch.group('project')
+# 		# Determine our branch group, based on the given branch/base combo
+# 		if jobMatch.group('base') == 'qt5':
+# 			if jobMatch.group('branch') == 'stable':
+# 				arguments.branchGroup = 'stable-kf5-qt5'
+# 			else:
+# 				arguments.branchGroup = 'kf5-qt5'
+# 		elif jobMatch.group('branch') == 'oldstable':
+# 			arguments.branchGroup = 'oldstable-qt4'
+# 		elif jobMatch.group('branch') == 'stable':
+# 			arguments.branchGroup = 'stable-qt4'
+# 		elif jobMatch.group('branch') == 'master':
+# 			arguments.branchGroup = 'latest-qt4'
+# 
+# 	# Do we have a workspace?
+# 	if 'WORKSPACE' in os.environ:
+# 		# Transfer it
+# 		arguments.sources = os.environ['WORKSPACE']
+# 
+# 	# Do we have a build variation?
+# 	if 'Variation' in os.environ:
+# 		# We need this to determine our specific build variation
+# 		arguments.variation = os.environ['Variation']
+# 
+# 	# Do we need to change into the proper working directory?
+# 	if 'JENKINS_SLAVE_HOME' in os.environ:
+# 		# Change working directory
+# 		os.chdir( os.environ['JENKINS_SLAVE_HOME'] )
+# 
+# 	return arguments

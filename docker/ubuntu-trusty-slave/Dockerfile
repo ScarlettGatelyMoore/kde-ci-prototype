@@ -14,12 +14,13 @@ RUN echo "deb-src http://us.archive.ubuntu.com/ubuntu/ trusty-backports main res
 #is not compatible.. # Want libindi only from this PPA
 # Yes we are doing this again. We want libexiv2 for libkgeomap, they want a version that will never make into trusty.
 # We also do not want anything else from mutlaqja ppa (# currently disabled, breaks image)
-RUN apt-get  -y  install software-properties-common \
+RUN apt-get -y install software-properties-common \
 	&& add-apt-repository -y ppa:ximion/packagekit \	 
 	&& add-apt-repository -y ppa:anton+/photo-video-apps \	
 	&& add-apt-repository -y ppa:mc3man/trusty-media \
 	&& add-apt-repository -y ppa:mutlaqja/ppa \	
-	&& apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install appstream libexiv2-dev libindi-dev ffmpeg
+	&& apt-get update 
+	&& DEBIAN_FRONTEND=noninteractive apt-get -y install appstream libexiv2-dev libindi-dev ffmpeg
 	
 # Needed for building qt
 RUN apt-get update && apt-get upgrade -y && apt-get -y build-dep libqt4-dev
@@ -28,7 +29,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     ssh \ 
     wget \	
     openjdk-7-jdk \
-    git \	
+    git \
+    language-pack-en \
     xvfb \
     openbox \
     dbus-x11 \
@@ -150,7 +152,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     llvm \
     libgraphviz-dev \
     libmtp-dev \
-# Package Conflict with libelectra-dev temp resolution to disable.
     libmusicbrainz3-dev \
     libneon27-dev \
     libkrb5-dev \
@@ -172,7 +173,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libofx-dev \
     liblmdb-dev \
     sqlite3 \
-    cucumber \
     liblensfun-dev \
     libjasper-dev \
     mysql-server \
@@ -201,9 +201,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server \
     libhupnp-dev \
     libgit2-dev \
     libsqlcipher-dev \
-    python-sip 
-#    libelektra-dev \
-#    libxmu-dev  
+    python-sip \
+    gcovr \
+    libssh-dev
+
+RUN gem install cucumber 
  
 RUN mkdir -p /var/run/sshd
 RUN mkdir -p /tmp/1000-runtime-dir
@@ -212,6 +214,7 @@ RUN useradd -m -u 1000 -g 1000 -d /home/jenkins jenkins
 RUN echo 'jenkins:1234' | chpasswd #changeme
 RUN chown jenkins.jenkins /tmp/1000-runtime-dir
 RUN sed s,exit\ 101,exit\ 0, /usr/sbin/policy-rc.d -i
+RUN echo 'export LANG="en_US.UTF-8"' >> /etc/profile
 RUN dpkg-reconfigure openssh-server
 
 EXPOSE 22

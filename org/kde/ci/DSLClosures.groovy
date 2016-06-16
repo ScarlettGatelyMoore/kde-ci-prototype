@@ -101,7 +101,7 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
+	static Closure genBuildStep(jobType, jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
 		def shell
 		if (platform == "Windows") {
 			shell = 'BatchFile'
@@ -110,28 +110,34 @@ class DSLClosures {
 		}
 		
 		def job_command = commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null)
-			
-		return { project ->
-			project / builders <<
-			'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
-			   condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
-				   arg1 '${ENV,var="PLATFORM"}'
-				   arg2 "${platform}"
-				   ignoreCase false
-			   }
-			   runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
-			   buildStep(class: 'hudson.tasks.Shell') {
-				   command "${job_command}"
-			   }	
+		if (jobType == 'matrixJob' ) {
+			return { project ->
+				project / builders <<
+				'org.jenkinsci.plugins.conditionalbuildstep.singlestep.SingleConditionalBuilder' {
+					condition(class: 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition') {
+						arg1 '${ENV,var="PLATFORM"}'
+						arg2 "${platform}"
+						ignoreCase false
+					}
+					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
+					buildStep(class: "hudson.tasks.${shell}") {
+						command "${job_command}"
+					}	
+				}
+			} 
+		} else {
+			return { project ->
+				project / builders <<
+				buildStep(class: "hudson.tasks.${shell}") {
+					command "${job_command}"
+				}
 			}
-		}
-	
+		}	
 	
 	}
 		
 	static String commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
 		def jobcommand = new StringBuilder()
-		def home = System.getProperty('user.home')
 		if (custom_command) {
 			jobcommand.append(custom_command + '\n')
 		}
@@ -140,9 +146,9 @@ class DSLClosures {
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command)
 				} else {
-					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
-					jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')
+				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
 				}
 					return jobcommand
 				break
@@ -150,7 +156,8 @@ class DSLClosures {
 				if (win_custom_command) {
 					jobcommand.append(win_custom_command)
 				} else {
-					jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('emerge --install-deps' + jobname)
 					jobcommand.append('emerge ' + jobname)
 				}
 					return jobcommand
@@ -159,30 +166,33 @@ class DSLClosures {
 				if (osx_custom_command) {
 					jobcommand.append(osx_custom_command)
 				} else {
-					jobcommand.append('python2.7 -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py')
+					jobcommand.append('python3.5 -u ${JENKINS_SLAVE_HOME}/tools/perform-build.py')
 				}
 				 	return jobcommand
 				break
-			case 'Android':
+			case 'android':
 				if (android_job_command) {
 					jobcommand.append(android_job_command)
 				} else {
-					jobcommand.append('kdesource-build ' + jobname)
+				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
 				}
 					 return jobcommand
 				break
-			case 'ubuntu-phone':
+			case 'snappy':
 				if(snappy_job_command) {
 					jobcommand.append(snappy_job_command)
 				} else {
+				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('snapcraft ' + jobname)
 				}
 					return jobcommand
 				break
 			default:
-			 	jobcommand.append('python3 ' + "${home}" + '/scripts/tools/update-setup-sandbox.py\n')
-				jobcommand.append('python '+ "${home}" + '/scripts/tools/prepare-environment.py\n')
-				jobcommand.append('python '+ "${home}" + '/scripts/tools/perform-build.py')			
+			    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+			 	jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+				jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')			
 					return jobcommand
 			 	break
 		}		

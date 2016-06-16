@@ -37,6 +37,7 @@ JENKINS_BRANCH = config.get( 'Repo', 'jenkinsBranch' )
 JENKINS_DEPENDENCY_BRANCH = config.get( 'Repo', 'jenkinsDepBranch' )
 JENKINS_CONFIG_BRANCH = config.get( 'Repo', 'jenkinsConfigBranch' )
 REPO_METADATA = config.get( 'Repo', 'repoMetadataRepo' )
+repoDevScripts = config.get('Repo', 'repoDevScripts')
 
 #TO-DO Add in output code, could not get it working in port.
 def getRepository(repo_name, repoUrl, repoBranch="master"):
@@ -73,7 +74,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       process = subprocess.check_output( command, shell=True )  
       print(process)
       command = "git pull origin " + repoBranch
-      print( repoPath + "/.git exists " + str(command))
+      print( repoPath + "/.git exists ")
       process = subprocess.check_output( command, shell=True )
       print(process)
       os.chdir(originalDir)
@@ -83,12 +84,13 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   os.chdir(originalDir)			
 	
 getRepository("scripts", JENKINS_MASTER_REPO, JENKINS_BRANCH)
-getRepository("dependencies", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
+getRepository("dependencies", 'git://anongit.kde.org/kde-build-metadata', JENKINS_DEPENDENCY_BRANCH)
 getRepository("metadata", JENKINS_METADATA_REPO, JENKINS_DEPENDENCY_BRANCH)
 getRepository("repometadata", REPO_METADATA, JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
-getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
+getRepository("kde-dev-scripts", repoDevScripts, JENKINS_DEPENDENCY_BRANCH)
+#getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
 
 # if sys.platform == "win32":
 #   settingsfile = scriptsLocation + "etc/kdesettings.ini"
