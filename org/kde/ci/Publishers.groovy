@@ -34,7 +34,10 @@ public final class Publishers {
 
 	def genWarningsPublisher(platform, compiler) {
 		return { node ->
-			 	  publisherList {
+			  node / 'publishers' / 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' / 'publishers' <<
+			  	'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {				  
+					  condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun') { }
+					  publisherList {
 						'hudson.plugins.warnings.WarningsPublisher' {
 							canRunOnFailed false
 							usePreviousBuildAsReference false
@@ -79,7 +82,7 @@ public final class Publishers {
 					runner(class: "org.jenkins_ci.plugins.run_condition.BuildStepRunner\$Fail")
 				}
 			}		
-		
+	}		
 	
 	def genCppCheckPublisher() {
 		return { node ->
