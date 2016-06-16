@@ -20,6 +20,7 @@ from lxml import etree
 from collections import defaultdict
 from os.path import expanduser
 from subprocess import call
+from subprocess import check_output
 
 # Settings
 hostname = socket.gethostname()
