@@ -848,13 +848,14 @@ class BuildManager(object):
 		if self.config.has_option('Build', 'postConfigureCommand'):
 			command = self.config.get('Build', 'postConfigureCommand')
 			buildCommands.append( command )
-
+		print( buildCommands )
 		# Do the configure		
 		return self.run_build_commands( buildCommands )
 
 	def compile_build(self):
 		# Load the command and run it
 		command = self.config.get('Build', 'makeCommand')
+		print( command )
 		return self.run_build_commands( [command] )
 
 	def install_build(self):

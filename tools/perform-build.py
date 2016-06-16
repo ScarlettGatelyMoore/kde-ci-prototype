@@ -83,8 +83,7 @@ manager.configure_build()
 
 # Build the project
 print( "\n== Commencing the Build\n")
-if not manager.compile_build():
-	sys.exit("Compilation step exited with non-zero code, assuming failure to build from source for project %s." % project.identifier)
+manager.compile_build()
 
 # Install the project
 print( "\n== Installing the Build\n")
