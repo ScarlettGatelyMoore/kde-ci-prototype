@@ -1240,12 +1240,12 @@ class BuildManager(object):
 
 def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDirectory ):
 	# Load base specific dependencies
-	call("pwd")
 	with open( baseDepDirectory + baseName, 'r' ) as fileHandle:
 		ProjectManager.setup_dependencies( fileHandle )
 
 	# Load the local list of ignored projects
 	with open( baseDepDirectory + 'ignore', 'r' ) as fileHandle:
+		print(fileHandle)
 		ProjectManager.setup_ignored( fileHandle )
 
 	# Load the global list of ignored projects
