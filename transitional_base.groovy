@@ -164,34 +164,16 @@ GroupFile.each { group ->
 												}
 											}
 										}
-									} else if (branchGroup =~ "kf5-minimum") {
+									} else (branchGroup =~ "kf5-minimum") {
 										configure { project ->								
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
 												secureGroovyScript {
 												script 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
 												sandbox false
 												}
-										}
-									} 
-									} else if (PLATFORM == "android") {
-										configure { project ->								
-											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												secureGroovyScript {
-												script 'def labelMap = [ android: "Android"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
-												sandbox false
-												}
 											}
-										}
-									} else {
-										configure { project ->				
-											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
-												secureGroovyScript {
-												script 'def labelMap = [ Linux: "Linux", Windows: "Windows", OSX: "OSX", android: "Android", snappy: "snappy"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
-												sandbox false
-												}
-										}	
-									}
-									}
+										} 
+									}									
 									wrappers {
 										timestamps()
 										colorizeOutput()
