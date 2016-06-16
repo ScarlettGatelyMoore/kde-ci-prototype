@@ -92,7 +92,7 @@ manager.install_build()
 
 # Deploy the newly completed build to the local tree as well as the master server
 print( "\n== Deploying Installation\n")
-manager.deploy_installation()
+#manager.deploy_installation()
 
 # Execute the tests
 print("\n== Executing Tests\n")
