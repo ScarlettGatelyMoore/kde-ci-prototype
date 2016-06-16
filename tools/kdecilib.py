@@ -702,7 +702,7 @@ class BuildManager(object):
 
 		# Finally, we can merge this into the real environment
 		clonedEnv = copy.deepcopy(os.environ)
-		for variableName, variableEntries in envChanges.iteritems():
+		for variableName, variableEntries in envChanges.items():
 			# Join them
 			newEntry = splitChar.join( variableEntries )
 			# If the variable already exists in the system environment, we prefix ourselves on
