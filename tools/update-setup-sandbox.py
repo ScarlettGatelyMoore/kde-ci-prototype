@@ -90,7 +90,7 @@ getRepository("repometadata", REPO_METADATA, JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kde-dev-scripts", repoDevScripts, JENKINS_DEPENDENCY_BRANCH)
-#getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
+getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
 
 # if sys.platform == "win32":
 #   settingsfile = scriptsLocation + "etc/kdesettings.ini"
