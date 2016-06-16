@@ -99,7 +99,7 @@ GroupFile.each { group ->
 						DSLClosures misc = new DSLClosures()
 						Publishers pub = new Publishers()
 						//Publishers can be disabled in the yaml config files
-						def gen_publishers = job.gen_publishers ?: true		
+						def gen_publishers = job.gen_publishers
 						
 						def variations = platform.PlatformVariations(options)
 						def variationClosure
