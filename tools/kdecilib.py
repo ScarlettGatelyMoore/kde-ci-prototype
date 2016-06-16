@@ -987,7 +987,7 @@ class BuildManager(object):
 				process = subprocess.Popen( shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=runtimeEnv )
 				process.wait()
 				for variable in process.stdout:
-					splitVars = variable.split('=', 1)
+					splitVars = variable.split(b'=', 1)
 					runtimeEnv[ splitVars[0] ] = splitVars[1].strip()			
 
 		# Rebuild the Sycoca
