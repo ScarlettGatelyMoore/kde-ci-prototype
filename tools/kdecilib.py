@@ -141,9 +141,9 @@ class ProjectManager(object):
 		ignoreList = [ project.strip() for project in ignoreData if project.find("#") == -1 and project.strip() ]
 		# Now mark any listed project as ignored
 		for entry in ignoreList:
+			print(entry)
 			project = ProjectManager.lookup( entry )
-			if entry:
-				project.ignore = True
+			project.ignore = True
 
 	# Setup the dependencies from kde-build-metadata.git
 	@staticmethod
