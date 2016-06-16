@@ -19,9 +19,12 @@ environmentArgs = check_jenkins_environment()
 arguments = parser.parse_args( namespace=environmentArgs )
 
 # Load our configuration, projects and dependencies
+print( "Loading config with the following parameters: " + arguments.project + " " + arguments.branchGroup \
+	+ " " + arguments.platform + " " + arguments.compiler + " " + arguments.variation )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
-if not load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' ):
-	sys.exit("Failure to load projects - unable to continue")
+try:
+	load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' ):
+except OSError
 load_project_dependencies( 'config/base/', arguments.branchGroup, arguments.platform, 'dependencies/' )
 
 # Load the requested project
