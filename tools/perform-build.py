@@ -21,9 +21,9 @@ arguments = parser.parse_args( namespace=environmentArgs )
 # Load our configuration, projects and dependencies
 print( arguments )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
-load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' )
+load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'scripts/config/projects', 'scripts/dependencies/logical-module-structure' )
 
-load_project_dependencies( 'config/base/', arguments.branchGroup, arguments.platform, 'dependencies/' )
+load_project_dependencies( 'scripts/config/base/', arguments.branchGroup, arguments.platform, 'scripts/dependencies/' )
 
 # Load the requested project
 project = ProjectManager.lookup( arguments.project )
