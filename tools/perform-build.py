@@ -22,9 +22,8 @@ arguments = parser.parse_args( namespace=environmentArgs )
 print( "Loading config with the following parameters: " + arguments.project + " " + arguments.branchGroup \
 	+ " " + arguments.platform + " " + arguments.compiler + " " + arguments.variation )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
-try:
-	load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' ):
-except OSError
+load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' )
+
 load_project_dependencies( 'config/base/', arguments.branchGroup, arguments.platform, 'dependencies/' )
 
 # Load the requested project
