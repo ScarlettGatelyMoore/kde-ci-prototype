@@ -137,8 +137,8 @@ class ProjectManager(object):
 	# Setup ignored project metadata
 	@staticmethod
 	def setup_ignored( ignoreData ):
-		# First, remove any empty lines as well as comments
-		ignoreList = [ project.strip() for project in ignoreData if project.find("#") == -1 and project.strip() ]
+		# First, remove any empty lines as well as comments TO-DO BROKEN python 3
+		#ignoreList = [ project.strip() for project in ignoreData if project.find("#") == -1 and project.strip() ]
 		# Now mark any listed project as ignored
 		for entry in ignoreData:
 			print(entry)
@@ -1246,7 +1246,6 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 
 	# Load the local list of ignored projects
 	with open( baseDepDirectory + 'ignore', 'r' ) as fileHandle:
-		print(fileHandle)
 		ProjectManager.setup_ignored( fileHandle )
 
 	# Load the global list of ignored projects
