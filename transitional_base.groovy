@@ -164,7 +164,7 @@ GroupFile.each { group ->
 												}
 											}
 										}
-									} else (branchGroup =~ "kf5-minimum") {
+									} else if (branchGroup =~ "kf5-minimum") {
 										configure { project ->								
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
 												secureGroovyScript {
