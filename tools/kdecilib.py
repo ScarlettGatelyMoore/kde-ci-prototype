@@ -1245,8 +1245,8 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 		ProjectManager.setup_dependencies( fileHandle )
 
 	# Load the local list of ignored projects
-	with open( baseDepDirectory + 'ignore', 'r' ) as fileHandle:
-		ProjectManager.setup_ignored( fileHandle )
+# 	with open( baseDepDirectory + 'ignore', 'r' ) as fileHandle:
+# 		ProjectManager.setup_ignored( fileHandle )
 
 	# Load the global list of ignored projects
 	with open( globalDepDirectory + 'build-script-ignore', 'r' ) as fileHandle:
