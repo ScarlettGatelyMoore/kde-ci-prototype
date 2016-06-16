@@ -138,9 +138,6 @@ class DSLClosures {
 		
 	static String commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
 		def jobcommand = new StringBuilder()
-		if (custom_command) {
-			jobcommand.append(custom_command + '\n')
-		}
 		switch(platform) {
 			case 'Linux':
 				if (custom_command) {
