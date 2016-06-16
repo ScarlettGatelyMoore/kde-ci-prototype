@@ -485,13 +485,9 @@ class BuildManager(object):
 
 			# Execute the command which is part of the build execution process
 			try:
-                #Windows ignores PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-				if sys.platform == "win32":
-					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
-				else:
-					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
+				process = subprocess.check_output( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
 			except subprocess.CalledProcessError:
-				# Abort if it fails to complete
+			 #Abort if it fails to complete
 				return False
 
 		# We are successful
