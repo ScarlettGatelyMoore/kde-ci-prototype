@@ -19,6 +19,7 @@ from distutils import dir_util
 from lxml import etree
 from collections import defaultdict
 from os.path import expanduser
+from subprocess import call
 
 # Settings
 hostname = socket.gethostname()
@@ -1235,8 +1236,11 @@ class BuildManager(object):
 # 	return True
 
 # Load dependencies
+
+
 def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDirectory ):
 	# Load base specific dependencies
+	call("pwd")
 	with open( baseDepDirectory + baseName, 'r' ) as fileHandle:
 		ProjectManager.setup_dependencies( fileHandle )
 
