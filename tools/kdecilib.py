@@ -1021,7 +1021,7 @@ class BuildManager(object):
 
 		# Determine the maximum amount of time we will permit CTest to run for
 		# To accomodate for possible inconsistencies, we allow an extra 2 lots of the permissible time per test
-		testsFound = re.search('Total Tests: ([0-9]+)', stdout, re.MULTILINE).group(1)
+		testsFound = re.search('Total Tests: ([0-9]+)', stdout, re.MULTILINE).group(1).decode()
 		permittedTime = ( int(testsFound) + 2 ) * self.config.getint('Test', 'testTimePermitted')
 		# Start timing it
 		timeRunning = 0

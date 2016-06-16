@@ -128,7 +128,7 @@ class DSLClosures {
 		} else {
 			return { project ->
 				project / builders <<
-				buildStep(class: "hudson.tasks.${shell}") {
+				buildStep(class: 'hudson.tasks.' + "${shell}") {
 					command "${job_command}"
 				}
 			}
