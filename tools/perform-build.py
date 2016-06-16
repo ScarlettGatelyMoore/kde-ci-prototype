@@ -78,8 +78,8 @@ else:
 
 # Configure the build
 print( "\n== Configuring Build\n")
-if not manager.configure_build():
-	sys.exit("Configure step exited with non-zero code, assuming failure to configure for project %s." % project.identifier)
+manager.configure_build():
+
 
 # Build the project
 print( "\n== Commencing the Build\n")
