@@ -78,7 +78,7 @@ else:
 
 # Configure the build
 print( "\n== Configuring Build\n")
-manager.configure_build():
+manager.configure_build()
 
 
 # Build the project
