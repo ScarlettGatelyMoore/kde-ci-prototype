@@ -390,7 +390,7 @@ class BuildManager(object):
 		# Parse each path in turn (one per line)
 		for variable in process.stdout:
 			# Determine the prefix/lib less part of the path - and ensure it isn't a duplicate
-			result = compiledRegexp.match(variable)
+			result = compiledRegexp.match(variable.decode('utf-8'))
 			if result is not None and result.group(1) not in suffixes:
 				# just keep path endings (i.e. path remaining after '/lib' pattern)
 				suffixes.append(result.group(1))
