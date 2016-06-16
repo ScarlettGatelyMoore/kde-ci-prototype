@@ -485,7 +485,7 @@ class BuildManager(object):
 
 			# Execute the command which is part of the build execution process
 			try:
-				process = subprocess.check_output( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
+				process = subprocess.check_output( command, cwd=buildDirectory, env=buildEnv )
 			except subprocess.CalledProcessError:
 			 #Abort if it fails to complete
 				return False
