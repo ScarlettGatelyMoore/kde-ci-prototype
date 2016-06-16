@@ -953,7 +953,7 @@ class BuildManager(object):
 			process = subprocess.Popen( shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=runtimeEnv, cwd=buildDirectory)
 		stdout, stderr = process.communicate()
 		# Is it necessary to run tests? (tests must be enabled per configuration and CTest must report more than 1 test)
-		if not self.config.getboolean('Test', 'testsEnabled') or re.search('Total Tests: 0', stdout, re.MULTILINE.decode('utf-8')):
+		if not self.config.getboolean('Test', 'testsEnabled'): ##BROKEN PYTHON3 TO-DO or re.search('Total Tests: 0', stdout, re.MULTILINE):
 			# Copy in the skeleton file to keep Jenkins happy
 			unitTestSkeleton = os.path.join( self.scriptsLocation, 'templates', 'JUnitTestResults-Success.xml' )
 			shutil.copyfile( unitTestSkeleton, junitFilename )
