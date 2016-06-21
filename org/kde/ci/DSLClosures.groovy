@@ -128,7 +128,7 @@ class DSLClosures {
 		} else {
 			return { project ->
 				project / builders <<
-				buildStep(class: 'hudson.tasks.' + "${shell}") {
+				buildStep(class: "hudson.tasks.${shell}") {
 					command "${job_command}"
 				}
 			}
@@ -146,7 +146,7 @@ class DSLClosures {
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command + '\n')
 				} 
-					jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
 				
@@ -159,13 +159,13 @@ class DSLClosures {
 				if (win_custom_command) {
 					jobcommand.append(win_custom_command + '\n')
 				} 
-					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('emerge --install-deps' + jobname)
+					jobcommand.append('python ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('emerge --install-deps' + jobname + '\n')
 					jobcommand.append('emerge ' + jobname)
 				
 					return jobcommand
 				break
-			case 'osx':
+			case 'OSX':
 				if (custom_command) {
 					jobcommand.append(custom_command + '\n')
 				}
@@ -183,9 +183,9 @@ class DSLClosures {
 				if (android_job_command) {
 					jobcommand.append(android_job_command + '\n')
 				} 
-				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
-					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
+				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '/home/jenkins/scripts\n')
+					jobcommand.append('python3 ' + '/home/jenkins/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python3 ' + '/home/jenkins/scripts/tools/perform-build.py')
 				
 					 return jobcommand
 				break
@@ -196,13 +196,25 @@ class DSLClosures {
 				if(snappy_job_command) {
 					jobcommand.append(snappy_job_command + '\n')
 				} 
-				    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('snapcraft ' + jobname)
 				
 					return jobcommand
 				break
+			case 'flatpak':
+				if (custom_command) {
+					jobcommand.append(custom_command + '\n')
+				}
+				if(snappy_job_command) {
+					jobcommand.append(snappy_job_command + '\n')
+				}
+					jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append('flatpak-build ' + jobname)
+				
+					return jobcommand
+				break
 			default:
-			    jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+			    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 			 	jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 				jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')			
 					return jobcommand

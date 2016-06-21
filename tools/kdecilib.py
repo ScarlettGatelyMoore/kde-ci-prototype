@@ -487,6 +487,7 @@ class BuildManager(object):
 			# Execute the command which is part of the build execution process
 			try:
 				process = subprocess.check_output( command, cwd=buildDirectory, env=buildEnv )
+				print(process)
 			except subprocess.CalledProcessError:
 			 #Abort if it fails to complete
 				return False
@@ -1021,7 +1022,7 @@ class BuildManager(object):
 
 		# Determine the maximum amount of time we will permit CTest to run for
 		# To accomodate for possible inconsistencies, we allow an extra 2 lots of the permissible time per test
-		testsFound = re.search('Total Tests: ([0-9]+)', stdout, re.MULTILINE).group(1).decode()
+		testsFound = re.search('Total Tests: ([0-9]+)', stdout.decode(), re.MULTILINE).group(1)
 		permittedTime = ( int(testsFound) + 2 ) * self.config.getint('Test', 'testTimePermitted')
 		# Start timing it
 		timeRunning = 0

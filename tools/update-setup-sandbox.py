@@ -51,7 +51,7 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
   
   print("Processing: " + repo_name)
   if not os.path.exists(os.path.join(repoPath, '.git')):  
-    try:
+
       print("No valid repo exists in " + repoPath + " Cloning as requested.")
       command = "git clone %s %s" % (repoUrl, repoPath)
       process = subprocess.check_output( command, shell=True )
@@ -62,11 +62,9 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       if not repoBranch == 'master':
           process = subprocess.check_output( command, shell=True )
           print(process)
-      
-    except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
+
   elif os.path.exists(os.path.join(repoPath, '.git')):  
-    try:
+
       print("There appears to be a repo already in: " + repoPath + " Pulling instead")        	
       command = "git checkout " + repoBranch
       print( "Checkout branch: " + str(repoBranch) )
@@ -78,8 +76,8 @@ def getRepository(repo_name, repoUrl, repoBranch="master"):
       process = subprocess.check_output( command, shell=True )
       print(process)
       os.chdir(originalDir)
-    except subprocess.CalledProcessError: 
-      print( "subproccess CalledProcessError.output = " + str(subprocess.CalledProcessError.returncode))
+
+
 			
   os.chdir(originalDir)			
 	
@@ -90,7 +88,7 @@ getRepository("repometadata", REPO_METADATA, JENKINS_DEPENDENCY_BRANCH)
 getRepository("poppler-test-data", "git://git.freedesktop.org/git/poppler/test", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kapidox", "git://anongit.kde.org/kapidox", JENKINS_DEPENDENCY_BRANCH)
 getRepository("kde-dev-scripts", repoDevScripts, JENKINS_DEPENDENCY_BRANCH)
-getRepository("config", JENKINS_CONFIG_REPO, JENKINS_CONFIG_BRANCH)
+getRepository("config", 'https://github.com/ScarlettGatelyClark/kde-ci-config.git', JENKINS_CONFIG_BRANCH)
 
 # if sys.platform == "win32":
 #   settingsfile = scriptsLocation + "etc/kdesettings.ini"

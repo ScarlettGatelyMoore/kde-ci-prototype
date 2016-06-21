@@ -71,7 +71,7 @@ GroupFile.each { group ->
 		RepoMetaValues repodata = RepoMetaValues.newInstance(projrepoyaml)
 		def path = repodata.projectpath ?: groupName + '/' + jobname
 		assert job.group_name == groupName
-		println "Processing group: " + groupName
+		println "Processing group: " + groupName + '\n'
 		
 		// Lets start with.. Are we active?
 		if(job.getActive()) {	
@@ -88,10 +88,10 @@ GroupFile.each { group ->
 				//println path			
 				
 				def branch = tracks.getAt(track)
-				println branch				
+	
 				// Process each platform
 				Map pf = job.SetPlatformMap()	
-				pf.each { PLATFORM , options ->	
+				pf.each { curr_platform, options ->	
 					if (options.enabled == true) {																
 						Platform platform = new Platform()
 						def compiler = platform.genCompilers(options)
@@ -120,23 +120,23 @@ GroupFile.each { group ->
 						// We only want matrix jobs for variations, multiple compilers, requested. They are annoying with reports.
 						def jobType = platform.determineJobType(variations, compiler)
 						boolean currtrack = misc.genBuildTrack(options, track)
-						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, PLATFORM, compiler)
+						def fullname = job.SetProjectFullName(jobname, branchGroup, track, branch, curr_platform, compiler)
 						CurrentView = job.view
 						CurrentViewJobs << fullname
 						// If the current track is enabled for this platform generate job						
 						if (currtrack) {
-							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + PLATFORM \
+							println "Processing Project " + jobname + " " + branchGroup + " Track " + track + " Branch " + branch + " platform " + curr_platform \
 							+ " compiler " + compiler
 						SCM scm = new SCM()									
 						scmClosure = scm.generateSCM(jobname, job.SetRepoMap(), branch)
-									
+	
 								/* BEGIN DSL CODE */
 								"${jobType}"(fullname) {
 									configure { project ->
 										project / 'actions' {}				
 									}	
 									configure { project ->
-										project / assignedNode(PLATFORM)
+										project / assignedNode("${curr_platform}")
 										project / canRoam(false) // If canRoam is true, the label will not be used
 									}
 								    // token for api		
@@ -159,7 +159,7 @@ GroupFile.each { group ->
 										configure { project ->									
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
 												secureGroovyScript {
-												script 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												script 'def labelMap = [ Linux: "QT4"]; return labelMap.get(binding.getVariables().get("curr_platform"));'
 												sandbox false
 												}
 											}
@@ -168,7 +168,7 @@ GroupFile.each { group ->
 										configure { project ->								
 											project / 'properties' << 'jp.ikedam.jenkins.plugins.groovy_label_assignment.GroovyLabelAssignmentProperty' {
 												secureGroovyScript {
-												script 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("PLATFORM"));'
+												script 'def labelMap = [ Linux: "MINIMUM"]; return labelMap.get(binding.getVariables().get("curr_platform"));'
 												sandbox false
 												}
 											}
@@ -177,10 +177,10 @@ GroupFile.each { group ->
 									wrappers {
 										timestamps()
 										colorizeOutput()
-										if ( PLATFORM == "Linux") {
+										if ( curr_platform == "Linux") {
 											environmentVariables {
 												env('JENKINS_SLAVE_HOME', '/home/jenkins')
-												env('PLATFORM', PLATFORM)
+												env('PLATFORM', curr_platform)
 												env('JENKINS_TEST_HOME', '/home/jenkins')
 												env('ASAN_OPTIONS', 'detect_leaks=0')
 												env('XDG_CONFIG_DIRS', '/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/:${JENKINS_TEST_HOME}/.qttest/config')
@@ -194,9 +194,9 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep("${jobType}", jobname, PLATFORM, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
+									configure misc.genBuildStep("${jobType}", jobname, curr_platform, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
 									if(gen_publishers != false) {
-										configure pub.genWarningsPublisher(PLATFORM, compiler)	
+										configure pub.genWarningsPublisher(curr_platform, compiler)	
 										configure pub.genCppCheckPublisher()
 										configure pub.genCoberturaPublisher()
 										configure pub.genJunitPublisher()
@@ -211,7 +211,7 @@ GroupFile.each { group ->
 									
 								}// END DSL							
 							} else { // end current job track	
-								println "${jobname} does not have track: ${track} configured for ${PLATFORM}"
+								println "${jobname} does not have track: ${track} configured for ${curr_platform}"
 								return	
 							} 
 						} // End enabled platform chaeck.	
@@ -299,7 +299,28 @@ GroupFile.each { group ->
 		filterExecutors false
 		filterBuildQueue false
 		jobs {
-				regex(".* " + "Linux" + ".+")
+				regex(".* " + "android" + ".+")
+			}
+		jobFilters {
+		}
+		//statusFilter(StatusFilter.ENABLED)
+		columns {
+			status()
+			weather()
+			name()
+			lastSuccess()
+			lastFailure()
+			lastDuration()
+			buildButton()
+			//'hudson.plugins.UpDownStreamViewColumn'
+		}
+	}
+	listView('OSX') {
+		description 'All jobs for group: ' + "OSX"
+		filterExecutors false
+		filterBuildQueue false
+		jobs {
+				regex(".* " + "osx" + ".+")
 			}
 		jobFilters {
 		}
@@ -347,7 +368,3 @@ GroupFile.each { group ->
 } // End group	
 
 userContent('kde.css', streamFileFromWorkspace('css/kde.css'))
-
-
-
-

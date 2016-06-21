@@ -5,6 +5,8 @@ from load_configuration import *
 from kdecilib import *
 from appstreamtest import *
 
+home = os.path.expanduser("~")
+
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
 parser.add_argument('--project', type=str)
@@ -22,9 +24,9 @@ arguments = parser.parse_args( namespace=environmentArgs )
 print( arguments )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
 
-load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'scripts/config/projects', 'scripts/dependencies/logical-module-structure' )
+load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', home + '/scripts/config/projects', home + '/scripts/dependencies/logical-module-structure' )
 
-load_project_dependencies( 'scripts/config/base/', arguments.branchGroup, arguments.platform, 'scripts/dependencies/' )
+load_project_dependencies( home + '/scripts/config/base/', arguments.branchGroup, arguments.platform, home + '/scripts/dependencies/' )
 
 # Load the requested project
 project = ProjectManager.lookup( arguments.project )
