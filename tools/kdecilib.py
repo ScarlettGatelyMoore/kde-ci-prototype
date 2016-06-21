@@ -1207,34 +1207,33 @@ class BuildManager(object):
 # 	# All done, return the configuration		
 # 	return config
 
-# # Loads the projects
-# def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):
-# 	# Download the list of projects if necessary
-# 	if not os.path.exists(projectFile) or time.time() > os.path.getmtime(projectFile) + 60*60:
-# 		urllib.request.urlretrieve(projectFileUrl, projectFile)
-# 
-# 	# Now load the list of projects into the project manager
-# 	with open(projectFile, 'r') as fileHandle:
-# 		print( fileHandle )
-# 		try:
-# 			ProjectManager.load_projects( etree.parse(fileHandle) )
-# 		except:
-# 			os.remove(projectFile)
-# 			return False
-# 
-# 	# Load the branch group data now
-# 	with open(moduleStructure, 'r') as fileHandle:
-# 		ProjectManager.setup_branch_groups( json.load(fileHandle) )
-# 
-# 	# Finally, load special projects
-# 	for dirname, dirnames, filenames in os.walk( configDirectory ):
-# 		for filename in filenames:
-# 			filePath = os.path.join( dirname, filename )
-# 			ProjectManager.load_extra_project( filePath )
-# 
-# 	# We are successful
-# 	return True
+# Loads the projects
+def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):
+	# Download the list of projects if necessary
+	if not os.path.exists(projectFile) or time.time() > os.path.getmtime(projectFile) + 60*60:
+		urllib.request.urlretrieve(projectFileUrl, projectFile)
 
+	# Now load the list of projects into the project manager
+	with open(projectFile, 'r') as fileHandle:
+		print( fileHandle )
+		try:
+			ProjectManager.load_projects( etree.parse(fileHandle) )
+		except:
+			os.remove(projectFile)
+			return False
+
+	# Load the branch group data now
+	with open(moduleStructure, 'r') as fileHandle:
+		ProjectManager.setup_branch_groups( json.load(fileHandle) )
+
+	# Finally, load special projects
+	for dirname, dirnames, filenames in os.walk( configDirectory ):
+		for filename in filenames:
+			filePath = os.path.join( dirname, filename )
+			ProjectManager.load_extra_project( filePath )
+
+	# We are successful
+	return True
 # Load dependencies
 
 
