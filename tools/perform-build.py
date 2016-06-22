@@ -5,7 +5,7 @@ from load_configuration import *
 from kdecilib import *
 from appstreamtest import *
 
-home = os.path.expanduser("~")
+home = "/var/lib/jenkins"
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
