@@ -1192,20 +1192,22 @@ class BuildManager(object):
 		return True
 
 # Loads a configuration for a given project
-# def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
-# 	# Create a configuration parser
-# 	config = ConfigParser.SafeConfigParser()
-# 	# List of prospective files to parse
-# 	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
-# 	configFiles += ['{branchGroup}-{platform}.cfg']
-# 	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
-# 	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
-# 	# Go over the list and load in what we can
-# 	for confFile in configFiles:
-# 		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
-# 		config.read( 'config/build/' + confFile )		
-# 	# All done, return the configuration		
-# 	return config
+def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
+	# Create a configuration parser
+	config = configparser.ConfigParser()
+	# List of prospective files to parse
+	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
+	configFiles += ['{branchGroup}-{platform}.cfg']
+	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
+	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
+	configFiles += ['server.cfg']
+	# Go over the list and load in what we can
+	for confFile in configFiles:
+		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
+		config.read( 'scripts/config/build/' + confFile )		
+	# All done, return the configuration		
+	return config
+
 
 # Loads the projects
 def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):
@@ -1266,44 +1268,42 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 	    	ProjectManager.setup_dependencies( fileHandle )
 
 # Checks for a Jenkins environment, and sets up a argparse.Namespace appropriately if found
-# def check_jenkins_environment():
-# 	# Prepare
-# 	arguments = argparse.Namespace()
-# 
-# 	# Do we have a job name?
-# 	if 'JOB_NAME' in os.environ:
-# 		# Split it out
-# 		jobMatch = re.match("(?P<project>[^_]+)_?(?P<branch>[^_]+)?_?(?P<base>[^_/]+)?", os.environ['JOB_NAME'])
-# 		# Now transfer in any non-None attributes
-# 		# If we have the project name, transfer it
-# 		if jobMatch.group('project') is not None:
-# 			arguments.project = jobMatch.group('project')
-# 		# Determine our branch group, based on the given branch/base combo
-# 		if jobMatch.group('base') == 'qt5':
-# 			if jobMatch.group('branch') == 'stable':
-# 				arguments.branchGroup = 'stable-kf5-qt5'
-# 			else:
-# 				arguments.branchGroup = 'kf5-qt5'
-# 		elif jobMatch.group('branch') == 'oldstable':
-# 			arguments.branchGroup = 'oldstable-qt4'
-# 		elif jobMatch.group('branch') == 'stable':
-# 			arguments.branchGroup = 'stable-qt4'
-# 		elif jobMatch.group('branch') == 'master':
-# 			arguments.branchGroup = 'latest-qt4'
-# 
-# 	# Do we have a workspace?
-# 	if 'WORKSPACE' in os.environ:
-# 		# Transfer it
-# 		arguments.sources = os.environ['WORKSPACE']
-# 
-# 	# Do we have a build variation?
-# 	if 'Variation' in os.environ:
-# 		# We need this to determine our specific build variation
-# 		arguments.variation = os.environ['Variation']
-# 
-# 	# Do we need to change into the proper working directory?
-# 	if 'JENKINS_SLAVE_HOME' in os.environ:
-# 		# Change working directory
-# 		os.chdir( os.environ['JENKINS_SLAVE_HOME'] )
-# 
-# 	return arguments
+def check_jenkins_environment():
+	# Prepare
+	arguments = argparse.Namespace()
+
+	# Do we have a job name?
+	if 'JOB_NAME' in os.environ:
+		# Split it out
+		jobMatch = re.match("(?P<project>[^ ]+) ?(?P<branchGroup>[^ ]+)? ?(?P<track>[^ ]+)? ?(?P<branch>[^ ]+)? ?(?P<platform>[^ ]+)? ?(?P<compiler>[^ ]+)?", os.environ['JOB_NAME'])
+		# Now transfer in any non-None attributes
+		# If we have the project name, transfer it
+		if jobMatch.group('project') is not None:
+			arguments.project = jobMatch.group('project')
+		# Determine our branch group, based on the given branch/base combo
+		if jobMatch.group('branchGroup') is not None:
+			arguments.branchGroup = jobMatch.group('branchGroup')
+		if jobMatch.group('track') is not None:
+			arguments.track = jobMatch.group('track')
+		if jobMatch.group('branch') is not None:
+			arguments.branch = jobMatch.group('branch')
+		if jobMatch.group('platform') is not None:
+			arguments.platform = jobMatch.group('platform')
+		if jobMatch.group('compiler') is not None:
+			arguments.compiler = jobMatch.group('compiler')
+	# Do we have a workspace?
+	if 'WORKSPACE' in os.environ:
+		# Transfer it
+		arguments.sources = os.environ['WORKSPACE']
+
+	# Do we have a build variation?
+	if 'Variation' in os.environ:
+		# We need this to determine our specific build variation
+		arguments.variation = os.environ['Variation']
+
+	# Do we need to change into the proper working directory?
+	if 'JENKINS_SLAVE_HOME' in os.environ:
+		# Change working directory
+		os.chdir( os.environ['JENKINS_SLAVE_HOME'] )
+
+	return arguments
