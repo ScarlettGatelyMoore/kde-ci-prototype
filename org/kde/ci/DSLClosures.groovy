@@ -101,7 +101,7 @@ class DSLClosures {
 		}
 				
 	}
-	static Closure genBuildStep(jobType, jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
+	static Closure genBuildStep(jobType, jobname, branchGroup, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {		
 		def shell
 		if (platform == "windows") {
 			shell = 'BatchFile'
@@ -109,7 +109,7 @@ class DSLClosures {
 			shell = 'Shell'
 		}
 		
-		def job_command = commandBuilder(jobname, platform, custom_command, lin_custom_command, win_custom_command, osx_custom_command, android_job_command, snappy_job_command)
+		def job_command = commandBuilder(jobname, branchGroup, platform, custom_command, lin_custom_command, win_custom_command, osx_custom_command, android_job_command, snappy_job_command)
 		if (jobType == 'matrixJob' ) {
 			return { project ->
 				project / builders <<
