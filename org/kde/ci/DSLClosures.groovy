@@ -136,7 +136,7 @@ class DSLClosures {
 	
 	}
 		
-	static String commandBuilder(jobname, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
+	static String commandBuilder(jobname, branchGroup, platform, custom_command=null, lin_custom_command=null, win_custom_command=null, osx_custom_command=null, android_job_command=null, snappy_job_command=null) {
 		def jobcommand = new StringBuilder()
 		switch(platform) {
 			case 'Linux':
@@ -148,7 +148,8 @@ class DSLClosures {
 				} 
 					jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' +  + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
+						+ ' --compiler ' + 'gcc' + ' --platform ' + 'Linux' + ' --sources ' + '${WORKSPACE}')
 				
 					return jobcommand
 				break

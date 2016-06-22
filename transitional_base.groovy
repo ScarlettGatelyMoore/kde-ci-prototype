@@ -194,7 +194,7 @@ GroupFile.each { group ->
 									}
 									blockOnUpstreamProjects()
 									configure scmClosure
-									configure misc.genBuildStep("${jobType}", jobname, curr_platform, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
+									configure misc.genBuildStep("${jobType}", jobname, branchGroup, curr_platform, job_command, lin_job_command, win_job_command, osx_job_command, android_job_command, snappy_job_command)	
 									if(gen_publishers != false) {
 										configure pub.genWarningsPublisher(curr_platform, compiler)	
 										configure pub.genCppCheckPublisher()
