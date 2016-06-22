@@ -148,7 +148,7 @@ class DSLClosures {
 				} 
 					jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' +  + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
+					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
 						+ ' --compiler ' + 'gcc' + ' --platform ' + 'Linux' + ' --sources ' + '${WORKSPACE}')
 				
 					return jobcommand
