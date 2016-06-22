@@ -5,7 +5,7 @@ from load_configuration import *
 from kdecilib import *
 from appstreamtest import *
 
-home = "/var/lib/jenkins"
+home = "os.path.expanduser("~")"
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
@@ -29,9 +29,9 @@ load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', h
 load_project_dependencies( home + '/scripts/config/base/', arguments.branchGroup, arguments.platform, home + '/scripts/dependencies/' )
 
 # Load the requested project
-project = ProjectManager.lookup( arguments.project )
-if project is None:
-	sys.exit("Requested project %s was not found." % arguments.project)
+# project = ProjectManager.lookup( arguments.project )
+# if project is None:
+# 	sys.exit("Requested project %s was not found." % arguments.project)
 
 # Prepare the build manager
 manager = BuildManager(project, arguments.branchGroup, arguments.sources, config, arguments.platform)
