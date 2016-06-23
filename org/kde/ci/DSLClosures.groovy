@@ -146,7 +146,7 @@ class DSLClosures {
 				if (lin_custom_command) {
 					jobcommand.append(lin_custom_command + '\n')
 				} 
-					jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
+					jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
 					jobcommand.append('python3 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
 						+ ' --compiler ' + 'gcc' + ' --platform ' + 'Linux' + ' --sources ' + '${WORKSPACE}')
