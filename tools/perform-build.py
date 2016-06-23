@@ -29,7 +29,7 @@ load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', h
 load_project_dependencies( home + '/scripts/config/base/', arguments.branchGroup, arguments.platform, home + '/scripts/dependencies/' )
 
 # Load the requested project
-# project = ProjectManager.lookup( arguments.project )
+project = ProjectManager.lookup( arguments.project )
 # if project is None:
 # 	sys.exit("Requested project %s was not found." % arguments.project)
 
