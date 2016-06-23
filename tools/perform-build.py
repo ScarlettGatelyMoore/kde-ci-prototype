@@ -24,12 +24,14 @@ arguments = parser.parse_args( namespace=environmentArgs )
 print( arguments )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
 
+xmlprojects = ProjectManager.load_projects( etree.parse(fileHandle) )
+print(xmlprojects)
 load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', home + '/scripts/config/projects', home + '/scripts/dependencies/logical-module-structure' )
 
 load_project_dependencies( home + '/scripts/config/base/', arguments.branchGroup, arguments.platform, home + '/scripts/dependencies/' )
 
 # Load the requested project
-project = ProjectManager.lookup( arguments.project )
+#project = ProjectManager.lookup( arguments.project )
 # if project is None:
 # 	sys.exit("Requested project %s was not found." % arguments.project)
 
