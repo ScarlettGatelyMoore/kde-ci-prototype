@@ -1,7 +1,26 @@
 #!/usr/bin/python3
+import re
+import os
 import sys
+import time
+import copy
+import json
+import shlex
+import urllib.request
+import shutil
+import socket
+import fnmatch
 import argparse
-from load_configuration import *
+import subprocess
+import configparser
+import multiprocessing
+import distutils
+from distutils import dir_util
+from lxml import etree
+from collections import defaultdict
+from os.path import expanduser
+from subprocess import call
+from subprocess import check_output
 from kdecilib import *
 from appstreamtest import *
 
