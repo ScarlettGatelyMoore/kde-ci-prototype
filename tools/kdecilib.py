@@ -1302,17 +1302,16 @@ def check_jenkins_environment():
 		if jobMatch.group('project') is not None:
 			arguments.project = jobMatch.group('project')
 		# Determine our branch group, based on the given branch/base combo
-		if jobMatch.group('base') == 'qt5':
-			if jobMatch.group('branch') == 'stable':
-				arguments.branchGroup = 'stable-kf5-qt5'
-			else:
-				arguments.branchGroup = 'kf5-qt5'
-		elif jobMatch.group('branch') == 'oldstable':
-			arguments.branchGroup = 'oldstable-qt4'
-		elif jobMatch.group('branch') == 'stable':
-			arguments.branchGroup = 'stable-qt4'
-		elif jobMatch.group('branch') == 'master':
-			arguments.branchGroup = 'latest-qt4'
+		if jobMatch.group('branchGroup') is not None:
+			arguments.branchGroup = jobMatch.group('branchGroup')
+# 		if jobMatch.group('track') is not None:
+# 			arguments.track = jobMatch.group('track')
+		if jobMatch.group('branch') is not None:
+			arguments.branch = jobMatch.group('branch')
+		if jobMatch.group('platform') is not None:
+			arguments.platform = jobMatch.group('platform')
+		if jobMatch.group('compiler') is not None:
+			arguments.compiler = jobMatch.group('compiler')
 
 	# Do we have a workspace?
 	if 'WORKSPACE' in os.environ:
