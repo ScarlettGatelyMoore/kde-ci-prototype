@@ -19,8 +19,6 @@ arguments = parser.parse_args( namespace=environmentArgs )
 
 # Load our configuration, projects and dependencies
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
-for variable in config:
-	print variable
 	
 if not load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'scripts/config/projects', 'scripts/dependencies/logical-module-structure' ):
 	sys.exit("Failure to load projects - unable to continue")
