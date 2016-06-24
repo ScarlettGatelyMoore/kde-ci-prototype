@@ -6,7 +6,7 @@ import shutil
 import socket
 import os.path
 import shlex
-import configparser
+import ConfigParser
 from subprocess import STDOUT
 from subprocess import CalledProcessError, check_output
 
@@ -17,7 +17,7 @@ EMERGE_BASE=""
 EMERGE_ETC=""
 scriptsLocation=home + "/scripts/"
 def generate_server_config():
-  config = configparser.ConfigParser()
+  config = ConfigParser.ConfigParser()
   #Read in the defaults.
   config.read( scriptsLocation + 'tools/' + 'server.cfg' )
   #Get hostname and add .cfg to get file name.  
