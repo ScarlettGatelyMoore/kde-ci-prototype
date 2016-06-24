@@ -204,7 +204,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     openbox \
     openjdk-8-jdk \
     openssh-server \
-    p7zip
+    p7zip \
     packagekit \
     postgresql \
     protobuf-compiler \
@@ -242,7 +242,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     xserver-xorg-input-wacom \
     xserver-xorg-input-wacom \
     xsltproc \
-    xwayland \
+    xwayland
     
 RUN mkdir -p /var/run/sshd
 RUN groupadd -g 1000 jenkins
