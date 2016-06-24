@@ -212,6 +212,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install \
     psmisc \
     python-lxml \    
     python-numpy \
+    python2.7 \
     python3-dev \
     python3-lxml \
     python3-numpy \
