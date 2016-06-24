@@ -147,8 +147,8 @@ class DSLClosures {
 					jobcommand.append(lin_custom_command + '\n')
 				} 
 					jobcommand.append('git clone https://github.com/ScarlettGatelyClark/kde-ci-prototype.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
-					jobcommand.append('python ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
+					jobcommand.append('python2.7 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python2.7 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py ' + '--project ' + "${jobname}" + ' --branchGroup ' + "${branchGroup}"	\
 						+ ' --compiler ' + 'gcc' + ' --platform ' + 'Linux' + ' --sources ' + '${WORKSPACE}')
 				
 					return jobcommand
@@ -185,8 +185,8 @@ class DSLClosures {
 					jobcommand.append(android_job_command + '\n')
 				} 
 				    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '/home/jenkins/scripts\n')
-					jobcommand.append('python ' + '/home/jenkins/scripts/tools/update-setup-sandbox.py\n')
-					jobcommand.append('python ' + '/home/jenkins/scripts/tools/perform-build.py')
+					jobcommand.append('python2.7 ' + '/home/jenkins/scripts/tools/update-setup-sandbox.py\n')
+					jobcommand.append('python2.7 ' + '/home/jenkins/scripts/tools/perform-build.py')
 				
 					 return jobcommand
 				break
@@ -216,8 +216,8 @@ class DSLClosures {
 				break
 			default:
 			    jobcommand.append('git clone git://anongit.kde.org/sysadmin/ci-tools-experimental.git ' + '${JENKINS_SLAVE_HOME}/scripts\n')
-			 	jobcommand.append('python ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
-				jobcommand.append('python ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')			
+			 	jobcommand.append('python2.7 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/update-setup-sandbox.py\n')
+				jobcommand.append('python2.7 ' + '${JENKINS_SLAVE_HOME}/scripts/tools/perform-build.py')			
 					return jobcommand
 			 	break
 		}		
