@@ -6,20 +6,21 @@ import time
 import copy
 import json
 import shlex
-import urllib
+import urllib.request
 import shutil
 import socket
 import fnmatch
-import tempfile
 import argparse
 import subprocess
-import ConfigParser
+import configparser
 import multiprocessing
 import distutils
 from distutils import dir_util
 from lxml import etree
 from collections import defaultdict
 from os.path import expanduser
+from subprocess import call
+from subprocess import check_output
 
 # Settings
 hostname = socket.gethostname()
@@ -65,7 +66,7 @@ class ProjectManager(object):
 	@staticmethod
 	def load_extra_project( projectFilename ):
 		# Read the project configuration
-		projectData = ConfigParser.SafeConfigParser()
+		projectData = configparser.ConfigParser()
 		projectData.read( projectFilename )
 
 		# Determine if we already know a project by this name (ie. override rather than create)
@@ -141,6 +142,7 @@ class ProjectManager(object):
 		ignoreList = [ project.strip() for project in ignoreData if project.find("#") == -1 and project.strip() ]
 		# Now mark any listed project as ignored
 		for entry in ignoreList:
+			print(entry)
 			project = ProjectManager.lookup( entry )
 			project.ignore = True
 
@@ -389,7 +391,7 @@ class BuildManager(object):
 		# Parse each path in turn (one per line)
 		for variable in process.stdout:
 			# Determine the prefix/lib less part of the path - and ensure it isn't a duplicate
-			result = compiledRegexp.match(variable)
+			result = compiledRegexp.match(variable.decode('utf-8'))
 			if result is not None and result.group(1) not in suffixes:
 				# just keep path endings (i.e. path remaining after '/lib' pattern)
 				suffixes.append(result.group(1))
@@ -449,10 +451,7 @@ class BuildManager(object):
 
 		# If we have a Linux destination, but a Windows source we have to specify the permissions to be used
 		if source[1:9] == 'cygdrive' and not destination[1:9] == 'cygdrive':
-			print (source[1:9])
 			rsyncCommand.append("--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r")
-
-		print("Rsyncing from %s to %s" % (source, destination))
 
 		# Add the source and destination to our arguments
 		rsyncCommand.append( source + '/' )
@@ -482,18 +481,15 @@ class BuildManager(object):
 			# {loadLevel} = The desired maximum load level during the build
 			# {jobCount} = The appropriate number of jobs which should be started during a build
 			command = command.format( scriptsLocation=self.scriptsLocation, instPrefix=self.installPrefix.replace("\\", "/"), sources=self.projectSources.replace("\\", "/"), loadLevel=cpuCount, jobCount=cpuCount + 1 )
+			
 			command = shlex.split( command )
 
 			# Execute the command which is part of the build execution process
 			try:
-				# Windows ignores PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-				if sys.platform == "win32":
-					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
-				else:
-					print command
-					process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, cwd=buildDirectory, env=buildEnv )
+				process = subprocess.check_output( command, cwd=buildDirectory, env=buildEnv )
+				print(process)
 			except subprocess.CalledProcessError:
-				# Abort if it fails to complete
+			 #Abort if it fails to complete
 				return False
 
 		# We are successful
@@ -503,6 +499,7 @@ class BuildManager(object):
 	def sync_dependencies(self):
 		# Sync the project and shared system base dependencies
 		for candidate, candidateBranch in self.dependencies:
+			HOME=expanduser("~")
 			# Determine the host (source) and local (destination) directories we are syncing
 			hostPath = self.project_prefix( candidate, local=False )
 			localPath = self.project_prefix( candidate )
@@ -512,38 +509,34 @@ class BuildManager(object):
 			# Execute the command
 			if not self.perform_rsync( source=hostPath, destination=localPath ):
 				return False
-
-			# Do some OSX specific stuff
-			# We need to evaluate if this is even the way we want to do things...
-			if sys.platform == "darwin":
-				HOME=expanduser("~")
-				if os.path.isdir(localPath + "/Library/Application Support") == True:
-					datadir = localPath + "/Library/Application Support"
-					dstroot = HOME +  "/Library/Application Support"
-					try:
-						distutils.dir_util.copy_tree(datadir, dstroot)
-					except distutils.dir_util.log.DEBUG as e:
-						print "Oh No! Something went wrong. Error: %s" % e
-						return False
-
-				if os.path.isdir(localPath + "/Applications/KF5") == True:
-					bundledir = localPath + "/Applications/KF5"
-					dstroot = HOME + "/Applications/KF5"
-					try:
-						distutils.dir_util.copy_tree(bundledir, dstroot)
-					except distutils.dir_util.log.DEBUG as e:
-						print "Oh No! Something went wrong. Error: %s" % e
-						return False
- 
-				if os.path.isdir(localPath + "/Library/Preferences") == True:
-					configdir = localPath + "/Library/Preferences"
-					dstroot = HOME + "/Library/Preferences"
-					try:
-						distutils.dir_util.copy_tree(configdir, dstroot)
-					except distutils.dir_util.log.DEBUG as e:
-						print "Oh No! Something went wrong. Error: %s" % e
-						return False
-
+# 			if sys.platform == "OSX":
+# 				if os.path.isdir(localPath + "/Library/Application Support") == True:
+# 					datadir = localPath + "/Library/Application Support"
+# 			     	dstroot = HOME +  "/Library/Application Support"			      
+# 			    	try:
+# 			      		distutils.dir_util.copy_tree(datadir, dstroot)
+# 			      	except distutils.dir_util.log.DEBUG as e:
+# 			      		print( "Oh No! Something went wrong. Error: %s" % e)
+# 			      		return False
+# 			      	
+# 			      	if os.path.isdir(localPath + "/Applications/KF5") == True:
+# 			    		bundledir = localPath + "/Applications/KF5"
+# 			      		dstroot = HOME + "/Applications/KF5"			     
+# 			      		try:
+# 			      			distutils.dir_util.copy_tree(bundledir, dstroot)
+# 			      		except distutils.dir_util.log.DEBUG as e:
+# 			      			print( "Oh No! Something went wrong. Error: %s" % e)
+# 			      			return False
+# 			     
+# 			      	if os.path.isdir(localPath + "/Library/Preferences") == True:
+# 			      		configdir = localPath + "/Library/Preferences"
+# 			      		dstroot = HOME + "/Library/Preferences"			     
+# 			      		try:
+# 							distutils.dir_util.copy_tree(configdir, dstroot)
+# 			      		except distutils.dir_util.log.DEBUG as e:
+# 							print( "Oh No! Something went wrong. Error: %s" % e)
+# 							return False
+			    
 		return True
 
 	# Generate environment variables for configure / building / testing
@@ -706,8 +699,8 @@ class BuildManager(object):
 				envChanges['QMAKEFEATURES'].append( extraLocation )
 
 		# Finally, we can merge this into the real environment
-		clonedEnv = copy.deepcopy(os.environ.__dict__['data'])
-		for variableName, variableEntries in envChanges.iteritems():
+		clonedEnv = copy.deepcopy(os.environ)
+		for variableName, variableEntries in envChanges.items():
 			# Join them
 			newEntry = splitChar.join( variableEntries )
 			# If the variable already exists in the system environment, we prefix ourselves on
@@ -718,7 +711,6 @@ class BuildManager(object):
 
 		# Mark ourselves as a KDE session, for things like the platform plugin, etc.
 		clonedEnv['XDG_CURRENT_DESKTOP'] = 'KDE'
-
 		# Return the dict of the cloned environment, suitable for use with subprocess.Popen
 		return clonedEnv
 
@@ -748,30 +740,30 @@ class BuildManager(object):
 		# Ensure our desired branch is in place
 		# Disable this for kf5-minimum, we only have a tag available.
 		if self.branchGroup == "kf5-minimum":
-		  command = self.config.get('Source', 'gitSetBranchCommand')
-		  command = command.format( targetBranch=self.projectBranch )
-		  try:
-			  subprocess.check_call( shlex.split(command), cwd=self.projectSources )
-		  except subprocess.CalledProcessError:
-			  return False
+		  	command = self.config.get('Source', 'gitSetBranchCommand')
+		  	command = command.format( targetBranch=self.projectBranch )
+		  	try:
+			  	subprocess.check_call( shlex.split(command), cwd=self.projectSources )
+		  	except subprocess.CalledProcessError:
+		  		return False
 
 		elif self.config.getboolean('Source', 'alwaysCheckoutSources') or doCheckout:
 		# Check the sources out
-		  command = self.config.get('Source', 'gitCheckoutCommand')
-		  command = command.format( branch=self.projectBranch )
-		  try:
-			subprocess.check_call( shlex.split(command), cwd=self.projectSources )
-		  except subprocess.CalledProcessError:
-			return False
+		  	command = self.config.get('Source', 'gitCheckoutCommand')
+		  	command = command.format( branch=self.projectBranch )
+		  	try:
+		  		subprocess.check_call( shlex.split(command), cwd=self.projectSources )
+		  	except subprocess.CalledProcessError:
+		  		return False
 
 		# Do we need to run a post-checkout command?
 		if self.config.getboolean('Source', 'runPostCheckoutCommand'):
 			# Get the command in question and run it
 			command = self.config.get('Source', 'postCheckoutCommand')
 			if sys.platform == "win32":
-			  command = command.format( sources=self.projectSources.replace("\\","/"))
+			  	command = command.format( sources=self.projectSources.replace("\\","/"))
 			else:
-			  command = command.format( sources=self.projectSources )
+			  	command = command.format( sources=self.projectSources )
 			try:
 				subprocess.check_call( shlex.split(command), cwd=self.projectSources )
 			except subprocess.CalledProcessError:
@@ -817,11 +809,11 @@ class BuildManager(object):
 		# Do we have anything to apply?	
 		scriptsLocation=  expanduser("~") + '/scripts'
 		if os.path.isdir(os.path.join(scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )) == True:
-		  patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )
+		  	patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup, self.platform )
 		else: 
-		  patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup )
+		  	patchesDir = os.path.join( scriptsLocation, 'patches', self.project.identifier, self.branchGroup )
 		if not os.path.exists(patchesDir):
-			print "=== No patches to apply"
+			print( "=== No patches to apply")
 			return True
 
 		# Iterate over the patches and apply them
@@ -829,12 +821,11 @@ class BuildManager(object):
 		for dirname, dirnames, filenames in os.walk(patchesDir):
 			for filename in filenames:
 				# Get the full path to the patch
-				patchPath = os.path.join( dirname, filename )
+				patchPath = os.path.join( dirname, filename )	
 				# Apply the patch
 				try:
-					print "=== Applying: %s\n" % patchPath
+					print( "=== Applying: %s\n" % patchPath)
 					process = subprocess.check_call( command + [patchPath], stdout=sys.stdout, stderr=sys.stderr, cwd=self.projectSources )
-					print ""
 				except subprocess.CalledProcessError:
 					# Make sure the patch applied successfully - if it failed, then we should halt here
 					return False
@@ -855,13 +846,14 @@ class BuildManager(object):
 		if self.config.has_option('Build', 'postConfigureCommand'):
 			command = self.config.get('Build', 'postConfigureCommand')
 			buildCommands.append( command )
-
+		print( buildCommands )
 		# Do the configure		
 		return self.run_build_commands( buildCommands )
 
 	def compile_build(self):
 		# Load the command and run it
 		command = self.config.get('Build', 'makeCommand')
+		print( command )
 		return self.run_build_commands( [command] )
 
 	def install_build(self):
@@ -875,6 +867,7 @@ class BuildManager(object):
 			buildCommands.append( command )
 
 		# Do the installation
+		print(buildCommands)
 		if not self.run_build_commands( buildCommands ):
 			return False
 
@@ -887,39 +880,41 @@ class BuildManager(object):
 			command = self.config.get('Build', 'updateMimeDatabaseCommand')
 			subprocess.call( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, cwd=installRoot, env=buildEnv )
 
-		# OSX will not play nice with our env paths, so we must copy the files into 
+		#OSX will not play nice with our env paths, so we must copy the files into 
 		# a destination that compile time qt will find them.
-		if sys.platform == "darwin":
-			HOME=expanduser("~")
-			if os.path.isdir(installRoot + "/Library/Application Support") == True:
-				datadir = installRoot + "/Library/Application Support"
-				dstroot = HOME + "/Library/Application Support"
-				try:
-					distutils.dir_util.copy_tree(datadir, dstroot)
-				except distutils.dir_util.log.DEBUG as e:
-					print "Oh No! Something went wrong. Error: %s" % e
-					return False
-
-			if os.path.isdir(installRoot + "/Applications/KF5") == True:
-				bundledir = installRoot + "/Applications/KF5"
-				dstroot = HOME + "/Applications/KF5"
-				try:
-					distutils.dir_util.copy_tree(bundledir, dstroot)
-				except distutils.dir_util.log.DEBUG as e:
-					print "Oh No! Something went wrong. Error: %s" % e
-					return False
-
-			if os.path.isdir(installRoot + "/Library/Preferences") == True:
-				configdir = installRoot + "/Library/Preferences"
-				dstroot = HOME + "/Library/Preferences"
-				try:
-					distutils.dir_util.copy_tree(configdir, dstroot)
-				except distutils.dir_util.log.DEBUG as e:
-					print "Oh No! Something went wrong. Error: %s" % e
-					return False
-
+# 		if sys.platform == "darwin":
+# 			  HOME=expanduser("~")
+# 			  if os.path.isdir(installRoot + "/Library/Application Support") == True:
+# 			      datadir = installRoot + "/Library/Application Support"
+# 			      dstroot = HOME + "/Library/Application Support"			     
+# 			      try:
+# 				distutils.dir_util.copy_tree(datadir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
+# 			     
+# 			  if os.path.isdir(installRoot + "/Applications/KF5") == True:
+# 			      bundledir = installRoot + "/Applications/KF5"
+# 			      dstroot = HOME + "/Applications/KF5"			      
+# 			      try:
+# 				distutils.dir_util.copy_tree(bundledir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
+# 			     
+# 			  if os.path.isdir(installRoot + "/Library/Preferences") == True:
+# 			      configdir = installRoot + "/Library/Preferences"
+# 			      dstroot = HOME + "/Library/Preferences"			     
+# 			      try:
+# 				distutils.dir_util.copy_tree(configdir, dstroot)
+# 			      except distutils.dir_util.log.DEBUG as e:
+# 				print( "Oh No! Something went wrong. Error: %s" % e)
+# 				return False
+			      		
 		# None of the commands failed, so assume we succeeded
 		return True
+		
+		
 
 	def deploy_installation(self):
 		# Is deployment disabled?
@@ -960,19 +955,12 @@ class BuildManager(object):
 			process = subprocess.Popen( shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=runtimeEnv, cwd=buildDirectory)
 		stdout, stderr = process.communicate()
 		# Is it necessary to run tests? (tests must be enabled per configuration and CTest must report more than 1 test)
-		if not self.config.getboolean('Test', 'testsEnabled') or re.search('Total Tests: 0', stdout, re.MULTILINE):
+		if not self.config.getboolean('Test', 'testsEnabled'): ##BROKEN PYTHON3 TO-DO or re.search('Total Tests: 0', stdout, re.MULTILINE):
 			# Copy in the skeleton file to keep Jenkins happy
 			unitTestSkeleton = os.path.join( self.scriptsLocation, 'templates', 'JUnitTestResults-Success.xml' )
 			shutil.copyfile( unitTestSkeleton, junitFilename )
 			# All done
 			return
-
-		# Special Case: Marble's build system doesn't use ECM, but is able to use stuff that does use ECM
-		# This causes problems with ASAN, so we force inject ASAN into all processes running in a Marble build
-		# It's a terrible hack, but the Marble developers refuse to depend on ECM so we have no other choice (other than not running the Marble tests)
-		if self.project.identifier == 'marble' and os.path.exists('/usr/lib/x86_64-linux-gnu/libasan.so.2.0.0'):
-			# Inject ASAN for Marble....
-			runtimeEnv['LD_PRELOAD'] = '/usr/lib/x86_64-linux-gnu/libasan.so.2.0.0'
 
 		# Spawn a base user interface if needed
 		if self.use_xorg_environment():
@@ -998,11 +986,11 @@ class BuildManager(object):
 					runtimeEnv['DBUS_LAUNCHD_SESSION_BUS_SOCKET'] = variable
 			else:
 				command = self.config.get('Test', 'dbusLaunchCommand')
-				process = subprocess.Popen( shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=runtimeEnv )
-				process.wait()
-				for variable in process.stdout:
-					splitVars = variable.split('=', 1)
-					runtimeEnv[ splitVars[0] ] = splitVars[1].strip()			
+				process = check_output( shlex.split(command), env=runtimeEnv )
+				#TO-DO fix for py3
+# 				for variable in process:
+# 					splitVars = variable.split('=', 1)
+# 					runtimeEnv[ splitVars[0] ] = splitVars[1].strip()			
 
 		# Rebuild the Sycoca
 		command = self.config.get('Test', 'kbuildsycocaCommand')
@@ -1026,7 +1014,7 @@ class BuildManager(object):
 
 		# Execute CTest
 		command = self.config.get('Test', 'ctestRunCommand')
-		# Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
+                #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
 		if sys.platform == "win32":
 			ctestProcess = subprocess.Popen( shlex.split(command), stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=runtimeEnv )
 		else:
@@ -1034,7 +1022,7 @@ class BuildManager(object):
 
 		# Determine the maximum amount of time we will permit CTest to run for
 		# To accomodate for possible inconsistencies, we allow an extra 2 lots of the permissible time per test
-		testsFound = re.search('Total Tests: ([0-9]+)', stdout, re.MULTILINE).group(1)
+		testsFound = re.search('Total Tests: ([0-9]+)', stdout.decode(), re.MULTILINE).group(1)
 		permittedTime = ( int(testsFound) + 2 ) * self.config.getint('Test', 'testTimePermitted')
 		# Start timing it
 		timeRunning = 0
@@ -1112,19 +1100,18 @@ class BuildManager(object):
 
 		# Run cppcheck and wait for it to finish
 		with open(cppcheckFilename, 'w') as cppcheckXml:
-			# Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
+        #Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
 			if sys.platform == "win32":
 				process = subprocess.check_call( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, cwd=buildDirectory, env=buildEnv )
 			else:
 				process = subprocess.Popen( command, stdout=sys.stdout, stderr=cppcheckXml, cwd=self.projectSources, env=runtimeEnv )
-			process.wait()
+				process.wait()
 
 	def generate_lcov_data_in_cobertura_format(self):
 		# Prepare to execute gcovr
 		coberturaFile = os.path.join( self.build_directory(), 'CoberturaLcovResults.xml' )
 		command = self.config.get('QualityCheck', 'gcovrCommand')		
 		command = command.format( scriptsLocation=self.scriptsLocation, sources=self.projectSources )
-		print command
 		command = shlex.split(command)
 
 		# Run gcovr to gather up the lcov data and present it in Cobertura format
@@ -1143,11 +1130,7 @@ class BuildManager(object):
 		command = shlex.split(command)
 
 		# Run depdiagram-prepare to extract the dependency information in *.dot format
-		# Windows ignore PATH set in env with shell=False(default). This is a quick dirty fix to move forward. Needs to be improved.
-		if sys.platform == "win32":
-			process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, shell=True, env=runtimeEnv )
-		else:
-			process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, env=runtimeEnv )
+		process = subprocess.Popen( command, stdout=sys.stdout, stderr=sys.stderr, env=runtimeEnv )
 		process.wait()
 
 		# Next we ensure the remote directory exists
@@ -1183,10 +1166,7 @@ class BuildManager(object):
 
 		# Run depdiagram-prepare to extract the dependency information in *.dot format
 		with open(metaFilename, 'w') as metadataOutput:
-			if sys.platform == "win32":
-				process = subprocess.Popen( command, stdout=metadataOutput, stderr=metadataOutput, shell=True, env=runtimeEnv, cwd=buildDirectory )
-			else:
-				process = subprocess.Popen( command, stdout=metadataOutput, stderr=metadataOutput, env=runtimeEnv, cwd=buildDirectory )
+			process = subprocess.Popen( command, stdout=metadataOutput, stderr=metadataOutput, env=runtimeEnv, cwd=buildDirectory )
 			process.wait()
 
 		# Now we need to transfer the data to it's final home, so it can be picked up by the API generation runs
@@ -1214,32 +1194,30 @@ class BuildManager(object):
 # Loads a configuration for a given project
 def load_project_configuration( project, branchGroup, platform, compiler, variation = None ):
 	# Create a configuration parser
-	config = ConfigParser.SafeConfigParser()
+	config = configparser.ConfigParser()
 	# List of prospective files to parse
 	configFiles =  ['global.cfg', '{compiler}.cfg', '{platform}.cfg', '{branchGroup}.cfg', '{host}.cfg']
 	configFiles += ['{branchGroup}-{platform}.cfg']
 	configFiles += ['{project}/project.cfg', '{project}/{platform}.cfg', '{project}/{variation}.cfg', '{project}/{branchGroup}.cfg']
 	configFiles += ['{project}/{branchGroup}-{platform}.cfg', '{project}/{branchGroup}-{variation}.cfg']
+	configFiles += ['server.cfg']
 	# Go over the list and load in what we can
 	for confFile in configFiles:
 		confFile = confFile.format( host=socket.gethostname(), branchGroup=branchGroup, compiler=compiler, platform=platform, project=project, variation=variation )
-		config.read( 'config/build/' + confFile )		
+		config.read( 'scripts/config/build/' + confFile )		
 	# All done, return the configuration		
 	return config
+
 
 # Loads the projects
 def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure ):
 	# Download the list of projects if necessary
 	if not os.path.exists(projectFile) or time.time() > os.path.getmtime(projectFile) + 60*60:
-		# Create a temporary file for this
-		tempHandle, tempFilename = tempfile.mkstemp()
-		# Download the projects list
-		urllib.urlretrieve(projectFileUrl, tempFilename)
-		# Replace our existing file
-		shutil.move(tempFilename, projectFile)
+		urllib.request.urlretrieve(projectFileUrl, projectFile)
 
 	# Now load the list of projects into the project manager
 	with open(projectFile, 'r') as fileHandle:
+		print( fileHandle )
 		try:
 			ProjectManager.load_projects( etree.parse(fileHandle) )
 		except:
@@ -1258,8 +1236,9 @@ def load_projects( projectFile, projectFileUrl, configDirectory, moduleStructure
 
 	# We are successful
 	return True
-
 # Load dependencies
+
+
 def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDirectory ):
 	# Load base specific dependencies
 	with open( baseDepDirectory + baseName, 'r' ) as fileHandle:
@@ -1268,10 +1247,10 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 	# Load the local list of ignored projects
 	with open( baseDepDirectory + 'ignore', 'r' ) as fileHandle:
 		ProjectManager.setup_ignored( fileHandle )
-
-	# Load the global list of ignored projects
+ 
+ 	# Load the global list of ignored projects
 	with open( globalDepDirectory + 'build-script-ignore', 'r' ) as fileHandle:
-		ProjectManager.setup_ignored( fileHandle )
+ 		ProjectManager.setup_ignored( fileHandle )
 
 	# Load the dependencies - common ones first
 	with open( globalDepDirectory + 'dependency-data-common', 'r' ) as fileHandle:
@@ -1282,11 +1261,11 @@ def load_project_dependencies( baseDepDirectory, baseName, platform, globalDepDi
 		ProjectManager.setup_dependencies( fileHandle )
 	# Load the dependencies - now platform specific ones if it exists
 	if os.path.isfile( baseDepDirectory + baseName + '-' + platform ) == True:
-		with open( baseDepDirectory + baseName  + '-' + platform, 'r' ) as fileHandle:
-			ProjectManager.setup_dependencies( fileHandle )
+	    with open( baseDepDirectory + baseName  + '-' + platform, 'r' ) as fileHandle:
+	    	ProjectManager.setup_dependencies( fileHandle )
 	if os.path.isfile(  globalDepDirectory + 'dependency-data-' + baseName  + '-' + platform ) == True:
-		with open(  globalDepDirectory + 'dependency-data-' + baseName  + '-' + platform, 'r' ) as fileHandle:
-			ProjectManager.setup_dependencies( fileHandle )
+	    with open(  globalDepDirectory + 'dependency-data-' + baseName  + '-' + platform, 'r' ) as fileHandle:
+	    	ProjectManager.setup_dependencies( fileHandle )
 
 # Checks for a Jenkins environment, and sets up a argparse.Namespace appropriately if found
 def check_jenkins_environment():
@@ -1302,18 +1281,16 @@ def check_jenkins_environment():
 		if jobMatch.group('project') is not None:
 			arguments.project = jobMatch.group('project')
 		# Determine our branch group, based on the given branch/base combo
-		if jobMatch.group('base') == 'qt5':
-			if jobMatch.group('branch') == 'stable':
-				arguments.branchGroup = 'stable-kf5-qt5'
-			else:
-				arguments.branchGroup = 'kf5-qt5'
-		elif jobMatch.group('branch') == 'oldstable':
-			arguments.branchGroup = 'oldstable-qt4'
-		elif jobMatch.group('branch') == 'stable':
-			arguments.branchGroup = 'stable-qt4'
-		elif jobMatch.group('branch') == 'master':
-			arguments.branchGroup = 'latest-qt4'
-
+		if jobMatch.group('branchGroup') is not None:
+			arguments.branchGroup = jobMatch.group('branchGroup')
+		if jobMatch.group('track') is not None:
+			arguments.track = jobMatch.group('track')
+		if jobMatch.group('branch') is not None:
+			arguments.branch = jobMatch.group('branch')
+		if jobMatch.group('platform') is not None:
+			arguments.platform = jobMatch.group('platform')
+		if jobMatch.group('compiler') is not None:
+			arguments.compiler = jobMatch.group('compiler')
 	# Do we have a workspace?
 	if 'WORKSPACE' in os.environ:
 		# Transfer it

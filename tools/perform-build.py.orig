@@ -1,13 +1,35 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+import re
+import os
 import sys
+import time
+import copy
+import json
+import shlex
+import urllib.request
+import shutil
+import socket
+import fnmatch
 import argparse
+import subprocess
+import configparser
+import multiprocessing
+import distutils
+from distutils import dir_util
+from lxml import etree
+from collections import defaultdict
+from os.path import expanduser
+from subprocess import call
+from subprocess import check_output
 from kdecilib import *
 from appstreamtest import *
+
+home = os.path.expanduser("~")
 
 # Load our command line arguments
 parser = argparse.ArgumentParser(description='Utility to control building and execution of tests in an automated manner.')
 parser.add_argument('--project', type=str)
-parser.add_argument('--branchGroup', type=str, default='latest-qt4')
+parser.add_argument('--branchGroup', type=str, default='kf5-qt5')
 parser.add_argument('--sources', type=str)
 parser.add_argument('--variation', type=str)
 parser.add_argument('--platform', type=str, choices=['Linux', 'OSX', 'Windows', 'android', 'snappy', 'flatpak'], default='Linux')
@@ -18,37 +40,39 @@ environmentArgs = check_jenkins_environment()
 arguments = parser.parse_args( namespace=environmentArgs )
 
 # Load our configuration, projects and dependencies
+print( arguments )
 config = load_project_configuration( arguments.project, arguments.branchGroup, arguments.platform, arguments.compiler, arguments.variation )
-if not load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', 'config/projects', 'dependencies/logical-module-structure' ):
-	sys.exit("Failure to load projects - unable to continue")
-load_project_dependencies( 'config/base/', arguments.branchGroup, arguments.platform, 'dependencies/' )
+
+projects = load_projects( 'kde_projects.xml', 'http://projects.kde.org/kde_projects.xml', '/home/jenkins/scripts/config/projects', '/home/jenkins/scripts/dependencies/logical-module-structure' )
+print( projects )
+load_project_dependencies( home + '/scripts/config/base/', arguments.branchGroup, arguments.platform, home + '/scripts/dependencies/' )
 
 # Load the requested project
 project = ProjectManager.lookup( arguments.project )
-if project is None:
-	sys.exit("Requested project %s was not found." % arguments.project)
+# if project is None:
+# 	sys.exit("Requested project %s was not found." % arguments.project)
 
 # Prepare the build manager
 manager = BuildManager(project, arguments.branchGroup, arguments.sources, config, arguments.platform)
 
 # Give out some information on what we are going to do...
-print "\nKDE Continuous Integration Build"
-print "== Building Project: %s - Branch %s" % (project.identifier, manager.projectBranch)
-print "== Build Dependencies:"
+print("\nKDE Continuous Integration Build")
+print("== Building Project: %s - Branch %s" % (project.identifier, manager.projectBranch))
+print( "== Build Dependencies:")
 for dependency, dependencyBranch in manager.dependencies:
-	print "==== %s - Branch %s" %(dependency.identifier, dependencyBranch)
+	print( "==== %s - Branch %s" %(dependency.identifier, dependencyBranch))
 
 # Apply any necessary patches if we have them
-print "\n== Applying Patches"
+print( "\n== Applying Patches")
 if not manager.apply_patches():
 	sys.exit("Applying patches to project %s failed." % project.identifier)
 
 # Sync all the dependencies
-print "\n== Syncing Dependencies from Master Server\n"
+print( "\n== Syncing Dependencies from Master Server\n")
 if not manager.sync_dependencies():
 	sys.exit("Syncing dependencies from master server for project %s failed." % project.identifier)
 	
-print "\n== Preparing the Environment\n"
+print( "\n== Preparing the Environment\n")
 environment = manager.generate_environment(True)
 
 # We care about these environment variables
@@ -64,65 +88,57 @@ osxneededVariables = [
 	'SHARE_INSTALL_PREFIX', 'BUNDLE_INSTALL_DIR'
 ]
 # Generate the shell format environment file, suitable for sourcing
-if sys.platform == 'darwin':
+if sys.platform == 'OSX':
 	for variable in osxneededVariables:
 		if variable in environment:
-			print 'export %s="%s"' % (variable, environment[variable])
+			print( 'export %s="%s"' % (variable, environment[variable]))
 else:
 	for variable in neededVariables:
 		if variable in environment:			
-			print 'export %s="%s"' % (variable, environment[variable])
+			print( 'export %s="%s"' % (variable, environment[variable]))
 
 # Configure the build
-print "\n== Configuring Build\n"
-if not manager.configure_build():
-	sys.exit("Configure step exited with non-zero code, assuming failure to configure for project %s." % project.identifier)
+print( "\n== Configuring Build\n")
+manager.configure_build()
+
 
 # Build the project
-print "\n== Commencing the Build\n"
-if not manager.compile_build():
-	sys.exit("Compilation step exited with non-zero code, assuming failure to build from source for project %s." % project.identifier)
+print( "\n== Commencing the Build\n")
+manager.compile_build()
 
 # Install the project
-print "\n== Installing the Build\n"
-if not manager.install_build():
-	sys.exit("Installation step exited with non-zero code, assuming failure to install from source for project %s." % project.identifier)
+print( "\n== Installing the Build\n")
+manager.install_build()
+
 
 # Deploy the newly completed build to the local tree as well as the master server
-print "\n== Deploying Installation\n"
-if not manager.deploy_installation():
-	sys.exit("Deployment of completed installation failed for project %s." % project.identifier)
-
-pretest = False
-if not pretest:
-   print "\n Pre test is disabled"
-else:
-   run_pre_test(manager)
+print( "\n== Deploying Installation\n")
+#manager.deploy_installation()
 
 # Execute the tests
-print "\n== Executing Tests\n"
+print("\n== Executing Tests\n")
 manager.execute_tests()
 
 # Run cppcheck
-print "\n== Executing cppcheck\n"
+print( "\n== Executing cppcheck\n")
 manager.execute_cppcheck()
 
 # Perform a lcov processing run
-print "\n== Performing lcov processing\n"
+print( "\n== Performing lcov processing\n")
 manager.generate_lcov_data_in_cobertura_format()
 
 # Extract dependency data from CMake
-print "\n== Extracting dependency information from CMake\n"
+print( "\n== Extracting dependency information from CMake\n")
 manager.extract_dependency_information()
 manager.extract_cmake_dependency_metadata()
 
 # Run appstreamcli tests
-print "\n== Running Appstreamcli Test\n"
+print( "\n== Running Appstreamcli Test\n")
 enableTest = manager.config.getboolean('AppstreamcliTest', 'appstreamcliEnabled')
 
 if not enableTest:
-   print "\n Appstream test is disabled"  
+   print( "\n Appstream test is disabled")  
 else:
    run_appstreamcli_test(manager)
 
-print "\n== Run Completed Successfully\n"
+print( "\n== Run Completed Successfully\n")
